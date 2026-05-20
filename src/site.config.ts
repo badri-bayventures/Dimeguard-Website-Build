@@ -19,6 +19,11 @@ export type ContactChannel = {
   href?: string;
 };
 
+export type NavLink = {
+  href: string;
+  label: string;
+};
+
 export type SiteConfig = {
   advisor: {
     fullName: string;
@@ -48,17 +53,37 @@ export type SiteConfig = {
     primaryState: string;
     licensedStates: LicensedState[];
     disclosure: string;
+    insuranceOnlyDisclosure: string;
   };
   carriers: string[];
+  /**
+   * Brand tokens. Values are surfaced as CSS custom properties in globals.css
+   * so swapping the palette for advisor #2 is a one-file change.
+   * Source of truth: Direction D mockup (Modern Trusted-Pro / Brand Palette).
+   * WCAG: `accent` is bright lime — only use as a button background paired with
+   * `ink` text. Never use `accent` for body text on light surfaces.
+   */
   brand: {
-    color: string;
-    colorForeground: string;
-    accentColor: string;
+    ink: string;
+    inkSoft: string;
+    accent: string;
+    accentInk: string;
+    secondary: string;
+    surface: string;
+    surfaceMuted: string;
+    border: string;
+    muted: string;
   };
+  typography: {
+    displayFontStack: string;
+    bodyFontStack: string;
+  };
+  nav: NavLink[];
   contact: {
     calendlyUrl: string;
     channels: ContactChannel[];
   };
+  social: { label: string; href: string }[];
   analytics: {
     ga4MeasurementId: string;
     posthogPublicKey: string;
@@ -85,7 +110,8 @@ export const siteConfig: SiteConfig = {
   business: {
     legalName: "Dimeguard",
     domain: "dimeguard.com",
-    tagline: "Insurance, retirement, and tax planning for Central Valley families.",
+    tagline:
+      "Insurance, retirement, and tax planning for Central Valley families.",
   },
   nap: {
     name: "Dimeguard",
@@ -106,22 +132,43 @@ export const siteConfig: SiteConfig = {
       { code: "NJ", name: "New Jersey" },
     ],
     disclosure:
+      "Licensed insurance broker in California, Texas, Colorado, and New Jersey.",
+    insuranceOnlyDisclosure:
       "Insurance-only licensure. Not investment, tax, or legal advice — for informational purposes only.",
   },
   carriers: [],
   brand: {
-    color: "#0f3d2e",
-    colorForeground: "#ffffff",
-    accentColor: "#c8a45c",
+    ink: "#143A4A",
+    inkSoft: "#2C5364",
+    accent: "#C8E04A",
+    accentInk: "#143A4A",
+    secondary: "#5BC0E8",
+    surface: "#FFFFFF",
+    surfaceMuted: "#F5F1E8",
+    border: "#E4DFD2",
+    muted: "#5F7079",
   },
+  typography: {
+    displayFontStack: "var(--font-display), Georgia, 'Times New Roman', serif",
+    bodyFontStack: "var(--font-body), system-ui, -apple-system, sans-serif",
+  },
+  nav: [
+    { href: "/retirement-planning", label: "Retirement" },
+    { href: "/life-insurance", label: "Life Insurance" },
+    { href: "/resources", label: "Resources" },
+    { href: "/blog", label: "Blog" },
+    { href: "/about", label: "About" },
+  ],
   contact: {
     calendlyUrl: process.env.NEXT_PUBLIC_CALENDLY_URL ?? "",
     channels: [],
   },
+  social: [],
   analytics: {
     ga4MeasurementId: process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID ?? "",
     posthogPublicKey: process.env.NEXT_PUBLIC_POSTHOG_KEY ?? "",
-    posthogHost: process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com",
+    posthogHost:
+      process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com",
   },
   calculators: {
     retirement: {
