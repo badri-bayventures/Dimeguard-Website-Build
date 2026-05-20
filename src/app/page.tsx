@@ -63,20 +63,20 @@ export default function Home() {
         <SectionHeading
           eyebrow="What I help with"
           title="Three things, done carefully."
-          lede="Most families I work with want help in the same three areas. Pick the one that&rsquo;s most on your mind."
+          lede="Most families I work with want help in the same three areas. Pick the one that’s most on your mind."
         />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           <ServiceCard
             eyebrow="Retirement"
             title="Retirement planning"
-            description="Map your current savings, contributions, and target income to see if you&rsquo;re on track — and what the gap looks like if you&rsquo;re not."
+            description="Map your current savings, contributions, and target income to see if you’re on track — and what the gap looks like if you’re not."
             href="/retirement-planning"
             cta="Run the retirement check"
           />
           <ServiceCard
             eyebrow="Insurance"
             title="Life & disability"
-            description="A short conversation about who depends on your income, what they&rsquo;d need, and which term or permanent coverage may fit your situation."
+            description="A short conversation about who depends on your income, what they’d need, and which term or permanent coverage may fit your situation."
             href="/life-insurance"
             cta="Estimate your coverage"
           />
@@ -100,7 +100,7 @@ export default function Home() {
             <SectionHeading
               eyebrow="How it works"
               title="A first call is mostly listening."
-              lede="No spreadsheet shared. No products pitched. The goal is to understand where you are and whether I&rsquo;m the right fit."
+              lede="No spreadsheet shared. No products pitched. The goal is to understand where you are and whether I’m the right fit."
             />
             <ButtonLink href={bookCallHref} className="mt-8" size="lg">
               {siteConfig.ctaLabels.bookCall}
@@ -110,18 +110,18 @@ export default function Home() {
             {[
               {
                 k: "01",
-                t: "Tell me what&rsquo;s on your mind.",
-                d: "A quick form or 20-minute call. Whatever&rsquo;s easier for you.",
+                t: "Tell me what’s on your mind.",
+                d: "A quick form or 20-minute call. Whatever’s easier for you.",
               },
               {
                 k: "02",
                 t: "We look at the numbers together.",
-                d: "I&rsquo;ll walk through what your current setup looks like and where the gaps may be.",
+                d: "I’ll walk through what your current setup looks like and where the gaps may be.",
               },
               {
                 k: "03",
-                t: "You decide what&rsquo;s next.",
-                d: "If there&rsquo;s a fit, we keep talking. If not, you leave with a clearer picture either way.",
+                t: "You decide what’s next.",
+                d: "If there’s a fit, we keep talking. If not, you leave with a clearer picture either way.",
               },
             ].map((step) => (
               <li
@@ -157,7 +157,7 @@ export default function Home() {
             items={[
               {
                 quote:
-                  "He explained the trade-offs in plain English. We didn&rsquo;t feel rushed and didn&rsquo;t feel sold to.",
+                  "He explained the trade-offs in plain English. We didn’t feel rushed and didn’t feel sold to.",
                 attribution: "M. Patel",
                 meta: "Tracy, CA",
               },
