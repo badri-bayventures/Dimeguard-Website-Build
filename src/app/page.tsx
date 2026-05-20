@@ -1,5 +1,7 @@
 import { siteConfig } from "@/site.config";
 import { Hero } from "@/components/hero";
+import { HeroTrustStrip } from "@/components/hero-trust-strip";
+import { CarrierStrip } from "@/components/carrier-strip";
 import { Section, SectionHeading } from "@/components/section";
 import { ServiceCard } from "@/components/service-card";
 import { Faq } from "@/components/faq";
@@ -15,9 +17,8 @@ import { localBusiness, person } from "@/lib/schema";
 export const generateMetadata = () => buildMetadata({ path: "/" });
 
 export default function Home() {
-  const states = siteConfig.licensure.licensedStates
-    .map((s) => s.code)
-    .join(" · ");
+  const bookCallHref =
+    siteConfig.contact.calendlyUrl || "/retirement-planning#calculator";
 
   return (
     <>
@@ -25,40 +26,38 @@ export default function Home() {
       <JsonLd data={person(siteConfig)} id="ld-person" />
 
       <Hero
-        eyebrow={`${siteConfig.nap.addressLocality}, ${siteConfig.nap.addressRegion} · Licensed in ${states}`}
-        title={
-          <>
-            Clear-eyed planning for{" "}
-            <span className="text-[color:var(--color-ink-soft)]">
-              Central Valley families
-            </span>
-            .
-          </>
+        badge={
+          siteConfig.heroBadge.enabled
+            ? { label: siteConfig.heroBadge.label }
+            : undefined
         }
+        title={<>Run the number. Then book the call.</>}
         lede={
           <>
-            Insurance, retirement, and tax coordination designed to help you
-            decide with confidence — without sales pressure.{" "}
-            {siteConfig.advisor.fullName} works one-on-one with families in
-            their 40s and 50s.
+            An independent practice for first-generation families. Five inputs,
+            a real retirement number in ninety seconds, then optionally a
+            twenty-minute conversation with the advisor who would actually run
+            your plan.
           </>
         }
         primaryCta={{
-          label: "Run the retirement check",
+          label: `${siteConfig.ctaLabels.runNumber} →`,
           href: "/retirement-planning#calculator",
         }}
         secondaryCta={{
-          label: `About ${siteConfig.advisor.firstName}`,
-          href: "/about",
+          label: siteConfig.ctaLabels.bookCall,
+          href: bookCallHref,
         }}
         meta={
           <span>
-            Typical first call: 15 minutes · No-obligation review · Calls
+            Typical first call: 20 minutes · No-obligation review · Calls
             returned within one business hour
           </span>
         }
         aside={siteConfig.heroCalcTeaser.enabled ? <CalcTeaser /> : null}
       />
+
+      <HeroTrustStrip />
 
       <Section tone="surface">
         <SectionHeading
@@ -76,7 +75,7 @@ export default function Home() {
           />
           <ServiceCard
             eyebrow="Insurance"
-            title="Life insurance"
+            title="Life & disability"
             description="A short conversation about who depends on your income, what they&rsquo;d need, and which term or permanent coverage may fit your situation."
             href="/life-insurance"
             cta="Estimate your coverage"
@@ -103,15 +102,8 @@ export default function Home() {
               title="A first call is mostly listening."
               lede="No spreadsheet shared. No products pitched. The goal is to understand where you are and whether I&rsquo;m the right fit."
             />
-            <ButtonLink
-              href={
-                siteConfig.contact.calendlyUrl ||
-                "/retirement-planning#calculator"
-              }
-              className="mt-8"
-              size="lg"
-            >
-              Book a 15-min call
+            <ButtonLink href={bookCallHref} className="mt-8" size="lg">
+              {siteConfig.ctaLabels.bookCall}
             </ButtonLink>
           </div>
           <ol className="md:col-span-7 space-y-5">
@@ -119,7 +111,7 @@ export default function Home() {
               {
                 k: "01",
                 t: "Tell me what&rsquo;s on your mind.",
-                d: "A quick form or 15-minute call. Whatever&rsquo;s easier for you.",
+                d: "A quick form or 20-minute call. Whatever&rsquo;s easier for you.",
               },
               {
                 k: "02",
@@ -197,7 +189,7 @@ export default function Home() {
               {
                 question: "Do you charge for a first conversation?",
                 answer:
-                  "No. The first call is a 15-minute conversation to see whether we’re a fit. If we keep working together, I’m paid by the insurance carrier on any policy you choose to put in place.",
+                  "No. The first call is a 20-minute conversation to see whether we’re a fit. If we keep working together, I’m paid by the insurance carrier on any policy you choose to put in place.",
               },
               {
                 question: "Are you licensed outside of California?",
@@ -240,24 +232,20 @@ export default function Home() {
           <div className="md:col-span-8">
             <SectionHeading
               eyebrow="Ready when you are"
-              title="A 15-minute call may save you a year of wondering."
+              title="A 20-minute call may save you a year of wondering."
               lede="No pressure, no jargon. Just a clear-eyed look at where you stand and what your options are."
               inverted
             />
           </div>
           <div className="md:col-span-4 md:text-right">
-            <ButtonLink
-              size="lg"
-              href={
-                siteConfig.contact.calendlyUrl ||
-                "/retirement-planning#calculator"
-              }
-            >
-              Book a 15-min call
+            <ButtonLink size="lg" href={bookCallHref}>
+              {siteConfig.ctaLabels.bookCall}
             </ButtonLink>
           </div>
         </div>
       </Section>
+
+      <CarrierStrip />
 
       <div className="border-t border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)]">
         <div className="mx-auto max-w-6xl px-6 py-8 md:px-8">

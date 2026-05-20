@@ -1,0 +1,142 @@
+Home page drifted from Direction D. Re-anchor to the mockup before 
+moving past step 7.
+
+SOURCE OF TRUTH:
+W3bly Document System/clients/dimeguard/assets/D _ Modern trusted-pro _ 
+brand palette.html (attach or read this file first — it's the design 
+mockup Saral approved over email; everything below is reconciling 
+against it).
+
+SEQUENCING:
+- Finish step 7 (SEO + AEO infrastructure) as already in flight.
+- Then run this re-alignment pass before step 8.
+
+THE HOME PAGE COMPOSITION SHOULD BE A FAITHFUL COMPONENT-PORT OF THE 
+MOCKUP, NOT A REINTERPRETATION. Specific gaps to close:
+
+1. TOP TRUST BAR (above the nav header) — Add a thin bar with two 
+   columns:
+   Left: "LICENSED IN CALIFORNIA · TEXAS · COLORADO · NEW JERSEY"
+   Right: "INDEPENDENT · NO SCRIPT, NO SALES PITCH"
+   
+   IMPORTANT — the mockup includes the word "FIDUCIARY" in the right 
+   column. DO NOT ship this word yet. Insurance-only brokers are not 
+   legally fiduciaries (they operate under suitability standard, not 
+   fiduciary standard). Use the version above without "FIDUCIARY" 
+   until I confirm with Saral. Make this string config-driven in 
+   site.config.ts so it's one-line to add "FIDUCIARY · " back if Saral 
+   has an RIA capacity I'm not aware of.
+
+2. PRIMARY NAV — Change to match the mockup exactly:
+   Home | Retirement Planning | Life & Disability | Calculators | About
+   
+   Right side: location pin "📍 Mountain House, CA" + "Book a 20-min 
+   call →" CTA (update from 15-min to 20-min to match mockup).
+   
+   Drop "Blog" and "Resources" from primary nav. Both go to footer:
+   - Footer: Blog · Resources · Privacy · Terms · social
+   
+   Cohort note: nav items must be a config-driven array in 
+   site.config.ts so the next advisor can swap labels without code 
+   changes. Use { label, href, primary: boolean } so footer-only items 
+   can share the same source.
+
+3. "LIFE & DISABILITY" vs "LIFE INSURANCE" — Use "Life & Disability" 
+   in the nav per the mockup. Keep the URL as /life-insurance (don't 
+   migrate routes yet — I'll confirm with Saral Friday whether he sells 
+   disability and if so we'll keep both labels and rename the route 
+   later). Make the nav label config-driven so I can swap to "Life 
+   Insurance" if Saral is life-only.
+
+4. "ACCEPTING NEW CLIENTS" PILL — Add the green-dot pill above the 
+   hero headline (mockup has it as a small badge with a lime dot). 
+   Softer than a hard SLA, signals availability without overcommitting.
+
+5. HERO COPY — Replace current hero with mockup voice:
+   - H1: "Run the number. Then book the call."
+   - Sub-copy: "An independent practice for first-generation families. 
+     Five inputs, a real retirement number in ninety seconds, then 
+     optionally a twenty-minute conversation with the advisor who 
+     would actually run your plan."
+     (NOTE: dropped "fiduciary" from the mockup version per item #1.)
+   - Primary CTA: "Run my retirement number →"
+   - Secondary CTA: "Book a 20-min call"
+   
+   This is much punchier direct-response copy — keep the command-form 
+   ("Run...Then book...") intact, don't soften it.
+
+6. CALC-TEASER REBUILD — "THE DIMEGUARD NUMBER" — Replace the current 
+   2-input "Quick Check" with the branded 4-input tool from the mockup:
+   
+   Header: "· THE DIMEGUARD NUMBER" (left) · "Live · 90 sec" (right, 
+     with a lime dot)
+   
+   Inputs (2x2 grid):
+     - Age (number)
+     - Retire at (number, default 65)
+     - Saved (currency, label "Saved")
+     - Spend / mo (currency, label "Spend / mo")
+   
+   Below inputs:
+     - "PROJECTED, AGES X → Y" annotation (left) · "+X% pre-retirement" 
+       annotation (right)
+     - A simple SVG line chart projecting the savings growth from 
+       current age to retirement age, computed client-side from the 
+       formula in our architecture-decisions doc (FV_savings + FV_contrib 
+       compounded annually). Lime line over a soft grid. Static SVG — no 
+       chart library needed.
+   
+   Below chart:
+     - "YOUR NUMBER" eyebrow
+     - "$X.XXM" headline number (the projected nest egg — FV_savings + 
+       FV_contrib at retirement age)
+     - Below the headline number, in a smaller line: "vs $Y.YYM needed 
+       for $Z/mo target income" — this gives the implied gap without 
+       making it the headline.
+     - "Run my number →" CTA (lime button)
+   
+   Footer line: "Estimate · 7% pre / 5% in-retirement · stress-tested 
+   both ways" (replace with the assumptions from site.config.ts: r_pre, 
+   r_post, drawdownYears)
+   
+   The full lead-capture flow still lives on /retirement-planning. 
+   Clicking "Run my number" on the home-page teaser scrolls to / opens 
+   the full 4-stage version there.
+
+7. HERO TRUST STRIP (below hero CTAs) — Replace current strip with 
+   mockup's 4-column pattern:
+   
+   Col 1: "20 min" / "first call · no script"
+   Col 2: "CA · TX · CO · NJ" / "licensed in four states"
+   Col 3: "$0" / "to run your number"
+   Col 4: "Multi-carrier" / "independent broker"
+   
+   Each column = large number/phrase on top, small descriptor below. 
+   Match the mockup's grid spacing.
+
+8. CARRIER LOGO STRIP (bottom of page) — Add the mockup's bottom strip:
+   "INDEPENDENT · WE PLACE ACROSS MULTIPLE CARRIERS" + 6 logo 
+   placeholder slots (CARRIER A through CARRIER E + "+1 logo" overflow).
+   When Saral delivers his actual carrier list, drop logos into the 
+   placeholders — no code change needed. Config-driven from 
+   site.config.ts: carriers: { name, logoPath }[].
+
+WHAT TO LEAVE ALONE:
+- /retirement-planning, /life-insurance pages already built — keep as-is.
+- Step 7 SEO/AEO infrastructure — don't touch.
+- Copy rules compliance — already correct, maintain.
+- "Calls returned within one business hour" — keep but I'll confirm with 
+  Saral Friday; cheap to swap to "within one business day" if needed.
+
+VALIDATION:
+- Open the mockup HTML in a browser side-by-side with the Replit preview.
+- Top bar, nav, hero, calc-teaser, trust strip, and carrier strip should 
+  read as the same composition with the live Tailwind theme.
+- The calc-teaser math must match the formulas in architecture-
+  decisions-2026-05-20.md exactly.
+- Mobile viewport: nav collapses to hamburger, calc-teaser stacks below 
+  hero copy, trust strip wraps to 2x2.
+
+Report back when step 7 is shipped and again when the re-alignment is 
+shipped. Goal: both done by Thursday EOD so the Friday 4pm PT kickoff 
+with Saral demos a faithful mockup-aligned preview URL.

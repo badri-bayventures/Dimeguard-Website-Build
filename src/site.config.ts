@@ -19,9 +19,33 @@ export type ContactChannel = {
   href?: string;
 };
 
+/**
+ * Nav links are shared between header and footer. `primary: true` items
+ * appear in the top-of-page primary nav; everything else (Blog, Resources,
+ * etc.) is footer-only.
+ */
 export type NavLink = {
   href: string;
   label: string;
+  primary: boolean;
+};
+
+export type LegalLink = {
+  href: string;
+  label: string;
+};
+
+export type Carrier = {
+  name: string;
+  /** Optional path under /public — when present, renders as <Image>. */
+  logoPath?: string;
+};
+
+export type TrustStripItem = {
+  /** Large display line (e.g. "20 min", "CA · TX · CO · NJ"). */
+  top: string;
+  /** Small descriptor below. */
+  bottom: string;
 };
 
 export type RouteChangeFrequency =
@@ -85,7 +109,7 @@ export type SiteConfig = {
     disclosure: string;
     insuranceOnlyDisclosure: string;
   };
-  carriers: string[];
+  carriers: Carrier[];
   /**
    * Brand tokens. Source of truth: Direction D mockup. Surfaced as CSS
    * custom properties in globals.css. Lime `accent` is button-only; never
@@ -106,7 +130,42 @@ export type SiteConfig = {
     displayFontStack: string;
     bodyFontStack: string;
   };
+  /**
+   * Top trust bar that sits above the primary nav. Set `enabled: false` to
+   * remove for advisors that don't want it. The right-column string is
+   * INSURANCE-ONLY-SAFE by default; to add "FIDUCIARY · " back (e.g. for
+   * an advisor with RIA capacity) prepend it to `right`.
+   */
+  topTrustBar: {
+    enabled: boolean;
+    left: string;
+    right: string;
+  };
+  /** Header location pin shown to the right of the primary nav. */
+  locationPin: {
+    enabled: boolean;
+    label: string;
+  };
+  /** Copy for the two CTAs that appear most often. Cohort-tunable. */
+  ctaLabels: {
+    bookCall: string;
+    runNumber: string;
+  };
+  /** Optional pill ("Accepting new clients") rendered above the hero H1. */
+  heroBadge: {
+    enabled: boolean;
+    label: string;
+  };
+  /** 4-column trust strip beneath the hero CTAs. */
+  heroTrustStrip: TrustStripItem[];
+  /** Bottom-of-page carrier logo strip. */
+  carrierStrip: {
+    enabled: boolean;
+    eyebrow: string;
+  };
   nav: NavLink[];
+  /** Footer-only links (Privacy, Terms, etc.). Kept separate from `nav`. */
+  legalLinks: LegalLink[];
   routes: RouteMeta[];
   sameAs: {
     googleBusinessProfile?: string;
@@ -126,11 +185,16 @@ export type SiteConfig = {
   };
   calculators: {
     retirement: {
-      assumedAnnualReturn: number;
+      /** Pre-retirement assumed annual return (accumulation phase). */
+      assumedAnnualReturnPre: number;
+      /** In-retirement assumed annual return (drawdown phase). */
+      assumedAnnualReturnPost: number;
       drawdownYears: number;
       teaserDefaults: {
+        currentAge: number;
         targetRetirementAge: number;
-        targetMonthlyIncome: number;
+        currentSavings: number;
+        monthlySpend: number;
         monthlyContribution: number;
       };
     };
@@ -212,7 +276,16 @@ export const siteConfig: SiteConfig = {
     insuranceOnlyDisclosure:
       "Insurance-only licensure. Not investment, tax, or legal advice — for informational purposes only.",
   },
-  carriers: [],
+  // Names are placeholders until Saral delivers his actual carrier list.
+  // Drop a logo into /public/carriers/ and set `logoPath` to render it.
+  carriers: [
+    { name: "Carrier A" },
+    { name: "Carrier B" },
+    { name: "Carrier C" },
+    { name: "Carrier D" },
+    { name: "Carrier E" },
+    { name: "+1 more" },
+  ],
   brand: {
     ink: "#143A4A",
     inkSoft: "#2C5364",
@@ -228,12 +301,49 @@ export const siteConfig: SiteConfig = {
     displayFontStack: "var(--font-display), Georgia, 'Times New Roman', serif",
     bodyFontStack: "var(--font-body), system-ui, -apple-system, sans-serif",
   },
+  // NOTE: "FIDUCIARY" deliberately omitted. Insurance-only brokers operate
+  // under the suitability standard. To add it back, prepend "FIDUCIARY · "
+  // to `right`.
+  topTrustBar: {
+    enabled: true,
+    left: "LICENSED IN CALIFORNIA · TEXAS · COLORADO · NEW JERSEY",
+    right: "INDEPENDENT · NO SCRIPT, NO SALES PITCH",
+  },
+  locationPin: {
+    enabled: true,
+    label: "Mountain House, CA",
+  },
+  ctaLabels: {
+    bookCall: "Book a 20-min call",
+    runNumber: "Run my retirement number",
+  },
+  heroBadge: {
+    enabled: true,
+    label: "Accepting new clients",
+  },
+  heroTrustStrip: [
+    { top: "20 min", bottom: "first call · no script" },
+    { top: "CA · TX · CO · NJ", bottom: "licensed in four states" },
+    { top: "$0", bottom: "to run your number" },
+    { top: "Multi-carrier", bottom: "independent broker" },
+  ],
+  carrierStrip: {
+    enabled: true,
+    eyebrow: "INDEPENDENT · WE PLACE ACROSS MULTIPLE CARRIERS",
+  },
   nav: [
-    { href: "/retirement-planning", label: "Retirement" },
-    { href: "/life-insurance", label: "Life Insurance" },
-    { href: "/resources", label: "Resources" },
-    { href: "/blog", label: "Blog" },
-    { href: "/about", label: "About" },
+    { href: "/", label: "Home", primary: true },
+    { href: "/retirement-planning", label: "Retirement Planning", primary: true },
+    // URL stays /life-insurance until Saral confirms disability scope on Friday.
+    { href: "/life-insurance", label: "Life & Disability", primary: true },
+    { href: "/calculators/inflation", label: "Calculators", primary: true },
+    { href: "/about", label: "About", primary: true },
+    { href: "/blog", label: "Blog", primary: false },
+    { href: "/resources", label: "Resources", primary: false },
+  ],
+  legalLinks: [
+    { href: "/privacy", label: "Privacy" },
+    { href: "/terms", label: "Terms" },
   ],
   routes: [
     {
@@ -338,12 +448,15 @@ export const siteConfig: SiteConfig = {
   },
   calculators: {
     retirement: {
-      assumedAnnualReturn: 0.05,
+      assumedAnnualReturnPre: 0.07,
+      assumedAnnualReturnPost: 0.05,
       drawdownYears: 25,
       teaserDefaults: {
+        currentAge: 45,
         targetRetirementAge: 65,
-        targetMonthlyIncome: 6000,
-        monthlyContribution: 500,
+        currentSavings: 125000,
+        monthlySpend: 6000,
+        monthlyContribution: 1500,
       },
     },
     life: {

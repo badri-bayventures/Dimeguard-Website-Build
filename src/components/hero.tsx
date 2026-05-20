@@ -3,6 +3,7 @@ import { Container } from "./container";
 import { ButtonLink } from "./button";
 
 type HeroProps = {
+  badge?: { label: string };
   eyebrow?: string;
   title: ReactNode;
   lede?: ReactNode;
@@ -13,6 +14,7 @@ type HeroProps = {
 };
 
 export function Hero({
+  badge,
   eyebrow,
   title,
   lede,
@@ -22,7 +24,7 @@ export function Hero({
   aside,
 }: HeroProps) {
   return (
-    <section className="relative overflow-hidden bg-[color:var(--color-surface-muted)] pt-16 pb-20 md:pt-24 md:pb-28">
+    <section className="relative overflow-hidden bg-[color:var(--color-surface-muted)] pt-12 pb-16 md:pt-20 md:pb-24">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-32 -right-20 h-[28rem] w-[28rem] rounded-full opacity-30 blur-3xl"
@@ -35,13 +37,24 @@ export function Hero({
       />
       <Container className="relative grid items-center gap-10 md:grid-cols-5 md:gap-12">
         <div className="md:col-span-3">
+          {badge ? (
+            <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--color-ink-soft)] shadow-sm">
+              <span
+                aria-hidden
+                className="inline-block h-2 w-2 rounded-full bg-[color:var(--color-accent)] ring-2 ring-[color:var(--color-accent)]/30"
+              />
+              {badge.label}
+            </span>
+          ) : null}
           {eyebrow ? (
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--color-ink-soft)]">
+            <p
+              className={`text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--color-ink-soft)] ${badge ? "mt-4" : ""}`}
+            >
               {eyebrow}
             </p>
           ) : null}
           <h1
-            className="mt-4 font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[color:var(--color-ink)] md:text-6xl"
+            className={`font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[color:var(--color-ink)] md:text-6xl ${badge || eyebrow ? "mt-4" : ""}`}
             style={{ lineHeight: 1.05 }}
           >
             {title}

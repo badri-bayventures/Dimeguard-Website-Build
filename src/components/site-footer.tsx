@@ -7,6 +7,10 @@ export function SiteFooter() {
   const states = siteConfig.licensure.licensedStates
     .map((s) => s.code)
     .join(" · ");
+  // Per Direction D mockup, footer "Explore" column is the secondary surface:
+  // footer-only nav items (Blog, Resources) — primary nav already lives in
+  // the header. Legal + social go in the bottom bar.
+  const footerNav = siteConfig.nav.filter((item) => !item.primary);
   return (
     <footer className="mt-24 border-t border-[color:var(--color-border)] bg-[color:var(--color-ink)] text-white">
       <Container className="grid gap-12 py-16 md:grid-cols-12">
@@ -38,7 +42,7 @@ export function SiteFooter() {
             Explore
           </p>
           <ul className="mt-4 space-y-2 text-sm text-white/80">
-            {siteConfig.nav.map((item) => (
+            {footerNav.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
@@ -48,14 +52,6 @@ export function SiteFooter() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                href="/calculators/inflation"
-                className="hover:text-[color:var(--color-accent)]"
-              >
-                Inflation calculator
-              </Link>
-            </li>
           </ul>
         </div>
         <div className="md:col-span-4">
@@ -76,18 +72,25 @@ export function SiteFooter() {
             © {year} {siteConfig.business.legalName}. All rights reserved.
           </div>
           <div className="flex items-center gap-4">
-            {siteConfig.social.length === 0 ? null : (
-              siteConfig.social.map((s) => (
-                <a
-                  key={s.href}
-                  href={s.href}
-                  className="hover:text-[color:var(--color-accent)]"
-                  rel="noopener noreferrer"
-                >
-                  {s.label}
-                </a>
-              ))
-            )}
+            {siteConfig.legalLinks.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="hover:text-[color:var(--color-accent)]"
+              >
+                {l.label}
+              </Link>
+            ))}
+            {siteConfig.social.map((s) => (
+              <a
+                key={s.href}
+                href={s.href}
+                className="hover:text-[color:var(--color-accent)]"
+                rel="noopener noreferrer"
+              >
+                {s.label}
+              </a>
+            ))}
           </div>
         </Container>
       </div>
