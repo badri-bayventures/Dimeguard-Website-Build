@@ -6,6 +6,8 @@ import { Faq } from "@/components/faq";
 import { TestimonialRow } from "@/components/testimonial-row";
 import { Disclosure } from "@/components/disclosure";
 import { ButtonLink } from "@/components/button";
+import { CalcTeaser } from "@/components/calc-teaser";
+import { MeetAdvisor } from "@/components/meet-advisor";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/lib/schema/json-ld";
 import { localBusiness, person } from "@/lib/schema";
@@ -55,22 +57,7 @@ export default function Home() {
             returned within one business hour
           </span>
         }
-        aside={
-          <div className="aspect-[4/5] w-full rounded-2xl bg-gradient-to-br from-[color:var(--color-ink)] to-[color:var(--color-ink-soft)] p-8 text-white">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-accent)]">
-              Founder
-            </p>
-            <p className="mt-3 font-[family-name:var(--font-display)] text-3xl font-medium leading-tight">
-              {siteConfig.advisor.fullName}
-            </p>
-            <p className="mt-1 text-sm text-white/75">
-              {siteConfig.advisor.title}
-            </p>
-            <div className="mt-8 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs text-white/85">
-              Photo placeholder · swap in step 3
-            </div>
-          </div>
-        }
+        aside={siteConfig.heroCalcTeaser.enabled ? <CalcTeaser /> : null}
       />
 
       <Section tone="surface">
@@ -102,6 +89,10 @@ export default function Home() {
             cta="See the tools"
           />
         </div>
+      </Section>
+
+      <Section tone="surface">
+        <MeetAdvisor />
       </Section>
 
       <Section tone="muted">

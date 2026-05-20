@@ -128,11 +128,28 @@ export type SiteConfig = {
     retirement: {
       assumedAnnualReturn: number;
       drawdownYears: number;
+      teaserDefaults: {
+        targetRetirementAge: number;
+        targetMonthlyIncome: number;
+        monthlyContribution: number;
+      };
     };
     life: {
       incomeMultiplier: number;
       perDependentMultiplier: number;
+      teaserDefaults: {
+        dependents: number;
+        existingCoverage: number;
+      };
     };
+  };
+  /**
+   * Opt-in inline calculator teaser in the hero. Off-cohort advisors can
+   * disable or swap to the life-value teaser by flipping these values.
+   */
+  heroCalcTeaser: {
+    enabled: boolean;
+    calculator: "retirement" | "life_value";
   };
 };
 
@@ -323,11 +340,24 @@ export const siteConfig: SiteConfig = {
     retirement: {
       assumedAnnualReturn: 0.05,
       drawdownYears: 25,
+      teaserDefaults: {
+        targetRetirementAge: 65,
+        targetMonthlyIncome: 6000,
+        monthlyContribution: 500,
+      },
     },
     life: {
       incomeMultiplier: 10,
       perDependentMultiplier: 1,
+      teaserDefaults: {
+        dependents: 2,
+        existingCoverage: 0,
+      },
     },
+  },
+  heroCalcTeaser: {
+    enabled: true,
+    calculator: "retirement",
   },
 };
 

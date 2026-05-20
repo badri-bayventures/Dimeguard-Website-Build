@@ -33,8 +33,8 @@ export function Hero({
         className="pointer-events-none absolute -bottom-24 -left-16 h-[22rem] w-[22rem] rounded-full opacity-25 blur-3xl"
         style={{ background: "var(--color-accent)" }}
       />
-      <Container className="relative grid items-center gap-12 md:grid-cols-12">
-        <div className="md:col-span-7">
+      <Container className="relative grid items-center gap-10 md:grid-cols-5 md:gap-12">
+        <div className="md:col-span-3">
           {eyebrow ? (
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--color-ink-soft)]">
               {eyebrow}
@@ -71,13 +71,7 @@ export function Hero({
             </div>
           ) : null}
         </div>
-        {aside ? (
-          <div className="md:col-span-5">
-            <div className="relative rounded-3xl border border-[color:var(--color-border)] bg-white p-2 shadow-[var(--shadow-card)]">
-              {aside}
-            </div>
-          </div>
-        ) : null}
+        {aside ? <div className="md:col-span-2">{aside}</div> : null}
       </Container>
     </section>
   );
