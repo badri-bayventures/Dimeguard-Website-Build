@@ -1,0 +1,116 @@
+ROLE: You are an architect helping me set up a 6-page financial-advisor 
+website that prioritizes lead generation, SEO, and AEO (answer engine 
+optimization / AI search visibility) as the top three outcomes. The site is 
+the first reference implementation for a "Founding 10" cohort — 10 similar 
+small-business advisor sites I'll build over the next 12 months, so 
+patterns should compound across the cohort, not just fit this client.
+
+LOCKED STACK (do not re-litigate — note any concerns as "future 
+evaluation" bullets, never mid-prompt detours):
+- Framework: Next.js 15 (App Router)
+- Hosting: Replit Deployments
+- CMS: Notion as headless (advisor writes in Notion → Next.js pulls via 
+  Notion API → live on /blog)
+- Calculators: 2 native React + 1 Calconic embed
+- Lead capture: Twilio SMS + email to advisor
+- Per-client tool cost ceiling: $31/mo
+- Vega (our internal discoverability tool) supplies the SEO/AEO content 
+  roadmap — we know what queries to target before publishing.
+
+CLIENT CONTEXT (Dimeguard.com):
+- Insurance + retirement + tax advisor in Mountain House, CA
+- 4-state licensure (CA, TX, CO, NJ); primary GBP anchored in CA
+- ICP: 40–55 South Asian families across Central Valley
+- Today: zero website flywheel, all leads from referrals. Target: 15 
+  conversations/mo
+- Compliance: insurance-only broker, no disclosure-review gate
+- Launch deadline: Aug 15, 2026
+
+SITE STRUCTURE:
+- /  (home)
+- /retirement-planning  (service + Retirement Readiness calculator)
+- /life-insurance  (service + Human Life Value calculator)
+- /about  (founder photo, story, carriers, licensure across 4 states)
+- /resources  (gated downloadable xlsx tools)
+- /blog  (Notion-fed, AEO-targeted, ~2 posts/mo)
+- /calculators/inflation  (Calconic embed)
+
+GROWTH-SYSTEM OUTPUTS — frame every architectural decision against these, 
+not against abstract best-practice:
+
+1. PUBLISHING VELOCITY — advisor writes a post in Notion → live within 5 
+   min → indexed by Google within 24 hrs → eligible to appear in AI search 
+   (ChatGPT browsing, Perplexity, Google AI Overviews) within 14 days.
+
+2. LEAD CAPTURE LATENCY — visitor completes calculator → advisor has 
+   name+phone+email on his phone (SMS) and inbox within 30 seconds. 
+   Visitor sees a confirmation that names a specific next step, not 
+   "we'll be in touch."
+
+3. AEO CITABILITY — when an LLM-driven query asks "what's the best 
+   retirement strategy for a 50-year-old in California making $150k?", our 
+   content is structurally citable (semantic HTML, FAQPage schema, 
+   question-answer structure, llms.txt if that becomes real).
+
+4. LOCAL-INTENT WIN — someone in Mountain House searches "financial 
+   advisor near me" → we land local pack + organic top 3 within 90 days. 
+   GBP + LocalBusiness schema + city-anchored content do the lifting.
+
+5. MEASURABLE FUNNEL — at end of each Care Plus month, I can open ONE 
+   dashboard and answer: top organic landing pages, the queries that 
+   brought traffic, calculator conversion rate, funnel drop-off point. No 
+   GA4 spelunking.
+
+6. COHORT REUSABILITY — every decision should compound across the next 9 
+   advisor sites. Flag anything that fits Dimeguard only.
+
+DECISIONS I NEED FROM YOU:
+
+A. RENDERING STRATEGY per route — which routes go SSG, ISR, SSR, or 
+   client-rendered, and why. Specifically: how Notion-fed blog posts stay 
+   fresh without losing SSG SEO benefits.
+
+B. STRUCTURED DATA LAYER — Schema.org types at launch (LocalBusiness, 
+   FinancialService, Person, FAQPage, HowTo if applicable). Centralized 
+   JSON-LD helper vs per-page inline. Maintainability as the site grows.
+
+C. AEO-SPECIFIC MARKUP — 2026-current patterns to bake in: llms.txt, 
+   semantic HTML (article vs section vs main), FAQ block structure, 
+   question-as-heading. Flag what's documented best practice vs 
+   speculation.
+
+D. SITEMAP / ROBOTS / CANONICALS — auto-generation (next-sitemap vs 
+   custom). How Notion posts get added without manual touches. How to 
+   handle multi-state advisor pages (CA primary, TX/CO/NJ secondary) 
+   without diluting local signal.
+
+E. IMAGE PIPELINE — next/image defaults vs Cloudinary vs alternatives. 
+   Address LCP target <2.0s on mobile 4G specifically.
+
+F. ANALYTICS LAYER — GA4 + GSC are table stakes. Worth adding Posthog / 
+   Plausible / server-side event tracking for calculator funnel drop-off? 
+   What gives me the "one dashboard" outcome in #5 without building a 
+   custom dashboard?
+
+G. CONSENT / COOKIE BANNER — finance vertical, multi-state. Ship one or 
+   not, and minimum viable implementation if yes.
+
+H. CALCULATOR LEAD-CAPTURE FLOW — client state vs server route. How the 
+   Twilio SMS + email fires <30 sec. Where the lead record lives (Airtable 
+   / Notion DB / Replit Postgres). What survives if advisor wants to add 
+   Salesforce or HubSpot in M6.
+
+I. NOTION CMS ADAPTER — recommended pattern (notion-client vs official 
+   API). Caching strategy so "publish → live in 5 min" hits without 
+   hammering Notion's API. Handling Notion's quirky block types 
+   (toggles, callouts, embeds).
+
+OUTPUT FORMAT:
+For each decision A–I, give me:
+  - Recommendation (one line)
+  - Why (2–3 sentences, anchored against the growth-system outputs above)
+  - Runner-up and why you didn't pick it
+  - One sentence on what would change your mind later
+
+End with a "Defer / re-evaluate at the 3-month mark" list — anything 
+uncertain, or where post-launch data should drive the call.

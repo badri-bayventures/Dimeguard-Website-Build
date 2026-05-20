@@ -1,0 +1,54 @@
+Design Direction D — visual identity source of truth.
+
+I'm attaching the Direction D HTML mockup (Modern Trusted-Pro / Brand 
+Palette) — this is the design language Saral approved over email. It is 
+NOT a layout to port 1:1; it is the source of truth for visual identity, 
+which you should extract into our design system in step 2 of the plan.
+
+EXTRACT FROM THE HTML:
+- Color palette — primary, accent, neutrals, backgrounds. Encode as 
+  Tailwind theme tokens AND as fields in site.config.ts so future advisor 
+  sites can swap palettes without code changes. Specifically, capture:
+    • Dark teal/navy (~#143A4A) — primary text + headers
+    • Sky/cyan (~#5BC0E8) — secondary accent
+    • Lime/yellow-green (~#C8E04A) — CTA accent (drawn from Saral's logo)
+    • Neutrals + whitespace tone
+- Typography scale — heading sizes, body size, line-height, font weights, 
+  font family (or substitute a Google Fonts close-match if the mockup 
+  uses a paid font). Encode as Tailwind theme.
+- Section composition language — how hero, service cards, testimonial 
+  blocks, FAQ blocks, footer are visually structured. Build these as 
+  reusable React components (Hero, ServiceCard, FAQBlock, TestimonialRow, 
+  Footer) — don't hard-code per page.
+- Button + form styling — primary button, secondary button, input 
+  treatment, focus states.
+- Spacing rhythm — section padding, card padding, vertical gaps.
+
+DO NOT:
+- Copy the HTML markup directly into a page. Direction D's HTML is a 
+  single static page; our site has 7 routes with different content.
+- Use any image assets embedded in the mockup as final assets. Treat all 
+  imagery as placeholders that will be swapped for Saral's photo + carrier 
+  logos when he delivers them.
+- Carry over any copy from the mockup. All page copy must go through the 
+  Copy rules section of our plan (no superlatives, "may/can/designed to 
+  help" framing, estimates not projections).
+
+DO:
+- Build the design system in step 2 as advisor-agnostic primitives 
+  consuming site.config.ts (advisor name, brand color, NAP, etc.).
+- Treat Direction D's home composition as the reference layout for our 
+  / route, but rebuild it with our components against our config.
+- If Direction D uses a typographic or color choice that conflicts with 
+  WCAG AA contrast for body text, fix it and note the change. Saral's 
+  approval is for the look-and-feel; accessibility is non-negotiable.
+
+OUTPUT after step 2 should be:
+- Tailwind theme config with the extracted tokens.
+- site.config.ts with brand color, typography choices, and section 
+  defaults parameterized.
+- A primitive component library (Hero, ServiceCard, FAQBlock, etc.) 
+  rendered on a working / route that visually reads as Direction D 
+  without being a copy of its HTML.
+
+Attached file: D — Modern trusted-pro — brand palette.html

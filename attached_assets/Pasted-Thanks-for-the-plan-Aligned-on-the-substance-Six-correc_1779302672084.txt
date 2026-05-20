@@ -1,0 +1,72 @@
+Thanks for the plan. Aligned on the substance. Six corrections before we 
+kick off step 1.
+
+1. NAME — the advisor is SARAL TOMS, not Ravi. Replace every "Ravi" in the 
+   plan and downstream code/UI strings/env-var docs with "Saral." Visible 
+   confirmation copy currently reads "Sending to Ravi now…" — must be 
+   "Sending to Saral now…"
+
+2. CLARIFY TEMPLATE — the plan opens with "Create a new react-vite-class 
+   artifact slot." But the stack is Next.js 15 App Router, not Vite. 
+   Confirm: is "react-vite-class" your internal name for a Next.js 
+   scaffold, or did you pick a Vite + React template by mistake? If the 
+   latter, switch to a Next.js App Router scaffold.
+
+3. DROP OR JUSTIFY MONOREPO — the plan references pnpm-workspace.yaml. 
+   This is client #1 of a cohort, but we don't need monorepo workspaces 
+   yet. Drop pnpm-workspace.yaml unless you can name a concrete reason it 
+   helps before client #2 ships. Single Next.js app in a single repo.
+
+4. ONE API SURFACE — the plan lists both /api/lead (Next.js Route 
+   Handlers, line 40) AND artifacts/api-server/src/app.ts (separate API 
+   server). Pick one. Use Next.js Route Handlers. Drop the separate 
+   api-server artifact.
+
+5. COMPLIANCE COPY GUARDRAILS — even though Saral has no broker-dealer 
+   review gate, all generated copy must follow these hard rules:
+   - No superlatives ("best", "top-rated", "#1", "leading")
+   - No language implying guaranteed investment returns or outcomes
+   - No outcome-implying testimonials in copy or generated content
+   - Use "may," "can," "designed to help" instead of "will" when 
+     describing outcomes
+   Add this as a "Copy rules" section to the plan. Apply to all generated 
+   page copy, FAQ answers, and meta descriptions.
+
+6. CALCULATOR FORMULAS — specify these explicitly so you don't invent 
+   them:
+
+   Retirement Readiness:
+   - Inputs: current age, current savings, monthly contribution, target 
+     retirement age, target monthly income in retirement
+   - Future value of current savings: FV = currentSavings * (1 + r)^n
+   - Future value of monthly contributions: FV = monthlyContribution * 
+     [((1 + r/12)^(n*12) - 1) / (r/12)]
+   - Where r = 0.05 (5% assumed annual return, configurable), n = 
+     yearsToRetirement
+   - Required nest egg: targetMonthlyIncome * 12 * 25 (25-year drawdown 
+     assumption)
+   - Output: gap = requiredNestEgg - (sumOfFutureValues). Show "on 
+     track" if gap <= 0, "gap of $X" otherwise. Lead-capture form 
+     follows.
+
+   Human Life Value:
+   - Inputs: age, annual income, dependents count, existing life 
+     coverage
+   - Income-replacement model: recommended coverage = annualIncome * 
+     (10 + dependents) — i.e., 10x income baseline + 1x per dependent
+   - Coverage gap = recommendedCoverage - existingCoverage
+   - Output: "Recommended coverage: $X. Existing: $Y. Gap: $Z." Lead-
+     capture form follows.
+
+   Both calculators: 4-stage flow (inputs → preview gap → enter contact 
+   details → confirmation with named next step). Show teaser gap before 
+   form, full breakdown after.
+
+7. RESOURCES PAGE GATING — /resources lists downloadable xlsx tools (Net 
+   Worth Calculator, Monthly Budget). Each download is gated through 
+   /api/lead — visitor fills the same lead form, then receives the file 
+   via signed URL in the confirmation email + a download link in the 
+   in-page confirmation. Reuse the lead pipeline; don't build a separate 
+   resource-request route.
+
+Once you've revised the plan with these seven changes, proceed to step 1.
