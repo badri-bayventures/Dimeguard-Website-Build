@@ -1,0 +1,86 @@
+Quick state check + push step 7 (SEO + AEO infrastructure) by Thursday EOD 
+so we can demo the AEO foundation on Friday's kickoff call with Saral.
+
+PART 1 — Audit current state, report before shipping
+
+Before you start step 7, audit what's already in the build from earlier 
+steps and report back with one line per item:
+
+a) JSON-LD blocks already present on each route — list each <script 
+   type="application/ld+json"> by route and @type. If none yet, say so.
+b) Meta tags status — is generateMetadata wired on each page? Are title, 
+   description, canonical, OG image, OG title, OG description, Twitter 
+   card all set? Per-route or global default only?
+c) Sitemap — is /sitemap.xml live? What does it include?
+d) robots.txt — present? What does it allow / disallow?
+e) llms.txt — present?
+f) <FAQ> component — is the FAQ on the home page emitting FAQPage 
+   JSON-LD, or is it visible-UI-only?
+
+PART 2 — Ship step 7
+
+After the audit, deliver these by Thursday EOD:
+
+1. Centralized JSON-LD builders in lib/schema/, all config-driven from 
+   site.config.ts so cohort reuse is one-line per advisor:
+   - localBusiness(config) — name, NAP, geo, opening hours, area served 
+     (Mountain House + Central Valley + the 4 licensed states), 
+     sameAs (GBP URL placeholder, LinkedIn placeholder), priceRange 
+     omitted (advisor doesn't disclose).
+   - financialService(config) — for /retirement-planning and 
+     /life-insurance, with serviceType and areaServed.
+   - person(config) — Saral Toms, jobTitle "Insurance & Retirement 
+     Advisor", worksFor → LocalBusiness, knowsLanguage Hindi + English.
+   - faqPage(faqs) — accepts an array of {question, answer} and renders 
+     FAQPage schema. Used by the <FAQ> component below.
+   - article(post) — for blog posts, with headline, datePublished, 
+     dateModified, author → Person, publisher → Organization, image.
+   - breadcrumb(trail) — for blog and calculator routes.
+
+2. Per-page generateMetadata across all 7 routes — title, description, 
+   canonical (self-referential), OG (title, description, image, url, 
+   type), Twitter (summary_large_image, title, description, image). 
+   Pull defaults from site.config.ts; override per-page where needed.
+
+3. Sitemap — app/sitemap.ts that combines static routes + Notion blog 
+   slugs (pull at revalidate time, not request time). Self-referential 
+   canonicals must match sitemap URLs exactly.
+
+4. robots.txt — at app/robots.ts. Allow all, point to sitemap, no 
+   blanket disallows.
+
+5. llms.txt — at app/llms.txt/route.ts (or static if simpler). Format:
+   - Site name + 1-line description
+   - Canonical URLs of the 7 routes with a short summary each
+   - Pointer to /sitemap.xml
+   Note: this is a speculative bet — keep it cheap to maintain (driven 
+   from site.config.ts route map, not hand-edited).
+
+6. Reusable <FAQ> component that takes an array of {question, answer} 
+   and emits BOTH the visible UI (semantic H3-question + answer 
+   paragraph pattern, AEO-aligned) AND the FAQPage JSON-LD via the 
+   faqPage(faqs) builder from #1. Replace the current home-page FAQ 
+   with this component as the reference implementation.
+
+VALIDATION before marking step 7 done:
+
+- Run the home page URL through Google's Rich Results Test (or paste 
+  the JSON-LD blocks into https://validator.schema.org/) and confirm 
+  LocalBusiness + Person + FAQPage all validate with zero errors.
+- /sitemap.xml renders with all 7 routes (blog slugs can be empty until 
+  Notion is wired).
+- /robots.txt loads.
+- /llms.txt loads.
+- Page-source view of / shows: <title>, <meta name="description">, 
+  <link rel="canonical">, OG + Twitter tags, and the JSON-LD blocks 
+  inline in <head>.
+
+Out of scope for step 7:
+
+- Don't wire real Notion content yet (blog slugs can be a stub list 
+  until step 6 runs).
+- Don't wire GA4 or PostHog yet (that's step 8).
+- Don't add per-state landing pages (out of scope per the plan).
+
+Report back when the audit is done and again when step 7 ships, so I 
+can verify on Friday morning before the 4pm PT kickoff call with Saral.

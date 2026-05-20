@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
-import { siteConfig } from "@/site.config";
+import { SITE_URL, siteConfig } from "@/site.config";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
@@ -20,11 +20,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${siteConfig.business.legalName} — ${siteConfig.business.tagline}`,
     template: `%s · ${siteConfig.business.legalName}`,
   },
   description: siteConfig.business.tagline,
+  applicationName: siteConfig.business.legalName,
+  authors: [{ name: siteConfig.advisor.fullName }],
+  creator: siteConfig.advisor.fullName,
+  publisher: siteConfig.business.legalName,
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({

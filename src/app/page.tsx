@@ -2,10 +2,15 @@ import { siteConfig } from "@/site.config";
 import { Hero } from "@/components/hero";
 import { Section, SectionHeading } from "@/components/section";
 import { ServiceCard } from "@/components/service-card";
-import { FaqBlock } from "@/components/faq-block";
+import { Faq } from "@/components/faq";
 import { TestimonialRow } from "@/components/testimonial-row";
 import { Disclosure } from "@/components/disclosure";
 import { ButtonLink } from "@/components/button";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/lib/schema/json-ld";
+import { localBusiness, person } from "@/lib/schema";
+
+export const generateMetadata = () => buildMetadata({ path: "/" });
 
 export default function Home() {
   const states = siteConfig.licensure.licensedStates
@@ -14,6 +19,9 @@ export default function Home() {
 
   return (
     <>
+      <JsonLd data={localBusiness(siteConfig)} id="ld-localbusiness" />
+      <JsonLd data={person(siteConfig)} id="ld-person" />
+
       <Hero
         eyebrow={`${siteConfig.nap.addressLocality}, ${siteConfig.nap.addressRegion} · Licensed in ${states}`}
         title={
@@ -28,8 +36,9 @@ export default function Home() {
         lede={
           <>
             Insurance, retirement, and tax coordination designed to help you
-            decide with confidence — without sales pressure. {siteConfig.advisor.fullName} works
-            one-on-one with families in their 40s and 50s.
+            decide with confidence — without sales pressure.{" "}
+            {siteConfig.advisor.fullName} works one-on-one with families in
+            their 40s and 50s.
           </>
         }
         primaryCta={{
@@ -192,43 +201,43 @@ export default function Home() {
           title="Common questions, answered plainly."
         />
         <div className="mt-10">
-          <FaqBlock
+          <Faq
             items={[
               {
                 question: "Do you charge for a first conversation?",
                 answer:
-                  "No. The first call is a 15-minute conversation to see whether we&rsquo;re a fit. If we keep working together, I&rsquo;m paid by the insurance carrier on any policy you choose to put in place.",
+                  "No. The first call is a 15-minute conversation to see whether we’re a fit. If we keep working together, I’m paid by the insurance carrier on any policy you choose to put in place.",
               },
               {
-                question:
-                  "Are you licensed outside of California?",
-                answer: `Yes. I&rsquo;m licensed as an insurance broker in ${siteConfig.licensure.licensedStates
+                question: "Are you licensed outside of California?",
+                answer: `Yes. I’m licensed as an insurance broker in ${siteConfig.licensure.licensedStates
                   .map((s) => s.name)
                   .join(
-                    ", "
+                    ", ",
                   )}. If you have family in any of those states, I can help coordinate.`,
               },
               {
                 question: "Do you give investment or tax advice?",
                 answer:
-                  "No. I&rsquo;m an insurance-only broker. The site shows estimates and frameworks; for tax filing or investment management, I&rsquo;ll refer you to a CPA or RIA I trust.",
+                  "No. I’m an insurance-only broker. The site shows estimates and frameworks; for tax filing or investment management, I’ll refer you to a CPA or RIA I trust.",
               },
               {
-                question:
-                  "What if I just want to download the spreadsheets?",
+                question: "What if I just want to download the spreadsheets?",
                 answer: (
                   <>
-                    That&rsquo;s fine — the{" "}
+                    That’s fine — the{" "}
                     <a
                       href="/resources"
                       className="underline decoration-[color:var(--color-secondary)] underline-offset-4 hover:text-[color:var(--color-ink)]"
                     >
                       resources page
                     </a>{" "}
-                    has the net worth and monthly budget files. I&rsquo;ll
-                    send them by email; no sales call required.
+                    has the net worth and monthly budget files. I’ll send them
+                    by email; no sales call required.
                   </>
                 ),
+                answerText:
+                  "Yes — the resources page has the net worth and monthly budget files. They are sent by email; no sales call required.",
               },
             ]}
           />

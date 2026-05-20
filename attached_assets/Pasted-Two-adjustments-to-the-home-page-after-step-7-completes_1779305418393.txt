@@ -1,0 +1,44 @@
+Two adjustments to the home page (after step 7 completes):
+
+1. HERO RESTRUCTURE — Remove the founder photo placeholder from the 
+   hero. New hero layout:
+   - Left column (60%): H1 question + 1-sentence sub-copy + primary CTA
+   - Right column (40%): inline calc-teaser (see #2)
+   
+   Move the founder photo to a new mid-page "Meet Saral" trust card 
+   between the service tiles and testimonials sections — smaller frame 
+   (~280px square), 2-sentence bio, "More about Saral →" link to /about. 
+   When the real photo is delivered, swap the placeholder.
+
+2. HOME-PAGE CALC-TEASER — Direction D's mockup includes a dark-navy 
+   calc-teaser section (data-anno="calc-teaser", bg #0e2a36). 
+   Implement it as the hero's right column AND mirror its visual 
+   pattern (dark navy panel against the light hero):
+   
+   - Heading: "Are you on track for retirement?"
+   - Two inputs only (current age, current savings) — minimum viable 
+     teaser
+   - Button: "See your gap →"
+   - On click: client-side calculation runs locally, displays a single 
+     teaser number (the gap in dollars or "You're on track")
+   - Below the teaser number: secondary CTA "Get the full breakdown" 
+     which scrolls to / opens the full 4-stage flow already built on 
+     /retirement-planning
+   
+   The full lead-capture flow stays on /retirement-planning — the 
+   home-page version is a frictionless top-of-funnel hook, not a 
+   replacement. PostHog event: calculator_teaser_engaged when a user 
+   submits the 2-input teaser; calculator_teaser_to_full when they 
+   click through to the full breakdown.
+
+3. COHORT NOTE — Both changes should be config-driven from 
+   site.config.ts:
+   - Hero calc-teaser is opt-in via heroCalcTeaser: { enabled, 
+     calculator: "retirement" | "life_value" } so advisor #2 can swap 
+     to Human Life Value as their hero teaser if their primary service 
+     differs.
+   - "Meet [advisor]" trust card pulls advisor name + photo path + bio 
+     snippet from site.config.ts.
+
+Don't touch the /retirement-planning or /life-insurance full calculator 
+pages — those are correctly built per the plan.
