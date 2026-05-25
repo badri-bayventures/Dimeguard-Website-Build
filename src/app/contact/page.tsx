@@ -1,6 +1,6 @@
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/lib/schema/json-ld";
-import { localBusiness, breadcrumb } from "@/lib/schema";
+import { breadcrumb } from "@/lib/schema";
 import { siteConfig } from "@/site.config";
 import { Hero } from "@/components/hero";
 import { Section, SectionHeading } from "@/components/section";
@@ -49,7 +49,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <JsonLd data={localBusiness(siteConfig)} id="ld-localbusiness" />
+      {/* LocalBusiness block is emitted site-wide from the root layout. */}
       <JsonLd
         data={breadcrumb([
           { name: "Home", path: "/" },

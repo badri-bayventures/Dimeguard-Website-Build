@@ -1,6 +1,6 @@
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/lib/schema/json-ld";
-import { person, localBusiness, breadcrumb } from "@/lib/schema";
+import { breadcrumb } from "@/lib/schema";
 import { siteConfig, absoluteUrl, type Founder } from "@/site.config";
 import { Hero } from "@/components/hero";
 import { Section, SectionHeading } from "@/components/section";
@@ -84,8 +84,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <JsonLd data={person(siteConfig)} id="ld-person" />
-      <JsonLd data={localBusiness(siteConfig)} id="ld-localbusiness" />
+      {/* LocalBusiness + Person blocks are emitted site-wide from the root layout. */}
       {founders.slice(1).map((f, i) => (
         <JsonLd
           key={f.name}

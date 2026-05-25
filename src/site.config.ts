@@ -67,9 +67,18 @@ export type RouteMeta = {
   description: string;
   priority: number;
   changeFrequency: RouteChangeFrequency;
+  /** ISO date for sitemap lastmod. Per-route so editors can stamp real edits. */
+  lastModified: string;
   llmsSummary: string;
   showInNav?: boolean;
   showInLlms?: boolean;
+  /**
+   * Whether this route belongs to the canonical site map. When false, the
+   * route still has metadata + a live page but is excluded from sitemap.xml
+   * and llms.txt — e.g. /contact, which we keep navigable but don't list as
+   * one of the 7 indexable surfaces.
+   */
+  canonical?: boolean;
 };
 
 export type Founder = {
@@ -395,9 +404,11 @@ export const siteConfig: SiteConfig = {
         "Saral Toms helps Central Valley families think clearly about insurance, retirement, and tax coordination. Independent insurance broker — first call is 20 minutes, no script, no sales pitch.",
       priority: 1.0,
       changeFrequency: "weekly",
+      lastModified: "2026-05-25",
       llmsSummary:
         "Home page. Insurance, retirement, and tax-aware planning for Central Valley families, by Saral Toms.",
       showInLlms: true,
+      canonical: true,
     },
     {
       path: "/retirement-planning",
@@ -406,10 +417,12 @@ export const siteConfig: SiteConfig = {
         "A 20-minute first call about your current savings, target retirement age, Social Security timing, and tax-bucket coordination. Designed for families in their 40s and 50s.",
       priority: 0.9,
       changeFrequency: "monthly",
+      lastModified: "2026-05-18",
       llmsSummary:
         "Retirement planning service — a first call covers current savings, target retirement age, Social Security timing, and tax-bucket coordination.",
       showInNav: true,
       showInLlms: true,
+      canonical: true,
     },
     {
       path: "/life-insurance",
@@ -418,10 +431,12 @@ export const siteConfig: SiteConfig = {
         "A short conversation about income to replace, dependents, existing coverage, and whether term or permanent insurance may fit your situation. Independent broker.",
       priority: 0.9,
       changeFrequency: "monthly",
+      lastModified: "2026-05-18",
       llmsSummary:
         "Life and disability insurance — a first call covers income to replace, dependents, existing employer coverage, and the term-vs-permanent fit.",
       showInNav: true,
       showInLlms: true,
+      canonical: true,
     },
     {
       path: "/about",
@@ -430,10 +445,12 @@ export const siteConfig: SiteConfig = {
         "Meet Saral Toms — a Mountain House-based insurance and retirement advisor working with Central Valley families on retirement, life, and tax-aware planning.",
       priority: 0.7,
       changeFrequency: "yearly",
+      lastModified: "2026-05-12",
       llmsSummary:
         "About the founder, Saral Toms — background, approach, and states served.",
       showInNav: true,
       showInLlms: true,
+      canonical: true,
     },
     {
       path: "/resources",
@@ -442,10 +459,12 @@ export const siteConfig: SiteConfig = {
         "Free spreadsheets for net worth tracking and monthly budgeting, used in the conversations Saral has with clients every week.",
       priority: 0.7,
       changeFrequency: "monthly",
+      lastModified: "2026-05-15",
       llmsSummary:
         "Free downloadable planning tools — net worth tracker and monthly budget spreadsheet.",
       showInNav: true,
       showInLlms: true,
+      canonical: true,
     },
     {
       path: "/blog",
@@ -454,22 +473,29 @@ export const siteConfig: SiteConfig = {
         "Plain-language notes on insurance, retirement, and tax topics that come up in client conversations.",
       priority: 0.6,
       changeFrequency: "weekly",
+      lastModified: "2026-05-22",
       llmsSummary:
         "Blog with notes on insurance, retirement, and tax topics that come up in client conversations.",
       showInNav: true,
       showInLlms: true,
+      canonical: true,
     },
     {
+      // Contact page exists for visitors but is intentionally excluded from
+      // the 7-route canonical sitemap + llms.txt — it's a low-value
+      // duplicate of the contact info already exposed on every page (footer
+      // NAP, header Calendly CTA, /about reach-out block).
       path: "/contact",
       title: "Contact Saral Toms · Dimeguard",
       description:
         "Three ways to reach Saral — email, a 20-minute Calendly call, or the contact form. Based in Mountain House, CA; serving the Central Valley.",
       priority: 0.8,
       changeFrequency: "yearly",
+      lastModified: "2026-05-12",
       llmsSummary:
         "Contact page — email, phone, Calendly link, and a short message form for reaching Saral Toms.",
       showInNav: true,
-      showInLlms: true,
+      canonical: false,
     },
     {
       path: "/calculators/inflation",
@@ -478,9 +504,11 @@ export const siteConfig: SiteConfig = {
         "Estimate how inflation may erode your savings over time. Independent calculator embedded for quick what-if math.",
       priority: 0.6,
       changeFrequency: "yearly",
+      lastModified: "2026-05-10",
       llmsSummary:
         "Inflation calculator — estimate the future purchasing power of today's savings.",
       showInLlms: true,
+      canonical: true,
     },
   ],
   sameAs: {

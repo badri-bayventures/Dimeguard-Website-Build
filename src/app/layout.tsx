@@ -4,6 +4,8 @@ import "./globals.css";
 import { SITE_URL, siteConfig } from "@/site.config";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { JsonLd } from "@/lib/schema/json-ld";
+import { localBusiness, person } from "@/lib/schema";
 
 const fraunces = Fraunces({
   variable: "--font-display",
@@ -43,6 +45,18 @@ export default function RootLayout({
       lang="en"
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
+      <head>
+        {/*
+          Site-wide structured data lives in <head> so every page's
+          view-source shows LocalBusiness + Person inline at the top of the
+          document. Page-specific blocks (FAQPage, FinancialService,
+          BreadcrumbList) are rendered from each page body — Google
+          explicitly supports JSON-LD in either head or body, and Next.js
+          App Router has no supported per-page <head> script injection.
+        */}
+        <JsonLd data={localBusiness(siteConfig)} id="ld-localbusiness" />
+        <JsonLd data={person(siteConfig)} id="ld-person" />
+      </head>
       <body className="min-h-full flex flex-col bg-[color:var(--color-surface)] text-[color:var(--color-ink)]">
         <a
           href="#main"

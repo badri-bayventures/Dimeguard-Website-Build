@@ -45,7 +45,10 @@ export function localBusiness(config: SiteConfig): JsonLdObject {
   );
   return {
     "@context": "https://schema.org",
-    "@type": "FinancialService",
+    // Multi-type so the block satisfies both LocalBusiness (for Google's
+    // local pack) and FinancialService (for the broker-specific facets).
+    // Validators accept type arrays.
+    "@type": ["LocalBusiness", "FinancialService"],
     "@id": `${absoluteUrl("/")}#localbusiness`,
     name: config.business.legalName,
     url: config.business.url,

@@ -9,7 +9,9 @@ import { siteConfig, absoluteUrl } from "@/site.config";
  * added or renamed — no hand maintenance.
  */
 export function GET() {
-  const indexable = siteConfig.routes.filter((r) => r.showInLlms !== false);
+  const indexable = siteConfig.routes.filter(
+    (r) => r.canonical !== false && r.showInLlms !== false,
+  );
   const lines: string[] = [];
 
   lines.push(`# ${siteConfig.business.legalName}`);

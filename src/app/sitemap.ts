@@ -10,20 +10,20 @@ import { siteConfig, absoluteUrl } from "@/site.config";
  * route Saral can show on Friday.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
-
-  const staticEntries: MetadataRoute.Sitemap = siteConfig.routes.map((r) => ({
-    url: absoluteUrl(r.path),
-    lastModified: now,
-    changeFrequency: r.changeFrequency,
-    priority: r.priority,
-  }));
+  const staticEntries: MetadataRoute.Sitemap = siteConfig.routes
+    .filter((r) => r.canonical !== false)
+    .map((r) => ({
+      url: absoluteUrl(r.path),
+      lastModified: new Date(r.lastModified),
+      changeFrequency: r.changeFrequency,
+      priority: r.priority,
+    }));
 
   // Notion-sourced blog slugs go here once step 6 wires the adapter.
-  const blogSlugs: string[] = [];
-  const blogEntries: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
-    url: absoluteUrl(`/blog/${slug}`),
-    lastModified: now,
+  const blogSlugs: { slug: string; lastModified: string }[] = [];
+  const blogEntries: MetadataRoute.Sitemap = blogSlugs.map((s) => ({
+    url: absoluteUrl(`/blog/${s.slug}`),
+    lastModified: new Date(s.lastModified),
     changeFrequency: "monthly",
     priority: 0.5,
   }));

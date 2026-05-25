@@ -10,8 +10,6 @@ import { ButtonLink } from "@/components/button";
 import { CalcTeaser } from "@/components/calc-teaser";
 import { MeetAdvisor } from "@/components/meet-advisor";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd } from "@/lib/schema/json-ld";
-import { localBusiness, person } from "@/lib/schema";
 
 export const generateMetadata = () => buildMetadata({ path: "/" });
 
@@ -20,9 +18,6 @@ export default function Home() {
 
   return (
     <>
-      <JsonLd data={localBusiness(siteConfig)} id="ld-localbusiness" />
-      <JsonLd data={person(siteConfig)} id="ld-person" />
-
       <Hero
         badge={
           siteConfig.heroBadge.enabled
