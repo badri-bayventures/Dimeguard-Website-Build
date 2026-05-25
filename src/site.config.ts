@@ -231,6 +231,7 @@ export const siteConfig: SiteConfig = {
     fullName: "Saral Toms",
     firstName: "Saral",
     title: "Insurance & Retirement Advisor",
+    photoSrc: "/founders/saral.png",
     knowsLanguage: ["English", "Hindi"],
     bioSnippet:
       "Saral works one-on-one with families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley.",

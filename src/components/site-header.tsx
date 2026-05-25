@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { siteConfig } from "@/site.config";
 import { ButtonLink } from "./button";
@@ -30,16 +31,18 @@ export function SiteHeader() {
         <Container className="flex h-16 items-center justify-between gap-6">
           <Link
             href="/"
-            className="flex items-center gap-2 font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight text-[color:var(--color-ink)]"
+            aria-label={`${siteConfig.business.legalName} — home`}
+            className="flex items-center"
             onClick={() => setMenuOpen(false)}
           >
-            <span
-              aria-hidden
-              className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-[color:var(--color-ink)] text-[color:var(--color-accent)] text-sm font-bold"
-            >
-              D
-            </span>
-            {siteConfig.business.legalName}
+            <Image
+              src="/logo.png"
+              alt={siteConfig.business.legalName}
+              width={1280}
+              height={1026}
+              priority
+              className="h-10 w-auto"
+            />
           </Link>
           <nav
             aria-label="Primary"

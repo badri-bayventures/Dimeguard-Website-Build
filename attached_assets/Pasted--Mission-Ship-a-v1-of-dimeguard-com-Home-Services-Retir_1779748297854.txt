@@ -1,0 +1,148 @@
+## Mission
+
+Ship a **v1 of dimeguard.com — Home, Services (Retirement Planning + Life & Disability), About, Contact** — deployed to the **kreatively test domain** by EOD Fri 2026-05-29. v1 is the launch-week scope per the signed engagement proposal; calculators, Notion blog, Resources, AEO templates, and per-state pages are explicitly out of scope for this sprint and ship later in M1 hardening / M2 / M3.
+
+**Why this matters now**: Badri is OOO Mon 6/1 → Wed 6/3 (Texas). Saral's first weekly check-in is Fri 5/29 4pm PT. We walk Saral through the kreatively-staged v1 on that call, hand him a feedback doc, and let him live with the site async Sat–Tue. Edits land Thu 6/4. Cutover to dimeguard.com + $299 invoice = Fri 2026-06-05.
+
+---
+
+## Hard rules (apply to every file you touch)
+
+- **Direction D palette is locked.** Brand tokens already live in `src/site.config.ts` → `brand`. Do not invent new colors or gradients. Lime `accent` (`#C8E04A`) is for buttons/highlights only — never body text on light surfaces.
+- **No state-anchoring in user-facing copy.** Saral wants out-of-state visitors to feel they can still reach out. Strip "Licensed CA / TX / CO / NJ" / "licensed in four states" / "limited to" framing from every visible surface — top trust bar, hero trust strip, FAQ answers, page descriptions. The `licensure.licensedStates` data array stays in `site.config.ts` (sitemap and JSON-LD still use it); only the visible copy changes.
+- **Compliance copy guardrails** (insurance-only broker, not RIA — no Form ADV gate, but still):
+  - No superlatives: "best", "top-rated", "#1", "leading", "premier", "trusted by thousands".
+  - No outcome-implying language: "guaranteed returns", "we'll make you wealthy", "you will save $X".
+  - Use "may", "can", "designed to help", "could" — never "will" when describing outcomes.
+  - No outcome-implying testimonials. If you keep a testimonial block, quotes must describe the *process* (clarity, listening, follow-up), never dollar outcomes.
+  - Every page that displays planning content carries the existing `<Disclosure />` block.
+- **No fabricated specifics.** Do not invent client names, dollar figures, carrier names, event dates, or testimonials. Where a real value is missing, leave a TODO comment in the source (e.g. `{/* TODO[badri]: replace with Saral's actual carriers */}`) and use a clearly-generic placeholder ("Independent — multi-carrier" vs "12 carriers").
+- **Calendly URL** comes from `process.env.NEXT_PUBLIC_CALENDLY_URL`. If env var is empty, fall back to `#contact` anchor on the new /contact page — never a hardcoded Calendly link.
+- **One-source-of-truth rule.** All advisor/business/NAP/brand/route metadata flows through `src/site.config.ts`. Do not hardcode the advisor name or business name in components — read from `siteConfig`.
+
+---
+
+## Current repo state (as of 2026-05-25)
+
+**Already built — do not regress:**
+
+- Scaffolding: Next.js 15 (App Router), Tailwind v4, TypeScript 5, Node 24, `pnpm` lockfile.
+- `src/site.config.ts` — full cohort-config shape (advisor, business, NAP, licensure, brand, carriers, nav, routes, calculator assumptions, analytics IDs).
+- `src/app/page.tsx` — Home page is built and on-brand: Hero + HeroTrustStrip + 3 ServiceCards + MeetAdvisor + 3-step "How it works" + TestimonialRow + FAQ + ink-tone final CTA + CarrierStrip + Disclosure.
+- Components: `hero`, `hero-trust-strip`, `carrier-strip`, `service-card`, `meet-advisor`, `testimonial-row`, `faq`, `faq-block`, `disclosure`, `calc-teaser`, `button`, `container`, `section`, `site-header`, `site-footer`, `page-stub`, `top-trust-bar`.
+- SEO + AEO infra: `lib/schema/` JSON-LD builders, `lib/seo/metadata.ts`, `app/sitemap.ts`, `app/robots.ts`, `app/llms.txt/route.ts`.
+
+**Currently stubbed (`PageStub` placeholder) — these are your real work:**
+
+- `src/app/about/page.tsx`
+- `src/app/retirement-planning/page.tsx`
+- `src/app/life-insurance/page.tsx`
+- `src/app/resources/page.tsx` ← leave stubbed for v1
+- `src/app/blog/page.tsx` ← leave stubbed for v1
+- `src/app/calculators/inflation/page.tsx` ← leave stubbed for v1
+
+**Issues to fix in Home + config:**
+
+- `siteConfig.topTrustBar.left` — currently `"LICENSED IN CALIFORNIA · TEXAS · COLORADO · NEW JERSEY"`. Replace with non-state-anchored copy (e.g., `"INDEPENDENT INSURANCE BROKER · NO SCRIPT, NO SALES PITCH"` for `left`, or split differently — your call, but no state list).
+- `siteConfig.heroTrustStrip[1]` — currently `{ top: "CA · TX · CO · NJ", bottom: "licensed in four states" }`. Replace with a non-state-anchored trust signal (e.g., `{ top: "Independent", bottom: "no carrier captive contract" }`).
+- `src/app/page.tsx` FAQ "Are you licensed outside of California?" — rewrite the answer so it reads national-capable. Suggested rewrite: "I'm licensed as an insurance broker in multiple states, including California. If you're outside California, mention your state on the first call and I'll confirm I can serve you."
+- Home `TestimonialRow` — current quotes use fabricated names (M. Patel / R. Singh / A. Kumar). **Remove the entire Testimonials section from Home for v1.** It comes back in M1 weeks 3–4 hardening once Saral confirms which of his 2 real testimonials to use. Replace the testimonial `<Section>` block with nothing (delete it cleanly; don't leave an empty section).
+- `siteConfig.carriers` — currently `Carrier A` through `+1 more`. Leave as-is for v1 (Saral has to supply the real carrier list); but ensure the CarrierStrip eyebrow reads `"INDEPENDENT · WE PLACE ACROSS MULTIPLE CARRIERS"` (no specific count).
+- `siteConfig.nap` — phone, email, address, postalCode currently empty strings. Leave as empty strings — `<SiteFooter />` should gracefully omit any field that is empty (verify; if it renders an empty line, fix the footer to conditionally render).
+
+---
+
+## v1 scope — five things
+
+### 1. `/retirement-planning` — full service page (NO calculator)
+
+Replace the `PageStub`. Structure:
+
+- **Hero** (use the existing `<Hero>` component or a similar inline section) — eyebrow "Retirement Planning"; title something like "Find out where you stand."; lede 1–2 sentences (no outcome promises); primary CTA "Book a 20-min call" → `siteConfig.contact.calendlyUrl || '/contact'`; secondary CTA "What we look at →" anchored to the section below.
+- **"What we look at on a first call"** — 4 bullets / mini-cards: current savings + contributions, target retirement age + income, social-security timing, tax-bucket coordination. Plain language. No dollar figures.
+- **"How families typically work with me"** — 3-step ladder (mirror Home's "How it works" style but service-specific): discovery call → written summary → ongoing review (annual or as life changes).
+- **Service-specific FAQ** (use existing `<Faq>` component) — 4–5 questions: "Is the first call really free?", "Do you charge a fee?", "Do you manage investments?" (answer: "No — insurance-only broker; I refer to a CPA or RIA for investment management"), "What if I already have a 401(k) plan elsewhere?", "How long does a typical engagement run?"
+- **Final CTA** — ink-tone section, same pattern as Home's bottom CTA.
+- Keep existing `financialService` + `breadcrumb` JSON-LD blocks.
+- Add `<Disclosure />` at bottom.
+
+### 2. `/life-insurance` — full service page (NO calculator)
+
+Replace the `PageStub`. Mirror the retirement-planning structure but content-specific:
+
+- Hero: "Estimate the coverage your family may need." (existing stub lede is fine to extend).
+- **"What we look at"** — income to replace, dependents, existing employer coverage, term vs permanent fit, riders worth knowing.
+- **"How term vs permanent compares"** — short 2-column or 2-card explainer, no dollar figures, no outcome promises.
+- FAQ — 4–5 questions: "Do you sell whole life?", "How do you decide between term and permanent?", "Do you work with people who've been declined before?", "Is the carrier commission disclosed?", "How much coverage do most clients end up with?" (answer in ranges only; no specifics).
+- Final CTA + JSON-LD + Disclosure.
+
+### 3. `/about` — 2-founder layout with single-person fallback
+
+Replace the `PageStub`. **Design for two founders from the start with a single-person fallback** — Saral confirmed a male business partner exists but the partner's name and public-inclusion decision are still pending. Build the layout to accept 1 OR 2 founders cleanly.
+
+Approach:
+
+- Add a `founders` array to `src/site.config.ts` (new field) — each entry: `{ name, role, photoSrc, bio, knowsLanguage }`. Seed it with one entry for Saral (use `siteConfig.advisor` data) and a commented-out second entry placeholder.
+- Page sections:
+  - **Hero** — "Two operators. One practice." (if 2 founders) OR "Meet Saral." (if 1). Component conditional.
+  - **Founder card(s)** — photo (large), name, role, 2–3 paragraph bio. Reuse `<MeetAdvisor>` styling if possible; extend to support side-by-side 2-up grid.
+  - **"Why Dimeguard"** — short 3-bullet origin/positioning section. Anchored to Mountain House but not state-listing. Mention the Central Valley + first-generation-family lens.
+  - **Final CTA** + breadcrumb JSON-LD + Person JSON-LD (one per founder) + Disclosure.
+- For Saral's bio: pull from his current Hostinger dimeguard.com About page (Badri said in kickoff "Reuse from current Hostinger site: About Us + Contact page copy"). If Badri hasn't dropped that copy into the repo, leave a TODO with the Hostinger URL and write 2 placeholder paragraphs grounded in `siteConfig.advisor.bioSnippet`.
+
+### 4. `/contact` — new route
+
+This route doesn't exist yet. Create `src/app/contact/page.tsx`. Add to `siteConfig.routes` and `siteConfig.nav` (primary: true, after About).
+
+Structure:
+
+- **Hero** — eyebrow "Contact"; title "Three ways to reach me."; lede "Email for quick questions, Calendly for a 20-minute call, or the form below if you'd rather write."
+- **3-column contact block** — Email / Phone / Calendly link. Read all three from `siteConfig.nap.email`, `siteConfig.nap.phone`, `siteConfig.contact.calendlyUrl`. Conditionally render — if a field is empty, omit that column. (For v1 we expect at least the email + Calendly to be populated; phone may stay blank until Saral confirms which number to publish.)
+- **Lead form** — Name, Email, Phone (optional), "What's on your mind?" textarea. Submits to `/api/lead` (you'll need to create this route handler as a stub for v1 that just returns 200 + logs the payload — full Twilio/Resend/Airtable wiring happens in M2's Feature Layer per the engagement proposal). Form validation: Zod-recommended; minimal client-side validation OK for v1.
+- **Map / NAP block** at the bottom — embedded Google Map (or static map image) centered on Mountain House, CA. NAP printed beside it. If no street address yet, show "Mountain House, CA" + service-area list from `siteConfig.nap.areaServed`.
+- **Hours** — from `siteConfig.nap.openingHours`. Render as plain text, not as a schema component.
+- Add LocalBusiness + breadcrumb JSON-LD.
+- Add `<Disclosure />`.
+
+### 5. Wire Calendly + deploy to kreatively staging
+
+- Add `NEXT_PUBLIC_CALENDLY_URL` to the Replit Secrets pane. Badri will paste Saral's actual Calendly link. If Badri hasn't done that yet by the time you reach this step, leave it blank — the fallback to `/contact` in code handles it.
+- Configure the Replit deployment target to publish to the **kreatively test subdomain**. Badri owns the `kreatively` domain and has wired it to Replit Deployments (but not yet to this specific project). Set the deployment domain to a subdomain like `dimeguard.kreatively.app` (or whatever Badri specifies — surface this question to him before deploying if it isn't obvious from the Replit deployment settings).
+- Run `pnpm typecheck && pnpm build` before deploying. If TypeScript errors surface, fix them — do not deploy a broken build.
+
+---
+
+## Off-limits for this sprint — do not touch
+
+These ship later per the engagement proposal. Even if Saral asks for them in feedback, defer to M2/M3:
+
+- ❌ Retirement Readiness Calculator (M2 — Feature Layer)
+- ❌ Human Life Value Calculator (M2)
+- ❌ Inflation Calconic embed (M2)
+- ❌ Notion CMS integration + blog migration (M2 — front-loaded into M1 per kickoff but NOT in v1 launch week)
+- ❌ Resources page xlsx gating (M2)
+- ❌ Per-state landing pages (M3+, defer to GSC signal)
+- ❌ AEO `<FAQ>` JSON-LD on every page beyond what's already shipped (already infrastructure-ready; new uses come with new pages)
+- ❌ GBP setup (separate from code — Badri handles directly)
+- ❌ AI chatbot (M3)
+- ❌ Events section (M2 or M3, Airtable-driven)
+- ❌ DMARC / DKIM / SPF fix (DNS-side; Badri does this manually outside the repo — Hostinger DNS + Zoho admin)
+- ❌ Adding new dependencies beyond what's strictly required for v1 (no new UI libs, no animation libs, no form libs heavier than Zod + react-hook-form if needed)
+
+---
+
+## Assets (Badri will stage these BEFORE firing this prompt)
+
+The agent should reference these paths in the code:
+
+- `public/brand/logo.png` — primary logo, transparent background, ~512px wide. Used in `<SiteHeader>` and as fallback OG image source.
+- `public/brand/logo-large.png` — same logo at ~1024px, for OG image generation.
+- `public/photos/saral-portrait.jpg` — chest-up portrait, clean background. Used in `<MeetAdvisor>` on Home and as `siteConfig.advisor.photoSrc`.
+- `public/photos/saral-secondary.jpg` — wider/environmental shot (desk / office). Used in About page founder card.
+- `public/photos/office-01.jpg`, `office-02.jpg` — office scenes for About + Contact pages.
+- `public/photos/meeting-01.jpg` — client meeting (only if consent confirmed; otherwise skip).
+- `public/photos/exterior.jpg` — Mountain House exterior or storefront (if available).
+
+After staging, update `siteConfig.advisor.photoSrc = "/photos/saral-portrait.jpg"` and `siteConfig.business.ogImage = "/og/default.png"` (generate a simple OG image at `public/og/default.png` from the logo + tagline — 1200×630, Direction D palette).
+
+---

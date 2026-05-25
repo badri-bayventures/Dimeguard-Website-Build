@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { siteConfig } from "@/site.config";
 import { Container } from "./container";
 
@@ -15,15 +16,13 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-[color:var(--color-border)] bg-[color:var(--color-ink)] text-white">
       <Container className="grid gap-12 py-16 md:grid-cols-12">
         <div className="md:col-span-5">
-          <div className="flex items-center gap-2 font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">
-            <span
-              aria-hidden
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--color-accent)] text-[color:var(--color-accent-ink)] text-base font-bold"
-            >
-              D
-            </span>
-            {siteConfig.business.legalName}
-          </div>
+          <Image
+            src="/logo-padded.png"
+            alt={siteConfig.business.legalName}
+            width={1280}
+            height={1024}
+            className="h-14 w-auto brightness-0 invert"
+          />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/75">
             {siteConfig.business.tagline}
           </p>
