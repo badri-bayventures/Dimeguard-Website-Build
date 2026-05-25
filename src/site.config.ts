@@ -72,6 +72,15 @@ export type RouteMeta = {
   showInLlms?: boolean;
 };
 
+export type Founder = {
+  name: string;
+  role: string;
+  photoSrc?: string;
+  /** 2–3 short paragraphs. Each entry renders as its own <p>. */
+  bioParagraphs: string[];
+  knowsLanguage: string[];
+};
+
 export type SiteConfig = {
   advisor: {
     fullName: string;
@@ -81,6 +90,12 @@ export type SiteConfig = {
     knowsLanguage: string[];
     bioSnippet: string;
   };
+  /**
+   * Founder roster for /about. Designed for 1 OR 2 entries — the layout
+   * gracefully degrades. Seed with one entry until Saral confirms a second
+   * founder's public-inclusion decision.
+   */
+  founders: Founder[];
   business: {
     legalName: string;
     domain: string;
@@ -236,6 +251,30 @@ export const siteConfig: SiteConfig = {
     bioSnippet:
       "Saral works one-on-one with families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley.",
   },
+  // TODO[badri]: drop in Saral's actual bio paragraphs from current Hostinger
+  // dimeguard.com once he supplies them — current /about there returns 404, so
+  // these are placeholder paragraphs grounded in bioSnippet. Add a second
+  // founder entry here when Saral confirms his business partner.
+  founders: [
+    {
+      name: "Saral Toms",
+      role: "Insurance & Retirement Advisor",
+      photoSrc: "/founders/saral.png",
+      knowsLanguage: ["English", "Hindi"],
+      bioParagraphs: [
+        "Saral is an independent insurance broker based in Mountain House, California. He works one-on-one with first-generation families across the Central Valley on retirement planning, life and disability coverage, and tax-aware decisions that come up around major life events.",
+        "His practice is deliberately small. Most first conversations are twenty minutes — no script, no products pitched — and a typical engagement begins with a written summary of what's already in place before anything new is recommended.",
+      ],
+    },
+    // Uncomment and edit when Saral confirms his partner's public-inclusion decision.
+    // {
+    //   name: "TODO[saral]: Partner name",
+    //   role: "TODO[saral]: Partner role",
+    //   photoSrc: undefined,
+    //   knowsLanguage: ["English"],
+    //   bioParagraphs: ["TODO[saral]: 2–3 paragraph partner bio."],
+    // },
+  ],
   business: {
     legalName: "Dimeguard",
     domain: "dimeguard.com",
@@ -307,8 +346,8 @@ export const siteConfig: SiteConfig = {
   // to `right`.
   topTrustBar: {
     enabled: true,
-    left: "LICENSED IN CALIFORNIA · TEXAS · COLORADO · NEW JERSEY",
-    right: "INDEPENDENT · NO SCRIPT, NO SALES PITCH",
+    left: "INDEPENDENT INSURANCE BROKER · INSURANCE-ONLY",
+    right: "20-MIN FIRST CALL · NO SCRIPT, NO SALES PITCH",
   },
   locationPin: {
     enabled: true,
@@ -324,7 +363,7 @@ export const siteConfig: SiteConfig = {
   },
   heroTrustStrip: [
     { top: "20 min", bottom: "first call · no script" },
-    { top: "CA · TX · CO · NJ", bottom: "licensed in four states" },
+    { top: "Independent", bottom: "no carrier captive contract" },
     { top: "$0", bottom: "to run your number" },
     { top: "Multi-carrier", bottom: "independent broker" },
   ],
@@ -339,6 +378,7 @@ export const siteConfig: SiteConfig = {
     { href: "/life-insurance", label: "Life & Disability", primary: true },
     { href: "/calculators/inflation", label: "Calculators", primary: true },
     { href: "/about", label: "About", primary: true },
+    { href: "/contact", label: "Contact", primary: true },
     { href: "/blog", label: "Blog", primary: false },
     { href: "/resources", label: "Resources", primary: false },
   ],
@@ -352,7 +392,7 @@ export const siteConfig: SiteConfig = {
       title:
         "Insurance, retirement & tax planning · Mountain House, CA · Dimeguard",
       description:
-        "Saral Toms helps Central Valley families think clearly about insurance, retirement, and tax coordination. Licensed insurance broker in CA, TX, CO, NJ.",
+        "Saral Toms helps Central Valley families think clearly about insurance, retirement, and tax coordination. Independent insurance broker — first call is 20 minutes, no script, no sales pitch.",
       priority: 1.0,
       changeFrequency: "weekly",
       llmsSummary:
@@ -361,25 +401,25 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/retirement-planning",
-      title: "Retirement planning · Free readiness check",
+      title: "Retirement planning · Dimeguard",
       description:
-        "Estimate your retirement gap with a free readiness check. Designed to help families in their 40s and 50s see where they stand and what their options may be.",
+        "A 20-minute first call about your current savings, target retirement age, Social Security timing, and tax-bucket coordination. Designed for families in their 40s and 50s.",
       priority: 0.9,
       changeFrequency: "monthly",
       llmsSummary:
-        "Retirement planning service, including a free readiness calculator that estimates gap to target income.",
+        "Retirement planning service — a first call covers current savings, target retirement age, Social Security timing, and tax-bucket coordination.",
       showInNav: true,
       showInLlms: true,
     },
     {
       path: "/life-insurance",
-      title: "Life insurance · Human Life Value estimator",
+      title: "Life & disability · Dimeguard",
       description:
-        "Estimate the coverage your family may need with a Human Life Value calculator. Term and permanent life insurance through a licensed broker.",
+        "A short conversation about income to replace, dependents, existing coverage, and whether term or permanent insurance may fit your situation. Independent broker.",
       priority: 0.9,
       changeFrequency: "monthly",
       llmsSummary:
-        "Life insurance service, with a Human Life Value calculator that estimates recommended coverage from income and dependents.",
+        "Life and disability insurance — a first call covers income to replace, dependents, existing employer coverage, and the term-vs-permanent fit.",
       showInNav: true,
       showInLlms: true,
     },
@@ -387,7 +427,7 @@ export const siteConfig: SiteConfig = {
       path: "/about",
       title: "About Saral Toms · Insurance & Retirement Advisor",
       description:
-        "Meet Saral Toms — a Mountain House-based insurance and retirement advisor working with Central Valley families across CA, TX, CO, and NJ.",
+        "Meet Saral Toms — a Mountain House-based insurance and retirement advisor working with Central Valley families on retirement, life, and tax-aware planning.",
       priority: 0.7,
       changeFrequency: "yearly",
       llmsSummary:
@@ -416,6 +456,18 @@ export const siteConfig: SiteConfig = {
       changeFrequency: "weekly",
       llmsSummary:
         "Blog with notes on insurance, retirement, and tax topics that come up in client conversations.",
+      showInNav: true,
+      showInLlms: true,
+    },
+    {
+      path: "/contact",
+      title: "Contact Saral Toms · Dimeguard",
+      description:
+        "Three ways to reach Saral — email, a 20-minute Calendly call, or the contact form. Based in Mountain House, CA; serving the Central Valley.",
+      priority: 0.8,
+      changeFrequency: "yearly",
+      llmsSummary:
+        "Contact page — email, phone, Calendly link, and a short message form for reaching Saral Toms.",
       showInNav: true,
       showInLlms: true,
     },

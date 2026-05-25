@@ -5,7 +5,6 @@ import { CarrierStrip } from "@/components/carrier-strip";
 import { Section, SectionHeading } from "@/components/section";
 import { ServiceCard } from "@/components/service-card";
 import { Faq } from "@/components/faq";
-import { TestimonialRow } from "@/components/testimonial-row";
 import { Disclosure } from "@/components/disclosure";
 import { ButtonLink } from "@/components/button";
 import { CalcTeaser } from "@/components/calc-teaser";
@@ -17,8 +16,7 @@ import { localBusiness, person } from "@/lib/schema";
 export const generateMetadata = () => buildMetadata({ path: "/" });
 
 export default function Home() {
-  const bookCallHref =
-    siteConfig.contact.calendlyUrl || "/retirement-planning#calculator";
+  const bookCallHref = siteConfig.contact.calendlyUrl || "/contact";
 
   return (
     <>
@@ -147,37 +145,6 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section tone="surface">
-        <SectionHeading
-          eyebrow="In their words"
-          title="What clients say about the process."
-        />
-        <div className="mt-12">
-          <TestimonialRow
-            items={[
-              {
-                quote:
-                  "He explained the trade-offs in plain English. We didn’t feel rushed and didn’t feel sold to.",
-                attribution: "M. Patel",
-                meta: "Tracy, CA",
-              },
-              {
-                quote:
-                  "Sat with us for two hours on a Saturday and answered every question, including the ones we forgot to ask.",
-                attribution: "R. Singh",
-                meta: "Mountain House, CA",
-              },
-              {
-                quote:
-                  "Followed up the next week with a written summary. That alone was more than the last advisor we worked with.",
-                attribution: "A. Kumar",
-                meta: "Manteca, CA",
-              },
-            ]}
-          />
-        </div>
-      </Section>
-
       <Section tone="muted">
         <SectionHeading
           eyebrow="Questions"
@@ -193,11 +160,8 @@ export default function Home() {
               },
               {
                 question: "Are you licensed outside of California?",
-                answer: `Yes. I’m licensed as an insurance broker in ${siteConfig.licensure.licensedStates
-                  .map((s) => s.name)
-                  .join(
-                    ", ",
-                  )}. If you have family in any of those states, I can help coordinate.`,
+                answer:
+                  "I’m licensed as an insurance broker in multiple states, including California. If you’re outside California, mention your state on the first call and I’ll confirm I can serve you.",
               },
               {
                 question: "Do you give investment or tax advice?",
