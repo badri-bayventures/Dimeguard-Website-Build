@@ -67,6 +67,21 @@ export default function ContactPage() {
             form below if you&rsquo;d rather write.
           </>
         }
+        aside={
+          <div className="rounded-3xl border border-[color:var(--color-border)] bg-white/60 p-8 text-[color:var(--color-ink-soft)] md:p-10">
+            <p className="font-medium text-[color:var(--color-ink)]">
+              Calls returned within one business hour
+            </p>
+            <ul className="mt-5 space-y-1 text-sm">
+              {nap.openingHours.map((h) => (
+                <li key={h}>{h}</li>
+              ))}
+            </ul>
+            <p className="mt-5 text-sm">
+              Mountain House, CA · {nap.email || "stoms@dimeguard.com"}
+            </p>
+          </div>
+        }
       />
 
       {channels.length ? (

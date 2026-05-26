@@ -48,8 +48,10 @@ export function Hero({
         className="pointer-events-none absolute -bottom-24 -left-16 z-10 h-[22rem] w-[22rem] rounded-full opacity-25 blur-3xl"
         style={{ background: "var(--color-accent)" }}
       />
-      <Container className="relative z-20 grid items-center gap-10 md:grid-cols-5 md:gap-12">
-        <div className="md:col-span-3">
+      <Container
+        className={`relative z-20 ${aside ? "grid items-center gap-10 md:grid-cols-5 md:gap-12" : ""}`}
+      >
+        <div className={aside ? "md:col-span-3" : "max-w-3xl"}>
           {badge ? (
             <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--color-ink-soft)] shadow-sm">
               <span

@@ -138,6 +138,20 @@ export default function AboutPage() {
           label: siteConfig.ctaLabels.bookCall,
           href: bookCallHref,
         }}
+        aside={
+          <figure className="rounded-3xl border border-[color:var(--color-border)] bg-white/60 p-8 md:p-10">
+            <blockquote className="font-[family-name:var(--font-display)] text-2xl italic leading-snug text-[color:var(--color-ink-soft)] md:text-3xl">
+              &ldquo;I had never been properly taught how money really works.&rdquo;
+            </blockquote>
+            <figcaption className="mt-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-ink-soft)]">
+              <span
+                aria-hidden
+                className="inline-block h-px w-8 bg-[color:var(--color-border)]"
+              />
+              — Saral, on why he started the practice
+            </figcaption>
+          </figure>
+        }
       />
 
       <Section tone="surface">
