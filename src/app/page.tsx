@@ -9,6 +9,7 @@ import { Disclosure } from "@/components/disclosure";
 import { ButtonLink } from "@/components/button";
 import { HeroNumber } from "@/components/hero-number";
 import { MeetAdvisor } from "@/components/meet-advisor";
+import { CalcTeaser } from "@/components/calc-teaser";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const generateMetadata = () => buildMetadata({ path: "/" });
@@ -52,6 +53,17 @@ export default function Home() {
       />
 
       <HeroTrustStrip />
+
+      <Section id="calculator" tone="muted">
+        <SectionHeading
+          eyebrow="THE DIMEGUARD NUMBER"
+          title="See where you stand in 90 seconds."
+          lede="Five inputs. A real projection. No signup — your number stays on this page."
+        />
+        <div className="mx-auto mt-12 max-w-4xl">
+          <CalcTeaser />
+        </div>
+      </Section>
 
       <Section tone="surface">
         <SectionHeading

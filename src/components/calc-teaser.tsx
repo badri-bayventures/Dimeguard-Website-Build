@@ -49,7 +49,7 @@ function ProjectionChart({ series }: { series: ChartPoint[] }) {
     <svg
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
-      className="block h-32 w-full md:h-36"
+      className="block h-40 w-full md:h-48"
       role="img"
       aria-label="Projected savings growth from current age to retirement age"
     >
@@ -151,8 +151,8 @@ export function CalcTeaser() {
   return (
     <div
       data-anno="calc-teaser"
-      className="relative overflow-hidden rounded-3xl p-7 text-white shadow-[0_30px_60px_-30px_rgba(14,42,54,0.6)] md:p-8"
-      style={{ backgroundColor: "#0e2a36" }}
+      className="relative overflow-hidden rounded-3xl p-10 text-white shadow-2xl ring-1 ring-white/10 backdrop-blur-md md:p-14"
+      style={{ backgroundColor: "rgba(14,42,54,0.85)" }}
     >
       <div
         aria-hidden
@@ -177,7 +177,7 @@ export function CalcTeaser() {
       {/* Single-stage teaser: chart updates live as user types, CTA always
           advances to the full 4-stage calculator on /retirement-planning. */}
       <div className="relative mt-5 space-y-5">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <FieldNumber
             id={ageId}
             label="Age"
