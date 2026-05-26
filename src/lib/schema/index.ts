@@ -181,6 +181,35 @@ export function article(
   };
 }
 
+export function blogPosting(
+  config: SiteConfig,
+  input: ArticleInput,
+): JsonLdObject {
+  const url = absoluteUrl(input.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: input.title,
+    description: input.description,
+    url,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": url,
+    },
+    image: input.imageUrl
+      ? [input.imageUrl]
+      : [absoluteUrl(config.business.ogImage)],
+    datePublished: input.datePublished,
+    dateModified: input.dateModified ?? input.datePublished,
+    author: {
+      "@type": "Person",
+      "@id": `${absoluteUrl("/about")}#person`,
+      name: input.authorName ?? config.advisor.fullName,
+    },
+    publisher: organizationRef(config),
+  };
+}
+
 export function breadcrumb(crumbs: BreadcrumbCrumb[]): JsonLdObject {
   return {
     "@context": "https://schema.org",

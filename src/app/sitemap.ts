@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig, absoluteUrl } from "@/site.config";
+import { listPostSummaries } from "@/lib/blog";
 
 /**
  * Sitemap is generated from siteConfig.routes — adding a route to the config
@@ -19,11 +20,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: r.priority,
     }));
 
-  // Notion-sourced blog slugs go here once step 6 wires the adapter.
-  const blogSlugs: { slug: string; lastModified: string }[] = [];
-  const blogEntries: MetadataRoute.Sitemap = blogSlugs.map((s) => ({
-    url: absoluteUrl(`/blog/${s.slug}`),
-    lastModified: new Date(s.lastModified),
+  // Blog slugs are sourced from the unified blog loader — Notion when the
+  // env vars are present, the static MDX fallback otherwise. Either way the
+  // sitemap stays in sync without a redeploy.
+  const posts = await listPostSummaries();
+  const blogEntries: MetadataRoute.Sitemap = posts.map((p) => ({
+    url: absoluteUrl(`/blog/${p.slug}`),
+    lastModified: new Date(p.publishedDate),
     changeFrequency: "monthly",
     priority: 0.5,
   }));
