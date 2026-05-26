@@ -23,7 +23,7 @@ function FounderCard({ founder }: { founder: Founder }) {
               alt={`${founder.name}, ${founder.role}`}
               width={240}
               height={240}
-              className="h-[240px] w-[240px] rounded-2xl object-cover"
+              className="h-[240px] w-[240px] rounded-2xl object-cover object-[center_20%]"
             />
           ) : (
             <div

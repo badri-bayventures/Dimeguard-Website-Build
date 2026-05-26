@@ -18,7 +18,7 @@ export function MeetAdvisor() {
             alt={`${advisor.fullName}, ${advisor.title}`}
             width={280}
             height={280}
-            className="h-[280px] w-[280px] rounded-2xl object-cover"
+            className="h-[280px] w-[280px] rounded-2xl object-cover object-[center_20%]"
           />
         ) : (
           <div
