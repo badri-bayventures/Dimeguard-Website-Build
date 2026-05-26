@@ -1,0 +1,183 @@
+### 2. Hero redesign — "The Number" (~3 hours, the centerpiece)
+
+Replace the current hero on `/` (which has the inline calc-teaser as its `aside`) with a type-led editorial layout. **The calculator moves OUT of the hero entirely** into its own Section 2 below (see step 3).
+
+**Layout** (5-column grid on desktop, stacked on mobile):
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ ● Accepting new clients                                         │
+│                                                                 │
+│ Insurance, retirement,            PROJECTED — A SAMPLE PROFILE  │
+│ and tax — handled in                                            │
+│ slow conversations.                       $1.42M                │
+│                                          ─────────              │
+│ A 20-minute first call.                                         │
+│ No script, no products            for a 45-yr-old saving        │
+│ pitched. A clear picture          $1,500/mo, retiring at 65     │
+│ of where you stand —                                            │
+│ and where you're going.                Run yours →              │
+│                                                                 │
+│ [ Book a 20-min call → ]                                        │
+│ [ Run my retirement number → ]                                  │
+│                                                                 │
+│ Typical first call: 20 min · No-obligation · Calls returned     │
+│ within one business hour                                        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Left column (3/5)** — uses existing `<Hero>` component data shape:
+- Badge: `● Accepting new clients` (from `siteConfig.heroBadge`)
+- H1: `Insurance, retirement, and tax — handled in slow conversations.` (Fraunces serif, see step 7 for font swap; sizes: `text-4xl md:text-6xl`, line-height `1.05`, tracking-tight)
+- Lede: `A 20-minute first call. No script, no products pitched. A clear picture of where you stand — and where you're going.`
+- Primary CTA: `Book a 20-min call` → `siteConfig.contact.calendlyUrl || '/contact'`
+- Secondary CTA: `Run my retirement number →` → `/#calculator` (anchor scrolls to Section 2 below — see step 3)
+- Meta line below CTAs (existing): `Typical first call: 20 minutes · No-obligation review · Calls returned within one business hour`
+
+**Right column (2/5)** — new `HeroNumber` component:
+- Eyebrow: `PROJECTED — A SAMPLE PROFILE` (uppercase, tracked `0.2em`, `text-xs`, ink-soft color)
+- The number itself: display serif (Fraunces or fallback), `~8rem md:~10rem`, font-weight medium (500), lime accent `#C8E04A` color, with a soft radial-gradient glow behind it (lime tint at ~12% opacity, blur radius ~80px). Compute the number live from `siteConfig.calculators.retirement.teaserDefaults` using the same formula as the existing `CalcTeaser` `project()` function — extract the formula into a shared utility at `src/lib/calc/retirement.ts` so both the hero number and the Section 2 full calc consume it. Format as `$X.XXM` (use existing `formatMillions` helper from calc-teaser.tsx — move it into the shared util).
+- One-line context below the number: `for a {currentAge}-year-old saving ${monthlyContribution}/mo, retiring at {targetRetirementAge}` — interpolate from `teaserDefaults`. Keep the values dynamic so siteConfig changes propagate.
+- "Run yours →" link below: anchors to `/#calculator`, same accent treatment as a secondary CTA but understated (text link, not a button)
+
+**Critical**: extract the retirement projection math out of `src/components/calc-teaser.tsx` into `src/lib/calc/retirement.ts`. Both the hero number and the Section 2 full calc must consume the same function. No formula divergence allowed.
+
+### 3. Section 2 — "The Dimeguard Number" full calc (~2 hours)
+
+Directly below the hero, add a new full-width section that becomes the home for `#calculator` anchor:
+
+- `<Section id="calculator" tone="surface">` (or `tone="muted"` — pick whichever creates the best visual rhythm against the cream hero)
+- `<SectionHeading>` with eyebrow `THE DIMEGUARD NUMBER`, title `See where you stand in 90 seconds.`, lede `Five inputs. A real projection. No signup — your number stays on this page.`
+- Below the heading: render the existing `<CalcTeaser>` component, but **with these upgrades**:
+  - Bigger card: max-width `4xl` instead of the narrow aside it currently lives in; padding bumped to `p-10 md:p-14`
+  - Frosted-glass treatment: `backdrop-blur-md`, `bg-[#0e2a36]/85` (the ink-deep base with slight transparency so any background pattern shows through subtly), heavier shadow `shadow-2xl`, soft inner ring `ring-1 ring-white/10`
+  - The form grid becomes 4-column on desktop (Age / Retire at / Saved / Spend) — current 2x2 is fine on mobile, but desktop should breathe more
+  - The chart gets more vertical room (`h-40 md:h-48`)
+  - Final CTA inside the card stays the same ("Run my number →" — but since we're already on the page, change it to "See full breakdown →" which scrolls to `/retirement-planning#calculator` for the full /retirement-planning page version — OR just keep the existing behavior if simpler)
+
+Update the home page `<Hero>` call site — remove the `aside={<CalcTeaser />}` prop. Add the Section 2 directly after `<Hero>` and `<HeroTrustStrip>`.
+
+The broken `#calculator` anchor (currently pointing at `/retirement-planning#calculator` from CTAs but no such ID exists on that page) gets fixed by this step: home-page CTAs now scroll to `/#calculator` on the home page itself.
+
+For `/retirement-planning`, leave the page structure as v1 shipped it (no calc) — the secondary CTA on that page can stay pointing at `#what-we-look-at` or whatever exists.
+
+### 4. About page — real founder story (~1.5 hours)
+
+Saral's actual About content was lifted from the current dimeguard.com/about-us page. The current siteConfig has placeholder bio paragraphs marked `TODO[badri]` — replace those with a storytelling rewrite of his real story, keeping his voice.
+
+**Source material** (raw, from dimeguard.com/about-us, scraped 2026-05-26):
+
+> Saral Toms arrived in the United States in 2013 as an immigrant professional with aspirations to build a better life. He initially worked in information technology for six years, supporting major insurance company platforms.
+>
+> While employed in the insurance sector, Toms recognized that financial products were frequently misunderstood by their intended consumers. Upon receiving permanent residency and transitioning to contract work, he faced personal financial decisions that revealed a significant gap in his knowledge.
+>
+> Toms embarked on extensive self-directed learning about financial strategies, eventually obtaining his life insurance licenses. His mission evolved from this personal experience of discovering that "despite being well-educated and working inside the insurance industry, I had never been properly taught how money really works."
+>
+> Toms distinguishes his approach from traditional sales-focused advisors, emphasizing that he entered the field "through education and real life experience." His engineering background informs his analytical methodology.
+>
+> The practice focuses on making sophisticated financial strategies accessible to everyday families through education rather than pressure. Services encompass life insurance strategies, tax planning, retirement protection, and estate planning — framed as building protective systems rather than simply selling products.
+
+**Rewrite into 3 first-person paragraphs** for `siteConfig.founders[0].bioParagraphs`. Preserve every factual claim (arrived 2013, IT in insurance for 6 years, got permanent residency, self-taught, life insurance licensed, engineering background, education-not-pressure approach). Tighten the rhythm to first-person + plain language. Keep the direct quote intact ("despite being well-educated and working inside the insurance industry, I had never been properly taught how money really works") — that line is the heart of the story.
+
+Suggested rewrite structure:
+- **Paragraph 1** — Origin: arrival in 2013, IT in insurance for six years, the realization that even working inside the industry, families on the other end were navigating these decisions blind.
+- **Paragraph 2** — Pivot: getting permanent residency, facing his own financial decisions, finding the gap in his own knowledge, the self-taught path to licensure. Drop the quote here.
+- **Paragraph 3** — Approach: how the engineering mindset informs the work — building systems, not selling products; education over pressure; deliberately small practice.
+
+Replace the comment block at `src/site.config.ts` lines ~263–286 (the `TODO[badri]` comment + placeholder bio) with the real rewrite. Keep the same `bioParagraphs` structure (array of 2–3 strings).
+
+The 2-founder layout stays — partner card remains commented out. Working assumption is still 2-founder include but partner data is pending Saral's reply.
+
+Also update `siteConfig.advisor.bioSnippet` (the short blurb on the Home `<MeetAdvisor>` card) to a tighter single-sentence version: something like `Saral works one-on-one with first-generation families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley.` (Current is already close — light edit.)
+
+### 5. FAQ → accordion conversion (~1.5 hours)
+
+Current `<FaqBlock>` renders all Q+A open. Convert to accordion:
+
+- Edit `src/components/faq-block.tsx`. Each `<FaqItem>` becomes a `<details>` element or a controlled component with `useState`-managed open state. Use native `<details>`/`<summary>` for accessibility + zero JS cost — preferred over hand-rolled. If you need smoother height transitions, layer a CSS-only `interpolate-size: allow-keywords` + `transition: height 0.3s ease` pattern.
+- Each summary shows the question + a chevron icon (use the existing SVG arrow pattern from `<ButtonLink>`); chevron rotates 90° or 180° on open.
+- First item on each page can start open (`<details open>`) so the page doesn't look empty above the fold.
+- Critical: the JSON-LD FAQPage schema in `<Faq>` (which renders `faqPage()` schema) stays unchanged — schema reads from the items array, not from rendered DOM. Crawlers + LLMs still see all answers.
+
+Apply across: Home FAQ, /retirement-planning FAQ, /life-insurance FAQ.
+
+### 6. Premium polish pass (~2 hours)
+
+Five touches that lift the Direction-D base into premium territory:
+
+- **Scroll-reveal fade-ups on section entry** — IntersectionObserver-based, one shared component or hook. Each `<Section>` fades from `opacity-0 translate-y-4` to `opacity-100 translate-y-0` when it intersects viewport. `prefers-reduced-motion` respected (no animation if user has the OS setting). ~30 lines of code total. Add to all major sections except hero (which is already visible on load — animating it causes a flash).
+- **Frosted-glass on the calc card** — already specified in step 3.
+- **Subtle SVG grid pattern in the hero background** — replaces nothing, layers behind the existing radial blurs. ~32px square grid, stroke `var(--color-border)` at 30% opacity. Inline SVG via `mask-image` so it fades toward the edges. Place behind the existing radial-blur orbs in `<Hero>` (z-index ordering: pattern → orbs → content).
+- **Button micro-interactions** — `transition-transform`, `active:scale-[0.98]` on all `<ButtonLink>` and `<button>` elements. Soft `hover:shadow-md` on primary buttons.
+- **Heavier shadow language on cards** — bump `shadow-[var(--shadow-card)]` definition in `globals.css` to a layered shadow (e.g., `0 1px 2px rgba(20,58,74,0.04), 0 8px 24px -8px rgba(20,58,74,0.08), 0 24px 48px -16px rgba(20,58,74,0.06)`). All existing card components inherit automatically.
+
+### 7. Fraunces display-font swap (~30 min)
+
+Swap the display serif from Georgia/Times → **Fraunces** (free Google Font, editorial-clean, designed for headlines + display use).
+
+- In `src/app/layout.tsx`, add `import { Fraunces } from 'next/font/google'` and configure: `const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-display', display: 'swap', weight: ['400','500','600'] })`. Apply the `fraunces.variable` className to the root `<html>` or `<body>`.
+- Update `siteConfig.typography.displayFontStack` to `"var(--font-display), Georgia, 'Times New Roman', serif"` (already structured this way — just ensure `--font-display` is now Fraunces).
+- Keep the body font as system stack (`var(--font-body), system-ui, -apple-system, sans-serif`).
+- Visually verify on H1s, founder card names, calc-teaser headline, and the hero $1.42M number — Fraunces should pop without changing the layout density.
+
+### 8. Carrier strip — hide until real names land (~10 min)
+
+`siteConfig.carriers` currently has `Carrier A` through `+1 more` placeholders. These actively hurt trust. **Flip `siteConfig.carrierStrip.enabled = false`** for v1.5. The component already conditionally renders based on this flag — no other code changes needed.
+
+Add a `TODO[saral]` comment next to the `carriers` array: `// TODO[saral]: deliver real carrier list (M2 — Feature Layer per engagement)`.
+
+### 9. Logo placement iteration markers (~15 min)
+
+Header + footer logo sizing needs Badri's eye-test on the staging URL. For now:
+
+- In `src/components/site-header.tsx` line ~44: the logo renders at `className="h-10 w-auto"`. Add a comment: `// TODO[badri]: tune logo height on staging — may need h-12 or h-14 depending on render`. Leave the size as-is for the build.
+- In `src/components/site-footer.tsx` line ~25: the logo renders at `className="h-14 w-auto brightness-0 invert"`. Add a comment: `// TODO[badri]: tune footer logo size + consider dropping brightness-0 invert if the logo has a white-on-dark variant`.
+
+Don't change the actual class values — Badri will eyeball on the staging URL Friday and tune in the edit cycle Thu 6/4.
+
+### 10. Light Notion CMS + 2 sample blog posts (~3 hours — IF time remains)
+
+This step ships **only if steps 1–9 are complete and you still have time before Fri EOD**. Otherwise leave the `/blog` page stubbed.
+
+If you reach this:
+
+- **Stack**: `@notionhq/client` for the API, `notion-to-md` for content conversion, `next-mdx-remote` for rendering. ISR with `revalidate: 300` on `/blog` and `/blog/[slug]`.
+- **Notion DB schema** Saral will populate (document this in a new `src/lib/notion/README.md`):
+  - Title (title) — post title
+  - Slug (rich text) — URL slug
+  - Status (select: Draft / Published) — only Published posts surface on the live site
+  - Published Date (date) — sort order
+  - Summary (rich text) — 1–2 sentence excerpt for index + meta description
+  - Category (select: Insurance / Retirement / Tax / Estate / General)
+  - SEO Title (rich text, optional) — overrides Title for `<title>`
+  - SEO Description (rich text, optional) — overrides Summary for meta description
+  - Body — Notion page body (auto)
+- **Env vars** (add to Replit Secrets pane, surface to Badri before running):
+  - `NOTION_API_KEY` — integration token Saral generates
+  - `NOTION_BLOG_DB_ID` — the database ID Saral shares with the integration
+- **Fallback path**: if `NOTION_API_KEY` is empty at build time, fall back to 2 static MDX posts in `content/blog/` so the blog still renders during the staging window. Pick 2 posts from current dimeguard.com to lift + AEO-rewrite:
+  - `cash-value-life-insurance` (high-intent insurance topic)
+  - `my-employer-sponsored-life-insurance-is-sufficient-are-you-sure` (strong question-as-title, AEO-friendly)
+- **Lift-and-rewrite rules**: keep Saral's factual claims, tighten paragraphs, add a 2–3-sentence intro that hooks on the reader's situation, include a "What to do next" CTA box at the end ("Want to talk through this for your situation? Book a 20-minute call →"), insert a FAQPage JSON-LD block with 3–5 Q&As pulled out of the post. Strip the SEO-spammy AI tells (paragraph kickoffs like "In today's world..." / "It is important to note that..." / "Furthermore" — replace with plain-English transitions).
+- **Routes**: `/blog` → list view with cards (title, category badge, summary, published date). `/blog/[slug]` → article view (H1, byline, prose body, end CTA, breadcrumb JSON-LD, BlogPosting JSON-LD).
+- Update `src/site.config.ts` routes array — `/blog` already has an entry; add the dynamic `/blog/[slug]` pattern is fine to leave out of the routes array since the static index covers sitemap (sitemap.ts can iterate Notion at build time if you have time, otherwise leave it).
+- Replace the `PageStub` in `src/app/blog/page.tsx` with the real index.
+
+If you hit time pressure during this step, ship the static MDX fallback ONLY and leave Notion integration as a wired stub with the env-var fallback path. Saral sees 2 real posts on Friday; full Notion wiring becomes M1 weeks 3-4 work.
+
+---
+
+## Off-limits for this sprint — same as v1 + chatbot reframing
+
+These ship later per the engagement proposal:
+
+- ❌ Retirement Readiness Calculator (full /retirement-planning version) — M2
+- ❌ Human Life Value Calculator — M2
+- ❌ Inflation calc (hand-rolled, replacing the proposal's Calconic embed) — M2
+- ❌ Resources page xlsx gating — M2
+- ❌ Per-state landing pages — M3
+- ❌ GBP setup — separate from code (Badri direct)
+- ❌ **AI chatbot — pulled forward from M3 to M2 per Badri's 5/26 call, but still NOT in this v1.5 sprint.** Surface this in any month-narrative or roadmap copy you touch ("guided website assistant — coming in M2") but do not start building.
+- ❌ Events section (Airtable-driven) — M2 or M3
+- ❌ DMARC / DKIM / SPF fix — Badri handles outside the repo
+- ❌ Adding new dependencies beyond what's listed in step 10

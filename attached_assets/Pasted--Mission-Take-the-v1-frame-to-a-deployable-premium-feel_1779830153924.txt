@@ -1,0 +1,35 @@
+## Mission
+
+Take the v1 frame to a **deployable, premium-feeling, content-real state** by EOD Fri 2026-05-29. The hero gets a confident type-led redesign, the calculator moves out of the hero into its own section, the about page gets the founder's real story, the state-anchoring leak in the footer + disclosure gets killed, the FAQs become accordions, and we add a polish pass (scroll reveals, frosted-glass treatment, subtle background pattern). Light Notion blog pipeline + 2 real posts also ship if time permits — otherwise leave the blog stub.
+
+**Why this matters now**: Saral's first weekly check-in is Fri 5/29 4pm PT. He walks through the kreatively-staged site, lives with it async Sat–Tue, Badri returns from Texas Wed 6/3 night and processes feedback Thu/Fri, cutover to dimeguard.com + $299 invoice on Fri 6/5.
+
+---
+
+## Hard rules (same as v1 — re-state for clarity)
+
+- **Direction D palette is locked.** Brand tokens in `src/site.config.ts` → `brand`. Lime accent (`#C8E04A`) is buttons + highlights only — never body text on light surfaces.
+- **No state-anchoring in user-facing copy.** Strip the four-state list from the footer Licensure column and the per-page Disclosure component. Keep `licensure.licensedStates` data array in siteConfig (sitemap + JSON-LD still consume it); only visible copy changes.
+- **Compliance copy guardrails** (insurance-only broker, no Form ADV gate):
+  - No superlatives: "best", "top-rated", "#1", "leading", "premier", "trusted by thousands"
+  - No outcome-implying language: "guaranteed returns", "will save you $X"; use "may", "can", "designed to help"
+  - No outcome-implying testimonials (Home testimonials section is already removed in v1 — keep removed)
+  - `<Disclosure />` on every content page (already shipped — preserve)
+- **No fabricated specifics.** Every placeholder gets a `TODO[badri]` or `TODO[saral]` comment. Do not invent carrier names, dollar figures, event dates, or testimonials.
+- **One-source-of-truth rule.** All advisor/business/NAP/brand/route metadata flows through `src/site.config.ts`. Do not hardcode the advisor name or business name in components.
+- **Stack constraints.** Do not add new dependencies beyond: `@notionhq/client`, `notion-to-md`, `next-mdx-remote` (only if you reach the blog work), `framer-motion` is forbidden — use IntersectionObserver + CSS transitions for animations, no animation library. No new UI libs.
+
+---
+
+## The work, in priority order
+
+### 1. Strip state-anchoring from footer + Disclosure (~30 min)
+
+Two render paths still leak the four-state list:
+
+- `src/components/site-footer.tsx` lines ~57–65 — "Licensure" column reads `"Licensed insurance broker in CA · TX · CO · NJ."`. Replace the whole `<p>` line with: `"Licensed insurance broker · California-based · Serving the Central Valley and beyond."`
+- `src/components/disclosure.tsx` lines 13–19 — renders `{advisor.fullName} is a licensed insurance broker in {states}. {insuranceOnlyDisclosure}`. Rewrite the JSX so the rendered output is: `{advisor.fullName} is a licensed insurance broker. {insuranceOnlyDisclosure}` (drop the state list entirely; remove the `states` variable from this file).
+
+Do NOT delete `siteConfig.licensure.licensedStates` — sitemap + JSON-LD still read it.
+
+Also remove `siteConfig.licensure.disclosure` field if it's no longer referenced anywhere (grep first; if unused, delete the field).

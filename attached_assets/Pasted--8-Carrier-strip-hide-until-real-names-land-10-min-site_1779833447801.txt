@@ -1,0 +1,61 @@
+### 8. Carrier strip — hide until real names land (~10 min)
+
+`siteConfig.carriers` currently has `Carrier A` through `+1 more` placeholders. These actively hurt trust. **Flip `siteConfig.carrierStrip.enabled = false`** for v1.5. The component already conditionally renders based on this flag — no other code changes needed.
+
+Add a `TODO[saral]` comment next to the `carriers` array: `// TODO[saral]: deliver real carrier list (M2 — Feature Layer per engagement)`.
+
+### 9. Logo placement iteration markers (~15 min)
+
+Header + footer logo sizing needs Badri's eye-test on the staging URL. For now:
+
+- In `src/components/site-header.tsx` line ~44: the logo renders at `className="h-10 w-auto"`. Add a comment: `// TODO[badri]: tune logo height on staging — may need h-12 or h-14 depending on render`. Leave the size as-is for the build.
+- In `src/components/site-footer.tsx` line ~25: the logo renders at `className="h-14 w-auto brightness-0 invert"`. Add a comment: `// TODO[badri]: tune footer logo size + consider dropping brightness-0 invert if the logo has a white-on-dark variant`.
+
+Don't change the actual class values — Badri will eyeball on the staging URL Friday and tune in the edit cycle Thu 6/4.
+
+### 10. Light Notion CMS + 2 sample blog posts (~3 hours — IF time remains)
+
+This step ships **only if steps 1–9 are complete and you still have time before Fri EOD**. Otherwise leave the `/blog` page stubbed.
+
+If you reach this:
+
+- **Stack**: `@notionhq/client` for the API, `notion-to-md` for content conversion, `next-mdx-remote` for rendering. ISR with `revalidate: 300` on `/blog` and `/blog/[slug]`.
+- **Notion DB schema** Saral will populate (document this in a new `src/lib/notion/README.md`):
+  - Title (title) — post title
+  - Slug (rich text) — URL slug
+  - Status (select: Draft / Published) — only Published posts surface on the live site
+  - Published Date (date) — sort order
+  - Summary (rich text) — 1–2 sentence excerpt for index + meta description
+  - Category (select: Insurance / Retirement / Tax / Estate / General)
+  - SEO Title (rich text, optional) — overrides Title for `<title>`
+  - SEO Description (rich text, optional) — overrides Summary for meta description
+  - Body — Notion page body (auto)
+- **Env vars** (add to Replit Secrets pane, surface to Badri before running):
+  - `NOTION_API_KEY` — integration token Saral generates
+  - `NOTION_BLOG_DB_ID` — the database ID Saral shares with the integration
+- **Fallback path**: if `NOTION_API_KEY` is empty at build time, fall back to 2 static MDX posts in `content/blog/` so the blog still renders during the staging window. Pick 2 posts from current dimeguard.com to lift + AEO-rewrite:
+  - `cash-value-life-insurance` (high-intent insurance topic)
+  - `my-employer-sponsored-life-insurance-is-sufficient-are-you-sure` (strong question-as-title, AEO-friendly)
+- **Lift-and-rewrite rules**: keep Saral's factual claims, tighten paragraphs, add a 2–3-sentence intro that hooks on the reader's situation, include a "What to do next" CTA box at the end ("Want to talk through this for your situation? Book a 20-minute call →"), insert a FAQPage JSON-LD block with 3–5 Q&As pulled out of the post. Strip the SEO-spammy AI tells (paragraph kickoffs like "In today's world..." / "It is important to note that..." / "Furthermore" — replace with plain-English transitions).
+- **Routes**: `/blog` → list view with cards (title, category badge, summary, published date). `/blog/[slug]` → article view (H1, byline, prose body, end CTA, breadcrumb JSON-LD, BlogPosting JSON-LD).
+- Update `src/site.config.ts` routes array — `/blog` already has an entry; add the dynamic `/blog/[slug]` pattern is fine to leave out of the routes array since the static index covers sitemap (sitemap.ts can iterate Notion at build time if you have time, otherwise leave it).
+- Replace the `PageStub` in `src/app/blog/page.tsx` with the real index.
+
+If you hit time pressure during this step, ship the static MDX fallback ONLY and leave Notion integration as a wired stub with the env-var fallback path. Saral sees 2 real posts on Friday; full Notion wiring becomes M1 weeks 3-4 work.
+
+---
+
+## Off-limits for this sprint — same as v1 + chatbot reframing
+
+These ship later per the engagement proposal:
+
+- ❌ Retirement Readiness Calculator (full /retirement-planning version) — M2
+- ❌ Human Life Value Calculator — M2
+- ❌ Inflation calc (hand-rolled, replacing the proposal's Calconic embed) — M2
+- ❌ Resources page xlsx gating — M2
+- ❌ Per-state landing pages — M3
+- ❌ GBP setup — separate from code (Badri direct)
+- ❌ **AI chatbot — pulled forward from M3 to M2 per Badri's 5/26 call, but still NOT in this v1.5 sprint.** Surface this in any month-narrative or roadmap copy you touch ("guided website assistant — coming in M2") but do not start building.
+- ❌ Events section (Airtable-driven) — M2 or M3
+- ❌ DMARC / DKIM / SPF fix — Badri handles outside the repo
+- ❌ Adding new dependencies beyond what's listed in step 10
