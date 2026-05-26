@@ -18,8 +18,7 @@ export function SiteFooter() {
             alt={siteConfig.business.legalName}
             width={1280}
             height={1024}
-            // TODO[badri]: tune footer logo size + consider dropping brightness-0 invert if the logo has a white-on-dark variant
-            className="h-14 w-auto brightness-0 invert"
+            className="h-16 w-auto brightness-0 invert"
           />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/75">
             {siteConfig.business.tagline}

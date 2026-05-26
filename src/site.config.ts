@@ -380,12 +380,11 @@ export const siteConfig: SiteConfig = {
     enabled: false,
     eyebrow: "INDEPENDENT · WE PLACE ACROSS MULTIPLE CARRIERS",
   },
+  // TODO[badri]: re-enable Calculators in M2 when real calculator pages ship.
   nav: [
-    { href: "/", label: "Home", primary: true },
     { href: "/retirement-planning", label: "Retirement Planning", primary: true },
     // URL stays /life-insurance until Saral confirms disability scope on Friday.
     { href: "/life-insurance", label: "Life & Disability", primary: true },
-    { href: "/calculators/inflation", label: "Calculators", primary: true },
     { href: "/about", label: "About", primary: true },
     { href: "/contact", label: "Contact", primary: true },
     { href: "/blog", label: "Blog", primary: false },
