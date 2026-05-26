@@ -258,12 +258,10 @@ export const siteConfig: SiteConfig = {
     photoSrc: "/founders/saral.png",
     knowsLanguage: ["English", "Hindi"],
     bioSnippet:
-      "Saral works one-on-one with families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley.",
+      "Saral works one-on-one with first-generation families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley.",
   },
-  // TODO[badri]: drop in Saral's actual bio paragraphs from current Hostinger
-  // dimeguard.com once he supplies them — current /about there returns 404, so
-  // these are placeholder paragraphs grounded in bioSnippet. Add a second
-  // founder entry here when Saral confirms his business partner.
+  // Second founder entry stays commented out until Saral confirms his business
+  // partner's public-inclusion decision.
   founders: [
     {
       name: "Saral Toms",
@@ -271,8 +269,9 @@ export const siteConfig: SiteConfig = {
       photoSrc: "/founders/saral.png",
       knowsLanguage: ["English", "Hindi"],
       bioParagraphs: [
-        "Saral is an independent insurance broker based in Mountain House, California. He works one-on-one with first-generation families across the Central Valley on retirement planning, life and disability coverage, and tax-aware decisions that come up around major life events.",
-        "His practice is deliberately small. Most first conversations are twenty minutes — no script, no products pitched — and a typical engagement begins with a written summary of what's already in place before anything new is recommended.",
+        "I arrived in the United States in 2013 and spent the next six years inside the insurance industry on the IT side, supporting the platforms a major insurance company ran its business on. From that seat I could see how the systems worked — and I could also see that the families on the other end of those systems were navigating some of the biggest financial decisions of their lives essentially blind.",
+        "Once I got my permanent residency and started facing my own long-term financial decisions, the gap became personal. \"despite being well-educated and working inside the insurance industry, I had never been properly taught how money really works.\" So I went and learned it — self-taught, then formally — and got licensed as a life insurance broker so I could sit on the other side of the table and actually help.",
+        "I bring an engineer's mindset to this work. That means building protective systems around a family's plan instead of selling products into it, leading with education instead of pressure, and keeping the practice deliberately small so every household gets real attention. The work spans insurance, tax planning, retirement protection, and estate planning — coordinated, not sold piece by piece.",
       ],
     },
     // Uncomment and edit when Saral confirms his partner's public-inclusion decision.
