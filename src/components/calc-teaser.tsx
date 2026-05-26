@@ -4,71 +4,12 @@ import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { siteConfig } from "@/site.config";
 import { track } from "@/lib/analytics/track";
-
-type ChartPoint = { age: number; balance: number };
-
-type Projection = {
-  series: ChartPoint[];
-  /** Projected nest egg at retirement (FV_savings + FV_contrib). */
-  finalBalance: number;
-  /** Required nest egg = monthlySpend * 12 * drawdownYears. */
-  requiredNestEgg: number;
-};
-
-function formatUsd(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(Math.max(0, Math.round(value)));
-}
-
-/** Display as $X.XXM for headline numbers; falls back to $XXk under $1M. */
-function formatMillions(value: number): string {
-  const v = Math.max(0, value);
-  if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(2)}M`;
-  if (v >= 1_000) return `$${Math.round(v / 1_000)}k`;
-  return formatUsd(v);
-}
-
-/**
- * Year-by-year projection of FV_savings + FV_contrib from current age to
- * retirement age. Mirrors the formula in
- * docs/architecture-decisions-2026-05-20.md so the teaser and the full
- * calculator on /retirement-planning produce identical numbers.
- */
-function project(args: {
-  currentAge: number;
-  retireAt: number;
-  saved: number;
-  monthlySpend: number;
-}): Projection {
-  const {
-    assumedAnnualReturnPre: rPre,
-    drawdownYears,
-    teaserDefaults,
-  } = siteConfig.calculators.retirement;
-  const { monthlyContribution } = teaserDefaults;
-
-  const years = Math.max(0, args.retireAt - args.currentAge);
-  const monthlyRate = rPre / 12;
-  const series: ChartPoint[] = [];
-  for (let i = 0; i <= years; i += 1) {
-    const months = i * 12;
-    const fvSavings = args.saved * Math.pow(1 + rPre, i);
-    const fvContrib =
-      monthlyRate === 0
-        ? monthlyContribution * months
-        : monthlyContribution *
-          ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
-    series.push({ age: args.currentAge + i, balance: fvSavings + fvContrib });
-  }
-  const finalBalance = series.length
-    ? series[series.length - 1].balance
-    : args.saved;
-  const requiredNestEgg = args.monthlySpend * 12 * drawdownYears;
-  return { series, finalBalance, requiredNestEgg };
-}
+import {
+  project,
+  formatUsd,
+  formatMillions,
+  type ChartPoint,
+} from "@/lib/calc/retirement";
 
 /**
  * Inline SVG line chart over a soft grid. No chart library — keeps the

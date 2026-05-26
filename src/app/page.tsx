@@ -7,7 +7,7 @@ import { ServiceCard } from "@/components/service-card";
 import { Faq } from "@/components/faq";
 import { Disclosure } from "@/components/disclosure";
 import { ButtonLink } from "@/components/button";
-import { CalcTeaser } from "@/components/calc-teaser";
+import { HeroNumber } from "@/components/hero-number";
 import { MeetAdvisor } from "@/components/meet-advisor";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -24,22 +24,23 @@ export default function Home() {
             ? { label: siteConfig.heroBadge.label }
             : undefined
         }
-        title={<>Run the number. Then book the call.</>}
+        title={
+          <>Insurance, retirement, and tax — handled in slow conversations.</>
+        }
         lede={
           <>
-            An independent practice for first-generation families. Five inputs,
-            a real retirement number in ninety seconds, then optionally a
-            twenty-minute conversation with the advisor who would actually run
-            your plan.
+            An independent practice for first-generation families. We look at
+            your number together, then decide — no script, no products pitched,
+            no pressure to put anything in place on the first call.
           </>
         }
         primaryCta={{
-          label: `${siteConfig.ctaLabels.runNumber} →`,
-          href: "/retirement-planning#calculator",
-        }}
-        secondaryCta={{
           label: siteConfig.ctaLabels.bookCall,
           href: bookCallHref,
+        }}
+        secondaryCta={{
+          label: `${siteConfig.ctaLabels.runNumber} →`,
+          href: "/#calculator",
         }}
         meta={
           <span>
@@ -47,7 +48,7 @@ export default function Home() {
             returned within one business hour
           </span>
         }
-        aside={siteConfig.heroCalcTeaser.enabled ? <CalcTeaser /> : null}
+        aside={<HeroNumber />}
       />
 
       <HeroTrustStrip />
