@@ -16,13 +16,10 @@ export function SiteFooter() {
           <Image
             src="/logo-white.png"
             alt={siteConfig.business.legalName}
-            width={1280}
-            height={1024}
-            className="h-40 w-auto md:h-44"
+            width={288}
+            height={174}
+            className="h-20 w-auto md:h-24"
           />
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/75">
-            {siteConfig.business.tagline}
-          </p>
           <address className="mt-6 not-italic text-sm leading-relaxed text-white/70">
             <div className="text-white">{siteConfig.nap.name}</div>
             <div>
