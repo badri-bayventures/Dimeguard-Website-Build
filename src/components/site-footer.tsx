@@ -14,11 +14,11 @@ export function SiteFooter() {
       <Container className="grid gap-12 py-16 md:grid-cols-12">
         <div className="md:col-span-5">
           <Image
-            src="/logo-padded.png"
+            src="/logo-white.png"
             alt={siteConfig.business.legalName}
             width={1280}
             height={1024}
-            className="h-16 w-auto brightness-0 invert"
+            className="h-40 w-auto md:h-44"
           />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/75">
             {siteConfig.business.tagline}

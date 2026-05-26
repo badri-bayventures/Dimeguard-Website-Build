@@ -28,7 +28,7 @@ export function SiteHeader() {
     <div className="sticky top-0 z-40 bg-[color:var(--color-surface)]/90 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-surface)]/80">
       <TopTrustBar />
       <header className="border-b border-[color:var(--color-border)]">
-        <Container className="flex h-16 items-center justify-between gap-6">
+        <Container className="flex h-20 items-center justify-between gap-6">
           <Link
             href="/"
             aria-label={`${siteConfig.business.legalName} — home`}
@@ -41,7 +41,7 @@ export function SiteHeader() {
               width={1280}
               height={1026}
               priority
-              className="h-12 w-auto"
+              className="h-16 w-auto"
             />
           </Link>
           <nav
