@@ -33,6 +33,16 @@ export const metadata: Metadata = {
   creator: siteConfig.advisor.fullName,
   publisher: siteConfig.business.legalName,
   robots: { index: true, follow: true },
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        {
+          url: "/blog/rss.xml",
+          title: `${siteConfig.business.legalName} — Notes on planning`,
+        },
+      ],
+    },
+  },
 };
 
 export default function RootLayout({
