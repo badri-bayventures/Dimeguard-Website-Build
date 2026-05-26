@@ -41,6 +41,7 @@ export function SiteHeader() {
               width={1280}
               height={1026}
               priority
+              // TODO[badri]: tune logo height on staging — may need h-12 or h-14 depending on render
               className="h-10 w-auto"
             />
           </Link>
