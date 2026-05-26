@@ -55,13 +55,22 @@ export default function Home() {
       <HeroTrustStrip />
 
       <Section id="calculator" tone="muted">
-        <SectionHeading
-          eyebrow="THE DIMEGUARD NUMBER"
-          title="See where you stand in 90 seconds."
-          lede="Five inputs. A real projection. No signup — your number stays on this page."
-        />
-        <div className="mx-auto mt-12 max-w-4xl">
-          <CalcTeaser />
+        <div className="grid items-start gap-12 md:grid-cols-12">
+          <div className="md:col-span-5">
+            <SectionHeading
+              eyebrow="THE DIMEGUARD NUMBER"
+              title="See where you stand in 90 seconds."
+              lede="Five inputs. A real projection. No signup — your numbers stay on this page."
+            />
+            <p className="mt-6 text-base text-[color:var(--color-ink)]/70">
+              The projection updates live as you type, using the same math as
+              the first call — so what you see here is the same starting point
+              we’d work from together.
+            </p>
+          </div>
+          <div className="md:col-span-7">
+            <CalcTeaser />
+          </div>
         </div>
       </Section>
 
