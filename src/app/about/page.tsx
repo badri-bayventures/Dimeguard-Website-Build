@@ -46,7 +46,7 @@ function FounderCard({ founder }: { founder: Founder }) {
           <p className="mt-1 text-sm text-[color:var(--color-muted)]">
             {founder.role}
           </p>
-          <div className="mt-5 space-y-4 text-[color:var(--color-ink-soft)]">
+          <div className="mt-5 max-w-prose space-y-4 text-[color:var(--color-ink-soft)]">
             {founder.bioParagraphs.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
