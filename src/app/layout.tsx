@@ -44,6 +44,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <head>
         {/*
@@ -57,7 +58,10 @@ export default function RootLayout({
         <JsonLd data={localBusiness(siteConfig)} id="ld-localbusiness" />
         <JsonLd data={person(siteConfig)} id="ld-person" />
       </head>
-      <body className="min-h-full flex flex-col bg-[color:var(--color-surface)] text-[color:var(--color-ink)]">
+      <body
+        className="min-h-full flex flex-col bg-[color:var(--color-surface)] text-[color:var(--color-ink)]"
+        suppressHydrationWarning
+      >
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-[color:var(--color-ink)] focus:px-3 focus:py-2 focus:text-sm focus:text-white"
