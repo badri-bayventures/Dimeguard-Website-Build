@@ -10,7 +10,7 @@ import { localBusiness, person } from "@/lib/schema";
 const fraunces = Fraunces({
   variable: "--font-display",
   subsets: ["latin"],
-  axes: ["opsz"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
