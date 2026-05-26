@@ -32,6 +32,30 @@ MDX posts in `content/blog/` so `/blog` always renders.
 | `SEO Description` | Rich text   | no       | Overrides meta description if set. Otherwise `Summary` is used.                        |
 | Body              | Page body   | yes      | The Notion page itself. Converted to Markdown via `notion-to-md` and rendered as MDX.  |
 
+## Publishing instantly
+
+Flipping `Status` to **Published** makes a post visible within 5 minutes (ISR
+cache window). To skip the wait — e.g. for a campaign post that has to go
+live the moment you publish — hit the revalidation endpoint:
+
+```bash
+curl -X POST https://<your-domain>/api/revalidate \
+  -H "X-Revalidate-Secret: $REVALIDATE_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"slug":"my-new-post-slug"}'
+```
+
+- `REVALIDATE_SECRET` is a shared secret set in the Replit Secrets pane. Pick
+  any long random string; the endpoint rejects requests without a matching
+  `X-Revalidate-Secret` header (401).
+- The endpoint always refreshes `/blog` and `/sitemap.xml`. If you include a
+  `slug`, it also refreshes `/blog/<slug>`. The body is optional — omit it to
+  just bust the listing.
+- You can either run the curl above by hand after publishing, or wire a Notion
+  automation ("When Status is set to Published → Send webhook") to call the
+  same URL with the secret header. The automation only needs to send the
+  `slug` field.
+
 ## Editorial guardrails
 
 Every post must comply with the broker copy guardrails baked into the rest of
