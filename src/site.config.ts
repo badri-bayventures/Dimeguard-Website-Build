@@ -326,6 +326,7 @@ export const siteConfig: SiteConfig = {
   },
   // Names are placeholders until Saral delivers his actual carrier list.
   // Drop a logo into /public/carriers/ and set `logoPath` to render it.
+  // TODO[saral]: deliver real carrier list (M2 — Feature Layer per engagement)
   carriers: [
     { name: "Carrier A" },
     { name: "Carrier B" },
@@ -376,7 +377,7 @@ export const siteConfig: SiteConfig = {
     { top: "Multi-carrier", bottom: "independent broker" },
   ],
   carrierStrip: {
-    enabled: true,
+    enabled: false,
     eyebrow: "INDEPENDENT · WE PLACE ACROSS MULTIPLE CARRIERS",
   },
   nav: [
