@@ -5,9 +5,6 @@ import { Container } from "./container";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
-  const states = siteConfig.licensure.licensedStates
-    .map((s) => s.code)
-    .join(" · ");
   // Per Direction D mockup, footer "Explore" column is the secondary surface:
   // footer-only nav items (Blog, Resources) — primary nav already lives in
   // the header. Legal + social go in the bottom bar.
@@ -58,7 +55,8 @@ export function SiteFooter() {
             Licensure
           </p>
           <p className="mt-4 text-sm text-white/80">
-            Licensed insurance broker in {states}.
+            Licensed insurance broker · California-based · Serving the Central
+            Valley and beyond.
           </p>
           <p className="mt-3 text-xs leading-relaxed text-white/60">
             {siteConfig.licensure.insuranceOnlyDisclosure}
