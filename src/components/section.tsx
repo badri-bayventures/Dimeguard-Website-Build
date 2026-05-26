@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { Container } from "./container";
+import { RevealOnScroll } from "./reveal-on-scroll";
 
 type Tone = "surface" | "muted" | "ink";
 
@@ -26,7 +27,9 @@ export function Section({
       {...rest}
       className={`py-20 md:py-28 ${toneClasses[tone]} ${className}`.trim()}
     >
-      <Container className={containerClassName}>{children}</Container>
+      <RevealOnScroll>
+        <Container className={containerClassName}>{children}</Container>
+      </RevealOnScroll>
     </section>
   );
 }

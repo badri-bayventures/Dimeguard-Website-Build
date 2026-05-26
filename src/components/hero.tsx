@@ -27,15 +27,28 @@ export function Hero({
     <section className="relative overflow-hidden bg-[color:var(--color-surface-muted)] pt-12 pb-16 md:pt-20 md:pb-24">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-32 -right-20 h-[28rem] w-[28rem] rounded-full opacity-30 blur-3xl"
+        className="pointer-events-none absolute inset-0 z-0 opacity-30"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M32 0H0v32' fill='none' stroke='rgb(228,223,210)' stroke-width='1'/></svg>\")",
+          backgroundSize: "32px 32px",
+          maskImage:
+            "radial-gradient(ellipse at center, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0) 85%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at center, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0) 85%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-32 -right-20 z-10 h-[28rem] w-[28rem] rounded-full opacity-30 blur-3xl"
         style={{ background: "var(--color-secondary)" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-24 -left-16 h-[22rem] w-[22rem] rounded-full opacity-25 blur-3xl"
+        className="pointer-events-none absolute -bottom-24 -left-16 z-10 h-[22rem] w-[22rem] rounded-full opacity-25 blur-3xl"
         style={{ background: "var(--color-accent)" }}
       />
-      <Container className="relative grid items-center gap-10 md:grid-cols-5 md:gap-12">
+      <Container className="relative z-20 grid items-center gap-10 md:grid-cols-5 md:gap-12">
         <div className="md:col-span-3">
           {badge ? (
             <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--color-ink-soft)] shadow-sm">

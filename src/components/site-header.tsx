@@ -96,7 +96,7 @@ export function SiteHeader() {
               aria-expanded={menuOpen}
               aria-controls="primary-mobile-nav"
               onClick={() => setMenuOpen((v) => !v)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[color:var(--color-border)] text-[color:var(--color-ink)] hover:bg-[color:var(--color-surface-muted)] md:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[color:var(--color-border)] text-[color:var(--color-ink)] transition-transform duration-150 ease-out active:scale-[0.98] motion-reduce:transform-none hover:bg-[color:var(--color-surface-muted)] md:hidden"
             >
               <svg
                 aria-hidden

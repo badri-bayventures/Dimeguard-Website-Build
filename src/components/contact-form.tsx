@@ -92,7 +92,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="mt-6 inline-flex items-center justify-center rounded-full bg-[color:var(--color-ink)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-ink-soft)] disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-6 inline-flex items-center justify-center rounded-full bg-[color:var(--color-ink)] px-6 py-3 text-sm font-semibold text-white transition-[colors,transform,box-shadow] duration-150 ease-out active:scale-[0.98] motion-reduce:transform-none hover:bg-[color:var(--color-ink-soft)] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
       >
         {status === "submitting" ? "Sending…" : "Send message"}
       </button>
