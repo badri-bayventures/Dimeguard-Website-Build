@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/lib/schema/json-ld";
 import { breadcrumb } from "@/lib/schema";
@@ -66,8 +67,20 @@ export default async function BlogIndexPage() {
                 <li key={post.slug}>
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="group flex h-full flex-col rounded-2xl border border-[color:var(--color-border)] bg-white p-6 transition-shadow hover:shadow-md md:p-8"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-white transition-shadow hover:shadow-md"
                   >
+                    {post.coverImage ? (
+                      <div className="relative aspect-[16/9] w-full overflow-hidden">
+                        <Image
+                          src={post.coverImage}
+                          alt={post.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : null}
+                    <div className="flex flex-1 flex-col p-6 md:p-8">
                     <div className="flex flex-wrap items-center gap-2">
                       {(post.tags ?? []).map((tag) => (
                         <span
@@ -98,6 +111,7 @@ export default async function BlogIndexPage() {
                     <span className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-ink)] group-hover:underline">
                       Read post →
                     </span>
+                    </div>
                   </Link>
                 </li>
               ))}
