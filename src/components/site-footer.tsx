@@ -14,7 +14,7 @@ export function SiteFooter() {
       <Container className="grid gap-12 py-16 md:grid-cols-12">
         <div className="md:col-span-5">
           <Image
-            src="/logo-on-dark.png"
+            src="/logo.png"
             alt={siteConfig.business.legalName}
             width={1280}
             height={1026}
