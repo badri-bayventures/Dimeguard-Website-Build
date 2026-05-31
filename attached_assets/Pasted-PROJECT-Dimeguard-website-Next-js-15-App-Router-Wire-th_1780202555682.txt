@@ -1,0 +1,46 @@
+PROJECT: Dimeguard website (Next.js 15, App Router). Wire the EXISTING /blog section to pull posts from a Notion database as the CMS. Do not rebuild the blog UI or the SEO scaffolding that already exists — discover it and connect the Notion data source into it, matching the existing code style.
+
+CONTEXT (inspect first)
+- The site already has a /blog framework plus SEO plumbing (sitemap, llms.txt, JSON-LD, per-route metadata). Read the existing blog routes, the SEO/metadata helpers, and site.config.ts BEFORE writing anything, and reuse those patterns.
+- Hosting is Vercel. Env vars must work in both Replit and Vercel.
+
+NOTION SOURCE
+- Database ID: 371f76ded63280d79a31c53040533710
+- Auth: read env var NOTION_TOKEN. Read NOTION_DATABASE_ID from env, defaulting to the ID above if unset.
+- Read these properties by these exact names, EXCEPT the title:
+  - Title: detect the property whose type is "title" (do NOT hardcode the property name — it may be labeled "Name (Title)") → post title / H1
+  - Slug (rich_text) → URL segment
+  - Status (select) → render ONLY posts where Status == "Published"
+  - Publish Date (date) → display date + sort key (newest first)
+  - Excerpt (rich_text) → meta description + list-card summary
+  - Author (rich_text) → byline (fallback "Saral Toms" if empty)
+  - Tags (multi_select) → topic tags
+  - Cover (files) → hero image; fall back to the Notion page cover if the Cover property is empty
+- Post body = the Notion page's block content, rendered to clean semantic HTML.
+
+IMPLEMENTATION
+- Use @notionhq/client for queries + metadata. For the body, convert page blocks to clean semantic HTML (notion-to-md → markdown → react-markdown + remark-gfm, or an equivalent that yields proper headings/lists/links/images/code/blockquotes/tables). Install only what's needed.
+- Create a data layer (lib/notion.ts or matching the repo's convention):
+  - getPublishedPosts(): published posts (metadata only), sorted by Publish Date desc. Handle Notion pagination (has_more / next_cursor).
+  - getPostBySlug(slug): single post metadata
+  - getPostContent(pageId): rendered body HTML
+- Wire these into the existing /blog list page and /blog/[slug] detail page. Use generateStaticParams for published slugs and ISR with revalidate = 300 so new Notion posts appear without a redeploy.
+- generateMetadata per post using the EXISTING metadata helper: title = post title, description = Excerpt, canonical = post URL, OpenGraph (title, description, type "article", publishedTime from Publish Date, authors, images = Cover), Twitter summary_large_image.
+- Inject BlogPosting JSON-LD per post, matching the repo's existing JSON-LD pattern (headline, description, datePublished, author, image, mainEntityOfPage).
+- Add published posts to the existing sitemap generator (and llms.txt if it enumerates posts).
+
+ROBUSTNESS
+- If NOTION_TOKEN or NOTION_DATABASE_ID is missing, do NOT crash the build: getPublishedPosts() returns [] and /blog renders an empty state. Build must stay green before env is set.
+- Notion file URLs (page/property images) are temporary signed URLs (~1h expiry). revalidate = 300 keeps them fresh; if simple, proxy/optimize them through next/image instead.
+
+OFF-LIMITS (do not touch)
+- Calculators, hero, home, about, contact, retirement, life pages
+- Brand tokens / site.config.ts beyond any blog-source config you must add
+- Do NOT import or write any blog post content — the database is intentionally empty; posts come later
+- No new analytics, no other integrations
+
+ENV TO SET (Replit Secrets)
+- NOTION_TOKEN = (the integration secret, starts with ntn_)
+- NOTION_DATABASE_ID = 371f76ded63280d79a31c53040533710
+
+When done: list which files changed, which packages you installed, and confirm the /blog routes build cleanly with an empty database.
