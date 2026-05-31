@@ -51,3 +51,12 @@ externalPort = 80
 [[ports]]
 localPort = 8081
 externalPort = 8081
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+LEAD_FROM_EMAIL = "leads@send.dimeguard.com"
+LEAD_TO_EMAIL = "stoms@dimeguard.com"

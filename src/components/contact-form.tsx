@@ -14,6 +14,13 @@ export function ContactForm() {
     setError(null);
     const form = event.currentTarget;
     const data = Object.fromEntries(new FormData(form));
+    const email = typeof data.email === "string" ? data.email.trim() : "";
+    const phone = typeof data.phone === "string" ? data.phone.trim() : "";
+    if (!email && !phone) {
+      setStatus("error");
+      setError("Please add an email or phone number so we can reach you.");
+      return;
+    }
     try {
       const res = await fetch("/api/lead", {
         method: "POST",
@@ -52,23 +59,26 @@ export function ContactForm() {
       className="rounded-2xl border border-[color:var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] md:p-8"
       noValidate={false}
     >
-      <div className="grid gap-4 md:grid-cols-2">
-        <Field label="Name" name="name" type="text" required autoComplete="name" />
-        <Field
-          label="Email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
+      {/* Honeypot: hidden from real users and screen readers; bots fill it. */}
+      <div aria-hidden="true" className="absolute left-[-9999px] top-[-9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="company">Company</label>
+        <input
+          id="company"
+          name="company"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
         />
       </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field label="Name" name="name" type="text" required autoComplete="name" />
+        <Field label="Email" name="email" type="email" autoComplete="email" />
+      </div>
       <div className="mt-4">
-        <Field
-          label="Phone (optional)"
-          name="phone"
-          type="tel"
-          autoComplete="tel"
-        />
+        <Field label="Phone" name="phone" type="tel" autoComplete="tel" />
+        <p className="mt-2 text-xs text-[color:var(--color-muted)]">
+          Add an email or phone number so we can reach you.
+        </p>
       </div>
       <div className="mt-4">
         <label
