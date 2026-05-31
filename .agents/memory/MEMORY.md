@@ -1,0 +1,1 @@
+- [Dev server verification](dev-server-verification.md) — curling public $REPLIT_DEV_DOMAIN gives 502 (mTLS proxy); curl http://localhost:$PORT (usually 5000) instead.

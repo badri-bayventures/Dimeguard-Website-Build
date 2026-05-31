@@ -20,33 +20,39 @@ export type BlogPostSummary = {
   slug: string;
   title: string;
   summary: string;
-  category: BlogCategory;
+  /** MDX-only taxonomy. The live Notion database uses `tags` instead. */
+  category?: BlogCategory;
   publishedDate: string;
+  /** Byline. Falls back to "Saral Toms" for Notion posts with no Author. */
+  author?: string;
+  /** Topic tags (Notion `Tags` multi_select). */
+  tags?: string[];
+  /** Hero/cover image URL (signed Notion file URL, kept fresh by ISR). */
+  coverImage?: string;
   seoTitle?: string;
   seoDescription?: string;
 };
 
 export type BlogPost = BlogPostSummary & {
-  /** Markdown body, ready to feed to next-mdx-remote. */
+  /** Markdown body, ready to render. */
   body: string;
 };
 
-const VALID_CATEGORIES: BlogCategory[] = [
-  "Insurance",
-  "Retirement",
-  "Tax",
-  "Estate",
-  "General",
-];
+const DEFAULT_DATABASE_ID = "371f76ded63280d79a31c53040533710";
+const DEFAULT_AUTHOR = "Saral Toms";
+
+function databaseId(): string {
+  return process.env.NOTION_DATABASE_ID || DEFAULT_DATABASE_ID;
+}
 
 export function notionEnabled(): boolean {
-  return Boolean(process.env.NOTION_API_KEY && process.env.NOTION_BLOG_DB_ID);
+  return Boolean(process.env.NOTION_TOKEN && databaseId());
 }
 
 let cachedClient: Client | null = null;
 function getClient(): Client {
   if (!cachedClient) {
-    cachedClient = new Client({ auth: process.env.NOTION_API_KEY });
+    cachedClient = new Client({ auth: process.env.NOTION_TOKEN });
   }
   return cachedClient;
 }
@@ -57,53 +63,82 @@ function plain(rich: RichTextLike[] | undefined): string {
   return rich.map((t) => t.plain_text ?? "").join("").trim();
 }
 
-function coerceCategory(value: string | undefined): BlogCategory {
-  if (value && (VALID_CATEGORIES as string[]).includes(value)) {
-    return value as BlogCategory;
-  }
-  return "General";
+type AnyProps = Record<string, unknown>;
+type PropMap = Record<string, { type?: string } & AnyProps>;
+
+type FileEntry = { file?: { url?: string }; external?: { url?: string } };
+
+function firstFileUrl(prop: ({ type?: string } & AnyProps) | undefined):
+  | string
+  | undefined {
+  const files = prop?.files as FileEntry[] | undefined;
+  const f = files?.[0];
+  return f?.file?.url ?? f?.external?.url ?? undefined;
 }
 
-type AnyProps = Record<string, unknown>;
+type PageCover = {
+  external?: { url?: string };
+  file?: { url?: string };
+} | null;
 
-function readSummary(page: { id: string; properties: AnyProps }):
-  | BlogPostSummary
-  | null {
-  const props = page.properties as Record<string, { type?: string } & AnyProps>;
+function pageCoverUrl(page: { cover?: PageCover }): string | undefined {
+  const cover = page.cover;
+  if (!cover) return undefined;
+  return cover.external?.url ?? cover.file?.url ?? undefined;
+}
 
-  const titleProp = props["Title"];
+function readTitle(props: PropMap): string {
+  for (const key of Object.keys(props)) {
+    const p = props[key];
+    if (p?.type === "title") {
+      return plain(p.title as RichTextLike[] | undefined);
+    }
+  }
+  return "";
+}
+
+function readTags(prop: ({ type?: string } & AnyProps) | undefined): string[] {
+  const opts = prop?.multi_select as Array<{ name?: string }> | undefined;
+  if (!opts) return [];
+  return opts.map((o) => o.name ?? "").filter(Boolean);
+}
+
+type NotionPage = { id: string; properties: PropMap; cover?: PageCover };
+
+function readSummary(page: NotionPage): BlogPostSummary | null {
+  const props = page.properties;
+
   const slugProp = props["Slug"];
   const statusProp = props["Status"];
-  const dateProp = props["Published Date"];
-  const summaryProp = props["Summary"];
-  const categoryProp = props["Category"];
-  const seoTitleProp = props["SEO Title"];
-  const seoDescProp = props["SEO Description"];
+  const dateProp = props["Publish Date"];
+  const excerptProp = props["Excerpt"];
+  const authorProp = props["Author"];
+  const tagsProp = props["Tags"];
+  const coverProp = props["Cover"];
 
-  const title = plain(titleProp?.title as RichTextLike[] | undefined);
+  const title = readTitle(props);
   const slug = plain(slugProp?.rich_text as RichTextLike[] | undefined);
   const status = (statusProp?.select as { name?: string } | undefined)?.name;
   const publishedDate = (dateProp?.date as { start?: string } | undefined)
     ?.start;
-  const summary = plain(summaryProp?.rich_text as RichTextLike[] | undefined);
-  const categoryRaw = (categoryProp?.select as { name?: string } | undefined)
-    ?.name;
-  const seoTitle = plain(seoTitleProp?.rich_text as RichTextLike[] | undefined);
-  const seoDescription = plain(
-    seoDescProp?.rich_text as RichTextLike[] | undefined,
-  );
+  const summary = plain(excerptProp?.rich_text as RichTextLike[] | undefined);
+  const author =
+    plain(authorProp?.rich_text as RichTextLike[] | undefined) ||
+    DEFAULT_AUTHOR;
+  const tags = readTags(tagsProp);
+  const coverImage = firstFileUrl(coverProp) ?? pageCoverUrl(page);
 
   if (status !== "Published") return null;
-  if (!title || !slug || !publishedDate || !summary) return null;
+  if (!title || !slug || !publishedDate) return null;
 
   return {
     slug,
     title,
     summary,
-    category: coerceCategory(categoryRaw),
     publishedDate,
-    seoTitle: seoTitle || undefined,
-    seoDescription: seoDescription || undefined,
+    author,
+    tags: tags.length ? tags : undefined,
+    coverImage,
   };
 }
 
@@ -117,14 +152,14 @@ let cachedDataSourceId: string | null = null;
 async function resolveDataSourceId(): Promise<string> {
   if (cachedDataSourceId) return cachedDataSourceId;
   const client = getClient();
-  const databaseId = process.env.NOTION_BLOG_DB_ID!;
+  const id = databaseId();
   const db = (await client.databases.retrieve({
-    database_id: databaseId,
+    database_id: id,
   })) as { data_sources?: Array<{ id: string }> };
   const first = db.data_sources?.[0]?.id;
   if (!first) {
     throw new Error(
-      `Notion database ${databaseId} has no data sources — check the ID and that the integration has access.`,
+      `Notion database ${id} has no data sources — check the ID and that the integration has access.`,
     );
   }
   cachedDataSourceId = first;
@@ -136,22 +171,32 @@ export async function fetchPublishedSummaries(): Promise<BlogPostSummary[]> {
   const client = getClient();
   const dataSourceId = await resolveDataSourceId();
 
-  const res = await client.dataSources.query({
-    data_source_id: dataSourceId,
-    filter: {
-      property: "Status",
-      select: { equals: "Published" },
-    },
-    sorts: [{ property: "Published Date", direction: "descending" }],
-    page_size: 100,
-  });
-
   const out: BlogPostSummary[] = [];
-  for (const page of res.results) {
-    if (!isFullPage(page)) continue;
-    const summary = readSummary(page);
-    if (summary) out.push(summary);
-  }
+  let cursor: string | undefined = undefined;
+
+  // Follow Notion's cursor-based pagination so every published post is listed,
+  // not just the first page of results.
+  do {
+    const res = await client.dataSources.query({
+      data_source_id: dataSourceId,
+      filter: {
+        property: "Status",
+        select: { equals: "Published" },
+      },
+      sorts: [{ property: "Publish Date", direction: "descending" }],
+      page_size: 100,
+      start_cursor: cursor,
+    });
+
+    for (const page of res.results) {
+      if (!isFullPage(page)) continue;
+      const summary = readSummary(page as unknown as NotionPage);
+      if (summary) out.push(summary);
+    }
+
+    cursor = res.has_more ? (res.next_cursor ?? undefined) : undefined;
+  } while (cursor);
+
   return out;
 }
 
@@ -173,7 +218,7 @@ export async function fetchPostBySlug(slug: string): Promise<BlogPost | null> {
 
   const page = res.results[0];
   if (!page || !isFullPage(page)) return null;
-  const summary = readSummary(page);
+  const summary = readSummary(page as unknown as NotionPage);
   if (!summary) return null;
 
   const n2m = new NotionToMarkdown({ notionClient: client });

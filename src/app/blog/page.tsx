@@ -68,10 +68,15 @@ export default async function BlogIndexPage() {
                     href={`/blog/${post.slug}`}
                     className="group flex h-full flex-col rounded-2xl border border-[color:var(--color-border)] bg-white p-6 transition-shadow hover:shadow-md md:p-8"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="inline-flex items-center rounded-full bg-[color:var(--color-surface-muted)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--color-ink-soft)]">
-                        {post.category}
-                      </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {(post.tags ?? []).map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center rounded-full bg-[color:var(--color-surface-muted)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--color-ink-soft)]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
                       <time
                         dateTime={post.publishedDate}
                         className="text-xs text-[color:var(--color-muted)]"
@@ -85,6 +90,11 @@ export default async function BlogIndexPage() {
                     <p className="mt-3 text-[color:var(--color-muted)]">
                       {post.summary}
                     </p>
+                    {post.author ? (
+                      <p className="mt-4 text-xs text-[color:var(--color-muted)]">
+                        By {post.author}
+                      </p>
+                    ) : null}
                     <span className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-ink)] group-hover:underline">
                       Read post →
                     </span>

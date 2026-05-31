@@ -29,13 +29,21 @@ export async function GET() {
   const items = posts
     .map((post) => {
       const link = absoluteUrl(`/blog/${post.slug}`);
+      const tagList = post.tags?.length
+        ? post.tags
+        : post.category
+          ? [post.category]
+          : [];
+      const categories = tagList.map(
+        (tag) => `      <category>${escapeXml(tag)}</category>`,
+      );
       return [
         "    <item>",
         `      <title>${escapeXml(post.title)}</title>`,
         `      <link>${escapeXml(link)}</link>`,
         `      <guid isPermaLink="true">${escapeXml(link)}</guid>`,
         `      <pubDate>${toRfc822(post.publishedDate)}</pubDate>`,
-        `      <category>${escapeXml(post.category)}</category>`,
+        ...categories,
         `      <description>${escapeXml(post.summary)}</description>`,
         "    </item>",
       ].join("\n");

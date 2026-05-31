@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/lib/schema/json-ld";
@@ -9,7 +10,9 @@ import { siteConfig } from "@/site.config";
 import { Container } from "@/components/container";
 import { Disclosure } from "@/components/disclosure";
 import { BlogEndCta } from "@/components/blog-cta";
+import { NotionBody } from "@/components/markdown";
 import { getPostBySlug, listPostSummaries } from "@/lib/blog";
+import { notionEnabled } from "@/lib/notion";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -50,7 +53,10 @@ export async function generateMetadata(
     path: `/blog/${post.slug}`,
     title: post.seoTitle ?? post.title,
     description: post.seoDescription ?? post.summary,
+    ogImage: post.coverImage,
     ogType: "article",
+    publishedTime: post.publishedDate,
+    authors: [post.author ?? siteConfig.advisor.fullName],
   });
 }
 
@@ -73,7 +79,8 @@ export default async function BlogPostPage(
       description: post.seoDescription ?? post.summary,
       path,
       datePublished: post.publishedDate,
-      authorName: siteConfig.advisor.fullName,
+      authorName: post.author ?? siteConfig.advisor.fullName,
+      imageUrl: post.coverImage,
     }),
   ];
   if (post.faqs && post.faqs.length > 0) {
@@ -98,10 +105,15 @@ export default async function BlogPostPage(
               ← Blog
             </Link>
           </nav>
-          <div className="mt-6 flex items-center gap-3">
-            <span className="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--color-ink-soft)]">
-              {post.category}
-            </span>
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            {(post.tags ?? []).map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--color-ink-soft)]"
+              >
+                {tag}
+              </span>
+            ))}
             <time
               dateTime={post.publishedDate}
               className="text-xs text-[color:var(--color-muted)]"
@@ -116,15 +128,36 @@ export default async function BlogPostPage(
             {post.title}
           </h1>
           <p className="mt-4 text-sm text-[color:var(--color-muted)]">
-            By {siteConfig.advisor.fullName}
+            By {post.author ?? siteConfig.advisor.fullName}
           </p>
         </Container>
       </section>
 
+      {post.coverImage ? (
+        <section className="bg-[color:var(--color-surface-muted)] pb-10 md:pb-14">
+          <Container>
+            <div className="relative mx-auto aspect-[16/9] w-full max-w-4xl overflow-hidden rounded-2xl">
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 896px"
+                className="object-cover"
+                priority
+              />
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
       <section className="py-12 md:py-16">
         <Container>
           <article className="post-body mx-auto max-w-2xl">
-            <MDXRemote source={post.body} />
+            {notionEnabled() ? (
+              <NotionBody source={post.body} />
+            ) : (
+              <MDXRemote source={post.body} />
+            )}
             <BlogEndCta />
           </article>
         </Container>
