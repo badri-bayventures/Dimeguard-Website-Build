@@ -6,24 +6,13 @@ import { breadcrumb } from "@/lib/schema";
 import { Container } from "@/components/container";
 import { Disclosure } from "@/components/disclosure";
 import { listPostSummaries } from "@/lib/blog";
+import { formatDate } from "@/lib/format-date";
 
 const PATH = "/blog";
 
 export const revalidate = 300;
 
 export const generateMetadata = () => buildMetadata({ path: PATH });
-
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return dateFormatter.format(d);
-}
 
 export default async function BlogIndexPage() {
   const posts = await listPostSummaries();

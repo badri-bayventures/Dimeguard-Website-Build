@@ -13,21 +13,10 @@ import { BlogEndCta } from "@/components/blog-cta";
 import { NotionBody } from "@/components/markdown";
 import { getPostBySlug, listPostSummaries } from "@/lib/blog";
 import { notionEnabled } from "@/lib/notion";
+import { formatDate } from "@/lib/format-date";
 
 export const revalidate = 300;
 export const dynamicParams = true;
-
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return dateFormatter.format(d);
-}
 
 export async function generateStaticParams() {
   const posts = await listPostSummaries();
