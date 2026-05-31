@@ -1,0 +1,32 @@
+PROJECT: Dimeguard website (Next.js 15, App Router). Wire the site's lead forms to send an email notification on submit via Resend. SMS and Airtable are separate, later work — do NOT add them now.
+
+INSPECT FIRST
+- Find the existing contact form (/contact) and any calculator lead-capture forms. Identify how they currently submit. Capture fields: Name, Phone, Email, Comment. Calculators may pass a context field (which calculator/result) — include it if present.
+
+IMPLEMENT
+- Create ONE server-side API route handler (app/api/lead/route.ts) that all lead forms POST to. It:
+  1. Validates server-side: Name + (Email or Phone) required; valid email format; reject if a hidden honeypot field is filled (spam trap).
+  2. Sends a notification email via Resend:
+     - to: env LEAD_TO_EMAIL
+     - from: env LEAD_FROM_EMAIL
+     - replyTo: the submitter's email (so a reply goes straight to the prospect)
+     - subject: "New website lead: {Name}"
+     - body (text + simple HTML): Name, Phone, Email, Comment, source page/form, timestamp
+  3. Returns success on send; on a Resend error, return a clear error to the client and log server-side. Do not crash.
+- Wire the existing forms to POST here; show a success state on 200 and an error state on failure. Keep existing form styling.
+- Use the official `resend` SDK. Structure the handler so a second channel (SMS/Airtable) can be slotted in later without rework, but DO NOT implement them now.
+
+SECURITY
+- Secrets server-side only — never NEXT_PUBLIC_. Honeypot + validation. No PII in logs beyond debugging needs.
+
+OFF-LIMITS
+- SMS/Twilio, Airtable, blog/Notion work, calculator math, brand tokens, other pages
+
+ENV (Replit Secrets now; mirror to Vercel next week)
+- RESEND_API_KEY
+- LEAD_FROM_EMAIL = leads@send.dimeguard.com
+- LEAD_TO_EMAIL = stoms@dimeguard.com
+
+NOTE: sending will fail until send.dimeguard.com is verified in Resend (a DNS task scheduled for next week's go-live). That's expected — the goal now is wired code, not a delivered test.
+
+When done: list files changed + packages installed, and confirm the handler is wired (live delivery pending domain verification).

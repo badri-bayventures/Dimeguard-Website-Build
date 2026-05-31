@@ -1,0 +1,37 @@
+PROJECT: Dimeguard website (Next.js 15, App Router). Wire the site's lead forms to send a notification on submit. Primary channel: email via Resend. Also write to Airtable and send an SMS via Twilio WHEN those are configured — but email is the only hard requirement; the others activate only if their env vars are present and must never block the submission or each other.
+
+INSPECT FIRST
+- Find the existing contact form (/contact) and any calculator lead-capture forms. Identify how they currently submit (if at all). Capture fields: Name, Phone, Email, Comment. Calculators may also pass a context field (which calculator / result) — include it if present.
+
+IMPLEMENT
+- Create ONE server-side API route handler (e.g. app/api/lead/route.ts) that all lead forms POST to. It:
+  1. Validates server-side: Name + (Email or Phone) required; valid email format; reject if a hidden honeypot field is filled (spam trap).
+  2. Sends a notification EMAIL via Resend:
+     - to: env LEAD_TO_EMAIL
+     - from: env LEAD_FROM_EMAIL
+     - replyTo: the submitter's email (so a reply goes straight to the prospect)
+     - subject: "New website lead: {Name}"
+     - body (text + simple HTML): Name, Phone, Email, Comment, source page/form, timestamp
+  3. If Airtable env present (AIRTABLE_TOKEN, AIRTABLE_BASE_ID, AIRTABLE_TABLE_NAME): also create a record with those fields. If absent, skip silently.
+  4. If Twilio env present (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER, LEAD_SMS_TO): also send SMS "New lead: {Name} — {Phone} — {Email}". If absent, skip silently.
+  5. Returns success to the client as long as the lead was captured (email sent OR Airtable write succeeded). Wrap each integration in its own try/catch — a failure in one must not break the others or the user response. Log failures server-side.
+- Wire the existing forms to POST to this route; show a success state on 200 and an error state on failure. Keep existing form styling.
+- Use official SDKs: resend, twilio, and airtable (or Airtable REST). Install only what's used.
+
+ROBUSTNESS / SECURITY
+- All secrets server-side only — never NEXT_PUBLIC_.
+- Anti-spam: honeypot field + reject empty/invalid. Add a light per-IP rate limit only if trivial.
+- No PII in logs beyond what's needed to debug.
+
+OFF-LIMITS
+- Blog/Notion work, calculator math, brand tokens, other pages' content
+- Don't add a database beyond Airtable; don't add auth
+
+ENV (Replit Secrets; mirror to Vercel before go-live)
+- RESEND_API_KEY
+- LEAD_FROM_EMAIL = leads@send.dimeguard.com
+- LEAD_TO_EMAIL = stoms@dimeguard.com
+- (optional SMS) TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER, LEAD_SMS_TO
+- (optional Airtable) AIRTABLE_TOKEN, AIRTABLE_BASE_ID, AIRTABLE_TABLE_NAME
+
+When done: list files changed, packages installed, and confirm a test submission delivers an email (note Airtable/SMS as active or skipped based on env).
