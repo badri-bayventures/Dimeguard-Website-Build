@@ -65,7 +65,7 @@ function FounderCard({ founder }: { founder: Founder }) {
 export default function AboutPage() {
   const founders = siteConfig.founders;
   const isTwo = founders.length >= 2;
-  const bookCallHref = siteConfig.contact.calendlyUrl || "/contact";
+  const bookCallHref = "/book?source=footer";
 
   const why = [
     {

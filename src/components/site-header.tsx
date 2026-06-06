@@ -79,13 +79,7 @@ export function SiteHeader() {
               </span>
             ) : null}
             <div className="hidden sm:block">
-              <ButtonLink
-                href={
-                  siteConfig.contact.calendlyUrl ||
-                  "/retirement-planning#calculator"
-                }
-                size="md"
-              >
+              <ButtonLink href="/book?source=footer" size="md">
                 {ctaLabels.bookCall} →
               </ButtonLink>
             </div>
@@ -139,10 +133,7 @@ export function SiteHeader() {
               ) : null}
               <div className="mt-4">
                 <ButtonLink
-                  href={
-                    siteConfig.contact.calendlyUrl ||
-                    "/retirement-planning#calculator"
-                  }
+                  href="/book?source=footer"
                   size="md"
                   className="w-full justify-center"
                 >

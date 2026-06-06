@@ -13,7 +13,7 @@ const PATH = "/retirement-planning";
 export const generateMetadata = () => buildMetadata({ path: PATH });
 
 export default function RetirementPlanningPage() {
-  const bookCallHref = siteConfig.contact.calendlyUrl || "/contact";
+  const bookCallHref = "/book?source=retirement";
 
   const lookAt = [
     {

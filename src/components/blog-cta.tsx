@@ -7,7 +7,7 @@ import { siteConfig } from "@/site.config";
  * consistent between Notion- and MDX-sourced posts.
  */
 export function BlogEndCta() {
-  const href = siteConfig.contact.calendlyUrl || "/contact";
+  const href = "/book?source=footer";
   return (
     <aside className="not-prose mt-12 rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] p-6 md:p-8">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-ink-soft)]">

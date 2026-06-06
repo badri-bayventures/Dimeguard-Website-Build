@@ -15,7 +15,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 export const generateMetadata = () => buildMetadata({ path: "/" });
 
 export default function Home() {
-  const bookCallHref = siteConfig.contact.calendlyUrl || "/contact";
+  const bookCallHref = "/book?source=hero";
 
   return (
     <>

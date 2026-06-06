@@ -19,7 +19,7 @@ type ContactChannel = {
 };
 
 export default function ContactPage() {
-  const { nap, contact } = siteConfig;
+  const { nap } = siteConfig;
 
   const channels: ContactChannel[] = [];
   if (nap.email) {
@@ -38,14 +38,12 @@ export default function ContactPage() {
       hint: "Calls returned within one business hour.",
     });
   }
-  if (contact.calendlyUrl) {
-    channels.push({
-      label: "Book a call",
-      value: "20-minute Calendly",
-      href: contact.calendlyUrl,
-      hint: "Pick a time that works — no prep required.",
-    });
-  }
+  channels.push({
+    label: "Book a call",
+    value: "20-minute call",
+    href: "/book?source=footer",
+    hint: "Pick a time that works — no prep required.",
+  });
 
   return (
     <>

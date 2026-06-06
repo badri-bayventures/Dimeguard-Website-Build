@@ -13,7 +13,7 @@ const PATH = "/life-insurance";
 export const generateMetadata = () => buildMetadata({ path: PATH });
 
 export default function LifeInsurancePage() {
-  const bookCallHref = siteConfig.contact.calendlyUrl || "/contact";
+  const bookCallHref = "/book?source=life";
 
   const lookAt = [
     {

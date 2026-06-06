@@ -592,6 +592,82 @@ export const siteConfig: SiteConfig = {
   },
 };
 
+/**
+ * Source-aware copy for the /book page left panel. The `?source=` query param
+ * selects which entry's heading/subcopy/bullets render; unknown or missing
+ * sources fall back to `footer`. Kept here (not in a component) so the copy is
+ * editable without touching the booking UI.
+ */
+export type BookingSourceCopy = {
+  /** Lead-in fragment of the heading, rendered in ink. */
+  heading: string;
+  /** Trailing fragment of the heading, rendered in the accent color. */
+  headingAccent: string;
+  /** One supporting line beneath the heading. */
+  subcopy: string;
+  /** 2–3 reassurance bullets describing what the call covers. */
+  bullets: string[];
+};
+
+export type BookingSourceKey = "hero" | "retirement" | "life" | "footer";
+
+export const bookingSourceConfig: Record<BookingSourceKey, BookingSourceCopy> = {
+  hero: {
+    heading: "Let's look at your number",
+    headingAccent: "together.",
+    subcopy:
+      "You came from the homepage — start where most families do: a clear-eyed look at retirement, insurance, and tax in one slow conversation.",
+    bullets: [
+      "Your retirement number and how close you are.",
+      "Whether your coverage matches who depends on you.",
+      "The next small step — if there is one.",
+    ],
+  },
+  retirement: {
+    heading: "Find out where",
+    headingAccent: "you stand.",
+    subcopy:
+      "You were reading about retirement planning. Bring whatever you know about your savings and timeline — we'll map the rest on the call.",
+    bullets: [
+      "Current savings, contributions, and target income.",
+      "Social Security timing and tax-bucket coordination.",
+      "The gap, if there is one — and what closes it.",
+    ],
+  },
+  life: {
+    heading: "Estimate the coverage",
+    headingAccent: "your family needs.",
+    subcopy:
+      "You were reading about life & disability. We'll talk through who depends on your income and what term or permanent coverage may fit.",
+    bullets: [
+      "Income to replace and who relies on it.",
+      "What your employer coverage actually does.",
+      "Term vs permanent — and which job each one does.",
+    ],
+  },
+  footer: {
+    heading: "A 20-minute call,",
+    headingAccent: "no pressure.",
+    subcopy:
+      "Pick a time that works. The first call is a relaxed conversation — no script, no products pitched, no obligation to put anything in place.",
+    bullets: [
+      "Where you stand today, in plain language.",
+      "The gaps worth paying attention to.",
+      "What your options look like — and what they don't.",
+    ],
+  },
+};
+
+export function resolveBookingSource(
+  source: string | null | undefined,
+): { key: BookingSourceKey; copy: BookingSourceCopy } {
+  const key: BookingSourceKey =
+    source && Object.hasOwn(bookingSourceConfig, source)
+      ? (source as BookingSourceKey)
+      : "footer";
+  return { key, copy: bookingSourceConfig[key] };
+}
+
 export function getRoute(path: string): RouteMeta | undefined {
   return siteConfig.routes.find((r) => r.path === path);
 }

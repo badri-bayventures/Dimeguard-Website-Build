@@ -23,6 +23,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.6
+      react-calendly:
+        specifier: ^4.4.0
+        version: 4.4.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-dom:
         specifier: ^19.0.0
         version: 19.2.6(react@19.2.6)
@@ -1908,6 +1911,13 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  react-calendly@4.4.0:
+    resolution: {integrity: sha512-kMd8fEby0plL5aCebhjq9aesOJ6YWcmR3Pjs3bufncykrp7b6TryaCnWGoq4xZc/oipyudAVCIRgPVUjUEr8nQ==}
+    engines: {node: '>=8', npm: '>=5'}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   react-dom@19.2.6:
     resolution: {integrity: sha512-0prMI+hvBbPjsWnxDLxlCGyM8PN6UuWjEUCYmZhO67xIV9Xasa/r/vDnq+Xyq4Lo27g8QSbO5YzARu0D1Sps3g==}
@@ -4559,6 +4569,11 @@ snapshots:
   punycode@2.3.1: {}
 
   queue-microtask@1.2.3: {}
+
+  react-calendly@4.4.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+    dependencies:
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
 
   react-dom@19.2.6(react@19.2.6):
     dependencies:
