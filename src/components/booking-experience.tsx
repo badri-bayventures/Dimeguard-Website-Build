@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { InlineWidget } from "react-calendly";
 import { siteConfig, resolveBookingSource } from "@/site.config";
+import { track } from "@/lib/analytics/track";
 import { ButtonLink } from "./button";
 
 /**
@@ -17,6 +19,13 @@ export function BookingExperience() {
   const searchParams = useSearchParams();
   const { key, copy } = resolveBookingSource(searchParams.get("source"));
   const calendlyUrl = siteConfig.contact.calendlyUrl;
+
+  // Fire a booking-page view event tagged with the resolved entry-point
+  // source so Saral can see conversion by source in GA4 / PostHog. No-ops
+  // when analytics isn't connected (track() guards on window.posthog/gtag).
+  useEffect(() => {
+    track("booking_page_viewed", { source: key });
+  }, [key]);
 
   return (
     <section className="bg-[color:var(--color-surface-muted)]">
