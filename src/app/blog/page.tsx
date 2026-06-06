@@ -14,21 +14,36 @@ export const revalidate = 300;
 
 export const generateMetadata = () => buildMetadata({ path: PATH });
 
-export default async function BlogIndexPage() {
+function topicsForPost(post: { tags?: string[]; category?: string }): string[] {
+  const topics = post.tags && post.tags.length ? post.tags : [post.category];
+  return topics.filter((t): t is string => Boolean(t));
+}
+
+export default async function BlogIndexPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const posts = await listPostSummaries();
 
   const topicCounts = new Map<string, number>();
   for (const post of posts) {
-    const topics =
-      post.tags && post.tags.length ? post.tags : [post.category];
-    for (const topic of topics) {
-      if (!topic) continue;
+    for (const topic of topicsForPost(post)) {
       topicCounts.set(topic, (topicCounts.get(topic) ?? 0) + 1);
     }
   }
   const topics = [...topicCounts.entries()].sort((a, b) =>
     a[0].localeCompare(b[0]),
   );
+
+  const { topic: rawTopic } = await searchParams;
+  const requestedTopic = Array.isArray(rawTopic) ? rawTopic[0] : rawTopic;
+  const activeTopic =
+    requestedTopic && topicCounts.has(requestedTopic) ? requestedTopic : null;
+
+  const visiblePosts = activeTopic
+    ? posts.filter((post) => topicsForPost(post).includes(activeTopic))
+    : posts;
 
   return (
     <>
@@ -71,21 +86,48 @@ export default async function BlogIndexPage() {
                   Topics
                 </p>
                 <ul className="mt-4 flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-                  {topics.map(([topic, count]) => (
-                    <li key={topic}>
-                      <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] bg-white px-3 py-1.5 text-sm text-[color:var(--color-ink)] lg:rounded-lg lg:border-0 lg:bg-transparent lg:px-0 lg:py-1">
-                        <span>{topic}</span>
-                        <span className="text-xs text-[color:var(--color-muted)]">
-                          {count}
-                        </span>
+                  <li>
+                    <Link
+                      href={PATH}
+                      aria-current={activeTopic ? undefined : "true"}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors lg:rounded-lg lg:border-0 lg:bg-transparent lg:px-0 lg:py-1 ${
+                        activeTopic
+                          ? "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:text-[color:var(--color-ink-soft)]"
+                          : "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white lg:bg-transparent lg:font-semibold lg:text-[color:var(--color-ink)]"
+                      }`}
+                    >
+                      <span>All posts</span>
+                      <span className="text-xs text-[color:var(--color-muted)]">
+                        {posts.length}
                       </span>
-                    </li>
-                  ))}
+                    </Link>
+                  </li>
+                  {topics.map(([topic, count]) => {
+                    const isActive = activeTopic === topic;
+                    return (
+                      <li key={topic}>
+                        <Link
+                          href={`${PATH}?topic=${encodeURIComponent(topic)}`}
+                          aria-current={isActive ? "true" : undefined}
+                          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors lg:rounded-lg lg:border-0 lg:bg-transparent lg:px-0 lg:py-1 ${
+                            isActive
+                              ? "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white lg:bg-transparent lg:font-semibold lg:text-[color:var(--color-ink)]"
+                              : "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:text-[color:var(--color-ink-soft)]"
+                          }`}
+                        >
+                          <span>{topic}</span>
+                          <span className="text-xs text-[color:var(--color-muted)]">
+                            {count}
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </aside>
             ) : null}
             <ul className="grid gap-6 sm:grid-cols-2">
-              {posts.map((post) => (
+              {visiblePosts.map((post) => (
                 <li key={post.slug}>
                   <Link
                     href={`/blog/${post.slug}`}
