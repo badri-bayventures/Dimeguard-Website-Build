@@ -2,32 +2,23 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-const STORAGE_KEY = "dg_cookie_consent";
+import { readConsent, writeConsent } from "@/lib/analytics/consent";
 
 /**
- * Lightweight cookie-consent banner. Persists the user's choice in
- * localStorage so it only appears until acknowledged. No third-party scripts
- * are gated here yet — the choice is recorded for when analytics is enabled.
+ * Lightweight cookie-consent banner. Persists the user's choice via the shared
+ * consent helper, which the analytics loader (`components/analytics.tsx`)
+ * subscribes to — so GA4/PostHog only fire after the visitor accepts, and the
+ * choice takes effect without a hard reload.
  */
 export function CookieConsent() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (!stored) setVisible(true);
-    } catch {
-      setVisible(true);
-    }
+    if (!readConsent()) setVisible(true);
   }, []);
 
   const record = (value: "accepted" | "declined") => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, value);
-    } catch {
-      // Ignore storage failures (e.g. private mode); just dismiss.
-    }
+    writeConsent(value);
     setVisible(false);
   };
 
