@@ -6,6 +6,7 @@ import { breadcrumb } from "@/lib/schema";
 import { Container } from "@/components/container";
 import { Disclosure } from "@/components/disclosure";
 import { listPostSummaries } from "@/lib/blog";
+import { normalizeTopic, normalizeTopics } from "@/lib/blog/topics";
 import { formatDate } from "@/lib/format-date";
 
 const PATH = "/blog";
@@ -15,8 +16,11 @@ export const revalidate = 300;
 export const generateMetadata = () => buildMetadata({ path: PATH });
 
 function topicsForPost(post: { tags?: string[]; category?: string }): string[] {
-  const topics = post.tags && post.tags.length ? post.tags : [post.category];
-  return topics.filter((t): t is string => Boolean(t));
+  const raw =
+    post.tags && post.tags.length
+      ? post.tags
+      : [post.category].filter((t): t is string => Boolean(t));
+  return normalizeTopics(raw);
 }
 
 export default async function BlogIndexPage({
@@ -38,8 +42,15 @@ export default async function BlogIndexPage({
 
   const { topic: rawTopic } = await searchParams;
   const requestedTopic = Array.isArray(rawTopic) ? rawTopic[0] : rawTopic;
+  // Normalize the incoming value so both canonical links (?topic=Life insurance)
+  // and raw/bookmarked Notion-tag links (?topic=%23lifeinsurance) still resolve.
+  const normalizedRequested = requestedTopic
+    ? normalizeTopic(requestedTopic)
+    : null;
   const activeTopic =
-    requestedTopic && topicCounts.has(requestedTopic) ? requestedTopic : null;
+    normalizedRequested && topicCounts.has(normalizedRequested)
+      ? normalizedRequested
+      : null;
 
   const visiblePosts = activeTopic
     ? posts.filter((post) => topicsForPost(post).includes(activeTopic))
@@ -146,7 +157,7 @@ export default async function BlogIndexPage({
                     ) : null}
                     <div className="flex flex-1 flex-col p-6 md:p-8">
                     <div className="flex flex-wrap items-center gap-2">
-                      {(post.tags ?? []).map((tag) => (
+                      {normalizeTopics(post.tags).map((tag) => (
                         <span
                           key={tag}
                           className="inline-flex items-center rounded-full bg-[color:var(--color-surface-muted)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--color-ink-soft)]"

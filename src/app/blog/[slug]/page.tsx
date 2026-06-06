@@ -12,6 +12,7 @@ import { Disclosure } from "@/components/disclosure";
 import { BlogEndCta } from "@/components/blog-cta";
 import { NotionBody } from "@/components/markdown";
 import { getPostBySlug, listPostSummaries } from "@/lib/blog";
+import { normalizeTopics } from "@/lib/blog/topics";
 import { notionEnabled } from "@/lib/notion";
 import { formatDate } from "@/lib/format-date";
 
@@ -95,7 +96,7 @@ export default async function BlogPostPage(
             </Link>
           </nav>
           <div className="mt-6 flex flex-wrap items-center gap-2">
-            {(post.tags ?? []).map((tag) => (
+            {normalizeTopics(post.tags).map((tag) => (
               <span
                 key={tag}
                 className="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--color-ink-soft)]"
