@@ -26,7 +26,16 @@ export function SiteFooter() {
               {siteConfig.nap.addressLocality}, {siteConfig.nap.addressRegion}{" "}
               {siteConfig.nap.postalCode}
             </div>
-            {siteConfig.nap.phone ? <div>{siteConfig.nap.phone}</div> : null}
+            {siteConfig.nap.phone ? (
+              <div>
+                <a
+                  href={`tel:${siteConfig.nap.phone.replace(/[^\d+]/g, "")}`}
+                  className="hover:text-[color:var(--color-accent)]"
+                >
+                  {siteConfig.nap.phone}
+                </a>
+              </div>
+            ) : null}
             {siteConfig.nap.email ? <div>{siteConfig.nap.email}</div> : null}
           </address>
         </div>

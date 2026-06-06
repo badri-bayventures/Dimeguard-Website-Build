@@ -311,7 +311,7 @@ export const siteConfig: SiteConfig = {
     addressRegion: "CA",
     postalCode: "",
     addressCountry: "US",
-    phone: "",
+    phone: "408-582-4271",
     email: "",
     openingHours: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"],
     areaServed: [

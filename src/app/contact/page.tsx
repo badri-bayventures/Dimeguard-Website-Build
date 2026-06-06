@@ -18,10 +18,9 @@ type ContactChannel = {
   hint?: string;
 };
 
-const PHONE = "408-582-4271";
-
 export default function ContactPage() {
   const { nap } = siteConfig;
+  const telHref = nap.phone ? `tel:${nap.phone.replace(/[^\d+]/g, "")}` : "";
 
   const channels: ContactChannel[] = [];
   if (nap.email) {
@@ -32,12 +31,14 @@ export default function ContactPage() {
       hint: "For quick questions or sending a document.",
     });
   }
-  channels.push({
-    label: "Phone",
-    value: PHONE,
-    href: `tel:${PHONE.replace(/[^\d+]/g, "")}`,
-    hint: "Calls returned within one business hour.",
-  });
+  if (nap.phone) {
+    channels.push({
+      label: "Phone",
+      value: nap.phone,
+      href: telHref,
+      hint: "Calls returned within one business hour.",
+    });
+  }
   channels.push({
     label: "Book a call",
     value: "20-minute call",
@@ -165,14 +166,16 @@ export default function ContactPage() {
                 <div>
                   {nap.addressLocality}, {nap.addressRegion}
                 </div>
-                <div className="mt-1">
-                  <a
-                    href={`tel:${PHONE.replace(/[^\d+]/g, "")}`}
-                    className="hover:text-[color:var(--color-ink)]"
-                  >
-                    {PHONE}
-                  </a>
-                </div>
+                {nap.phone ? (
+                  <div className="mt-1">
+                    <a
+                      href={telHref}
+                      className="hover:text-[color:var(--color-ink)]"
+                    >
+                      {nap.phone}
+                    </a>
+                  </div>
+                ) : null}
                 {nap.email ? <div>{nap.email}</div> : null}
               </address>
             </div>
