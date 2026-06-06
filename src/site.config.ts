@@ -443,10 +443,11 @@ export const siteConfig: SiteConfig = {
     { href: "/terms", label: "Terms" },
   ],
   serviceLinks: [
-    { href: "/401k-rollovers", label: "401(k) Rollovers" },
-    { href: "/annuities", label: "Annuities & Retirement Income" },
-    { href: "/tax-planning", label: "Tax-Efficient Planning" },
-    { href: "/estate-planning", label: "Estate Planning" },
+    // Held for staggered release — re-enable in waves (2026-06).
+    // { href: "/401k-rollovers", label: "401(k) Rollovers" },
+    // { href: "/annuities", label: "Annuities & Retirement Income" },
+    // { href: "/tax-planning", label: "Tax-Efficient Planning" },
+    // { href: "/estate-planning", label: "Estate Planning" },
   ],
   routes: [
     {
@@ -560,8 +561,8 @@ export const siteConfig: SiteConfig = {
       lastModified: "2026-05-10",
       llmsSummary:
         "Inflation calculator — estimate the future purchasing power of today's savings.",
-      showInLlms: true,
-      canonical: true,
+      showInLlms: false,
+      canonical: false,
     },
     {
       path: "/401k-rollovers",
@@ -573,8 +574,8 @@ export const siteConfig: SiteConfig = {
       lastModified: "2026-06-06",
       llmsSummary:
         "401(k) rollovers — when a rollover to an IRA makes sense, tax-bucket implications, and trade-offs to weigh.",
-      showInLlms: true,
-      canonical: true,
+      showInLlms: false,
+      canonical: false,
     },
     {
       path: "/annuities",
@@ -586,8 +587,8 @@ export const siteConfig: SiteConfig = {
       lastModified: "2026-06-06",
       llmsSummary:
         "Annuities and retirement income — the main types, what guarantees mean, and where they fit in a plan.",
-      showInLlms: true,
-      canonical: true,
+      showInLlms: false,
+      canonical: false,
     },
     {
       path: "/tax-planning",
@@ -599,8 +600,8 @@ export const siteConfig: SiteConfig = {
       lastModified: "2026-06-06",
       llmsSummary:
         "Tax-efficient planning — coordinating taxable, tax-deferred, and tax-free buckets for retirement withdrawals.",
-      showInLlms: true,
-      canonical: true,
+      showInLlms: false,
+      canonical: false,
     },
     {
       path: "/estate-planning",
@@ -612,8 +613,8 @@ export const siteConfig: SiteConfig = {
       lastModified: "2026-06-06",
       llmsSummary:
         "Estate planning — beneficiary alignment, liquidity, and where life insurance fits alongside a will or trust.",
-      showInLlms: true,
-      canonical: true,
+      showInLlms: false,
+      canonical: false,
     },
     {
       path: "/privacy",

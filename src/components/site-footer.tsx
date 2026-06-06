@@ -56,23 +56,25 @@ export function SiteFooter() {
             ))}
           </ul>
         </div>
-        <div className="md:col-span-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-accent)]">
-            Services
-          </p>
-          <ul className="mt-4 space-y-2 text-sm text-white/80">
-            {siteConfig.serviceLinks.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="hover:text-[color:var(--color-accent)]"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {siteConfig.serviceLinks.length > 0 && (
+          <div className="md:col-span-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-accent)]">
+              Services
+            </p>
+            <ul className="mt-4 space-y-2 text-sm text-white/80">
+              {siteConfig.serviceLinks.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="hover:text-[color:var(--color-accent)]"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className="md:col-span-3">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-accent)]">
             Licensure

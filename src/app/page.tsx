@@ -96,7 +96,7 @@ export default async function Home() {
           />
           <ServiceCard
             eyebrow="Insurance"
-            title="Life & disability"
+            title="Life insurance"
             description="A short conversation about who depends on your income, what they’d need, and which term or permanent coverage may fit your situation."
             href="/life-insurance"
             cta="Estimate your coverage"

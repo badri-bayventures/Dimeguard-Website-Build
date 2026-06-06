@@ -134,7 +134,6 @@ export function CalcTeaser() {
   const drawdownYearsValue = clampNum(drawdownYearsStr, 1, 50, drawdownYears);
 
   const prePct = Math.round(annualReturn * 100);
-  const postPct = Math.round(assumedAnnualReturnPost * 100);
 
   // Live projection — recomputes from current field values as the user
   // types. Falls back to default age/retire-at so the chart never collapses,
@@ -325,9 +324,8 @@ export function CalcTeaser() {
         </Link>
 
         <p className="text-[10px] leading-relaxed text-white/55">
-          Estimate · {prePct}% pre / {postPct}% in-retirement · {drawdownYears}-yr
-          drawdown · stress-tested both ways. Not advice — for informational
-          purposes only.
+          Estimate · {prePct}% annual return · {drawdownYearsValue}-yr retirement
+          · Not advice — for informational purposes only.
         </p>
       </div>
     </div>
