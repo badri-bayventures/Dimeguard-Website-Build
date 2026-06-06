@@ -422,7 +422,7 @@ export const siteConfig: SiteConfig = {
     { top: "20 min", bottom: "first call · no script" },
     { top: "Independent", bottom: "not tied to one carrier" },
     { top: "$0", bottom: "to run your number" },
-    { top: "Multi-carrier", bottom: "independent agent" },
+    { top: "No pressure", bottom: "nothing pitched on the first call" },
   ],
   carrierStrip: {
     enabled: false,
