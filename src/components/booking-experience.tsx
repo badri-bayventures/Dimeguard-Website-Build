@@ -7,6 +7,11 @@ import { siteConfig, resolveBookingSource } from "@/site.config";
 import { track } from "@/lib/analytics/track";
 import { ButtonLink } from "./button";
 
+// Smallest height (px) we trust from Calendly's page_height messages. The live
+// booking widget is always well above this; smaller values are spurious
+// load/transition blips that would otherwise collapse the embed.
+const MIN_EMBED_HEIGHT = 500;
+
 /**
  * Source-aware booking experience. Reads `?source=` client-side to swap the
  * left-panel copy, and renders the configured 20-minute Calendly event in the
@@ -24,7 +29,7 @@ export function BookingExperience() {
   // page's true height as it changes (date picker → time slots → confirm),
   // so we grow the frame to match and never show an inner scrollbar. The
   // initial value is a tall fallback for before the first resize message.
-  const [embedHeight, setEmbedHeight] = useState("1000px");
+  const [embedHeight, setEmbedHeight] = useState(1000);
 
   // Fire a booking-page view event tagged with the resolved entry-point
   // source so Saral can see conversion by source in GA4 / PostHog. No-ops
@@ -33,8 +38,21 @@ export function BookingExperience() {
     track("booking_page_viewed", { source: key });
   }, [key]);
 
+  // Apply Calendly's reported height, but ignore implausibly small values.
+  // Calendly intermittently broadcasts a near-zero page height (e.g. "2px")
+  // during load/transition; applying it blindly collapsed the container and
+  // hid the otherwise-loaded calendar entirely. The real booking widget is
+  // always far taller than this floor, so dropping tiny values keeps the
+  // embed visible while still auto-fitting to every legitimate resize.
   useCalendlyEventListener({
-    onPageHeightResize: (e) => setEmbedHeight(e.data.payload.height),
+    onPageHeightResize: (e) => {
+      const raw = e.data.payload.height as string | number;
+      const parsed =
+        typeof raw === "number" ? raw : parseInt(String(raw), 10);
+      if (Number.isFinite(parsed) && parsed >= MIN_EMBED_HEIGHT) {
+        setEmbedHeight(parsed);
+      }
+    },
   });
 
   return (
@@ -95,7 +113,7 @@ export function BookingExperience() {
             <div className="overflow-hidden rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] shadow-[var(--shadow-card)]">
               <InlineWidget
                 url={calendlyUrl}
-                styles={{ height: embedHeight, minWidth: "280px" }}
+                styles={{ height: `${embedHeight}px`, minWidth: "280px" }}
                 pageSettings={{
                   backgroundColor: "F5F1E8",
                   primaryColor: "143A4A",
