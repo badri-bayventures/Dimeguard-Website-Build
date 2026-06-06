@@ -26,7 +26,6 @@ export default async function Home() {
   return (
     <>
       <Hero
-        eyebrow="Independent Financial Doctor"
         badge={
           siteConfig.heroBadge.enabled
             ? { label: siteConfig.heroBadge.label }

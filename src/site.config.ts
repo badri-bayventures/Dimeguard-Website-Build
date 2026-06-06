@@ -403,7 +403,7 @@ export const siteConfig: SiteConfig = {
   // to `right`.
   topTrustBar: {
     enabled: true,
-    left: "MULTI-CARRIER INDEPENDENT AGENT · INSURANCE-ONLY",
+    left: "Independent Financial Doctor",
     right: "20-MIN FIRST CALL · NO SCRIPT, NO SALES PITCH",
   },
   locationPin: {
