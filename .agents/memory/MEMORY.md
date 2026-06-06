@@ -1,4 +1,5 @@
 - [Dev server verification](dev-server-verification.md) — curling public $REPLIT_DEV_DOMAIN gives 502 (mTLS proxy); curl http://localhost:$PORT (usually 5000) instead.
 - [Next.js dev/build share .next](nextjs-dev-build-manifest.md) — `pnpm build` while dev workflow runs corrupts `.next` (routes-manifest ENOENT, 500s); restart the dev workflow after.
 - [Replit preview hydration](replit-preview-hydration.md) — "Hydration failed" in the preview may not reproduce in a clean direct-localhost browser; don't put explicit `<head>`+manual scripts in App Router root layout.
+- [Unlayered a{color:inherit} beats Tailwind utilities](tailwind-unlayered-anchor-reset.md) — globals.css `a{color:inherit}` is unlayered, overrides `text-white` on `<a>`; force with `text-white!`.
 - [Vitest is firewall-blocked](vitest-setup.md) — main env's package firewall 403s the vitest tarball; vitest test suites break post-merge installs (task-agent env allows it, main doesn't). Don't add vitest here.

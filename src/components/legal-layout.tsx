@@ -171,7 +171,7 @@ export function LegalContactCta({
       <p className="text-[color:var(--color-ink-soft)]">{children}</p>
       <a
         href={href}
-        className="mt-4 inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[color:var(--color-ink)] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[color:var(--color-ink-soft)] sm:mt-0"
+        className="mt-4 inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[color:var(--color-ink)] px-6 py-3 text-sm font-medium text-white! transition-colors hover:bg-[color:var(--color-ink-soft)] sm:mt-0"
       >
         {ctaLabel}
         <span aria-hidden>→</span>
