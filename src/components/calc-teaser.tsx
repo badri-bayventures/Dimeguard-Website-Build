@@ -99,8 +99,7 @@ export function CalcTeaser() {
   const savedId = useId();
   const contributionId = useId();
   const returnId = useId();
-  const inflationId = useId();
-  const taxId = useId();
+  const drawdownId = useId();
 
   const [age, setAge] = useState<string>(String(teaserDefaults.currentAge));
   const [retireAt, setRetireAt] = useState<string>(
@@ -113,32 +112,26 @@ export function CalcTeaser() {
     formatUsd(teaserDefaults.monthlyContribution),
   );
 
-  // Collapsible "Adjust assumptions" — return / inflation / tax bracket.
-  // Stored as whole-percent strings; clamped to sane bounds before use.
+  // Collapsible "Adjust assumptions" — annual return / years in retirement.
+  // Stored as whole-number strings; clamped to sane bounds before use. These
+  // overrides feed only the live preview below; they never mutate siteConfig.
   const [showAssumptions, setShowAssumptions] = useState(false);
   const [returnPct, setReturnPct] = useState<string>(
     String(Math.round(teaserDefaults.expectedReturn * 100)),
   );
-  const [inflationPct, setInflationPct] = useState<string>(
-    String(Math.round(teaserDefaults.inflation * 100)),
-  );
-  const [taxPct, setTaxPct] = useState<string>(
-    String(Math.round(teaserDefaults.taxBracket * 100)),
+  const [drawdownYearsStr, setDrawdownYearsStr] = useState<string>(
+    String(drawdownYears),
   );
 
-  const clampPct = (v: string, lo: number, hi: number, fallback: number) => {
+  const clampNum = (v: string, lo: number, hi: number, fallback: number) => {
     const n = Number(v);
     if (!Number.isFinite(n) || v.trim() === "") return fallback;
     return Math.min(hi, Math.max(lo, n));
   };
 
   const annualReturn =
-    clampPct(returnPct, 1, 12, Math.round(assumedAnnualReturnPre * 100)) / 100;
-  const inflation =
-    clampPct(inflationPct, 0, 8, Math.round(teaserDefaults.inflation * 100)) /
-    100;
-  const taxRate =
-    clampPct(taxPct, 0, 50, Math.round(teaserDefaults.taxBracket * 100)) / 100;
+    clampNum(returnPct, 1, 12, Math.round(assumedAnnualReturnPre * 100)) / 100;
+  const drawdownYearsValue = clampNum(drawdownYearsStr, 1, 50, drawdownYears);
 
   const prePct = Math.round(annualReturn * 100);
   const postPct = Math.round(assumedAnnualReturnPost * 100);
@@ -168,8 +161,7 @@ export function CalcTeaser() {
         ? Math.max(0, contribRaw)
         : 0,
       annualReturn,
-      inflation,
-      taxRate,
+      drawdownYears: drawdownYearsValue,
     });
   }, [
     age,
@@ -177,8 +169,7 @@ export function CalcTeaser() {
     saved,
     contribution,
     annualReturn,
-    inflation,
-    taxRate,
+    drawdownYearsValue,
     teaserDefaults,
   ]);
 
@@ -268,10 +259,10 @@ export function CalcTeaser() {
             </span>
           </button>
           {showAssumptions ? (
-            <div className="mt-3 grid grid-cols-3 gap-3">
+            <div className="mt-3 grid grid-cols-2 gap-3">
               <FieldNumber
                 id={returnId}
-                label="Return %"
+                label="Annual return %"
                 value={returnPct}
                 onChange={setReturnPct}
                 min={1}
@@ -279,25 +270,20 @@ export function CalcTeaser() {
                 placeholder="7"
               />
               <FieldNumber
-                id={inflationId}
-                label="Inflation %"
-                value={inflationPct}
-                onChange={setInflationPct}
-                min={0}
-                max={8}
-                placeholder="3"
-              />
-              <FieldNumber
-                id={taxId}
-                label="Tax %"
-                value={taxPct}
-                onChange={setTaxPct}
-                min={0}
+                id={drawdownId}
+                label="Years in retirement"
+                value={drawdownYearsStr}
+                onChange={setDrawdownYearsStr}
+                min={1}
                 max={50}
-                placeholder="22"
+                placeholder="25"
               />
             </div>
-          ) : null}
+          ) : (
+            <p className="mt-2 text-[11px] text-white/55">
+              Assumes a 7% annual return and a 25-year retirement — adjust.
+            </p>
+          )}
         </div>
 
         <div className="flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.18em] text-white/55">

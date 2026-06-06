@@ -19,8 +19,6 @@ import {
  *   FV_contrib  = mc * ((1 + r/12)^(years*12) - 1) / (r/12)   [r > 0]
  *               = mc * (years*12)                              [r == 0]
  *   required    = monthlySpend * 12 * drawdownYears
- *                 * (1 + inflation)^years   [if inflation > 0]
- *                 / (1 - taxRate)           [if 0 < taxRate < 1]
  */
 
 const { assumedAnnualReturnPre, drawdownYears, teaserDefaults } =
@@ -110,65 +108,26 @@ describe("project() — required nest egg", () => {
     expect(requiredNestEgg).toBe(1800000);
   });
 
-  it("inflates the required nest egg to future dollars when inflation is given", () => {
+  it("uses an explicit drawdownYears override over the config default", () => {
     const { requiredNestEgg } = project({
       currentAge: 45,
       retireAt: 65,
       saved: 125000,
       monthlySpend: 6000,
-      inflation: 0.03,
+      drawdownYears: 30,
     });
-    // 1800000 * 1.03^20
-    expect(requiredNestEgg).toBeCloseTo(3251000.2224, 2);
+    // 6000 * 12 * 30
+    expect(requiredNestEgg).toBe(2160000);
   });
 
-  it("grosses up the required nest egg for a pre-tax drawdown when taxRate is given", () => {
+  it("falls back to the config drawdownYears when the override is omitted", () => {
     const { requiredNestEgg } = project({
       currentAge: 45,
       retireAt: 65,
       saved: 125000,
       monthlySpend: 6000,
-      taxRate: 0.22,
     });
-    // 1800000 / (1 - 0.22)
-    expect(requiredNestEgg).toBeCloseTo(2307692.3077, 2);
-  });
-
-  it("applies inflation then tax gross-up together", () => {
-    const { requiredNestEgg } = project({
-      currentAge: 45,
-      retireAt: 65,
-      saved: 125000,
-      monthlySpend: 6000,
-      inflation: 0.03,
-      taxRate: 0.22,
-    });
-    // 1800000 * 1.03^20 / (1 - 0.22)
-    expect(requiredNestEgg).toBeCloseTo(4167949.0031, 2);
-  });
-
-  it("ignores non-positive inflation and out-of-range tax rates", () => {
-    const nominal = 6000 * 12 * drawdownYears;
-    expect(
-      project({
-        currentAge: 45,
-        retireAt: 65,
-        saved: 0,
-        monthlySpend: 6000,
-        inflation: 0,
-        taxRate: 0,
-      }).requiredNestEgg,
-    ).toBe(nominal);
-    // taxRate of 1 (or more) would divide by zero / go negative — must be ignored.
-    expect(
-      project({
-        currentAge: 45,
-        retireAt: 65,
-        saved: 0,
-        monthlySpend: 6000,
-        taxRate: 1,
-      }).requiredNestEgg,
-    ).toBe(nominal);
+    expect(requiredNestEgg).toBe(6000 * 12 * drawdownYears);
   });
 });
 

@@ -23,17 +23,11 @@ export type ProjectArgs = {
    */
   annualReturn?: number;
   /**
-   * Annual inflation (decimal). When provided, the required nest egg is
-   * expressed in future dollars at retirement. Omitting it preserves the
-   * original (nominal) required figure.
+   * Years in retirement used for the required nest egg (`monthlySpend × 12 ×
+   * drawdownYears`). Defaults to the config value, so callers that omit it
+   * (e.g. the hero number) keep their original required figure.
    */
-  inflation?: number;
-  /**
-   * Marginal tax rate (decimal) applied to a pre-tax drawdown. When provided,
-   * the required nest egg is grossed up so the after-tax spend is covered.
-   * Omitting it preserves the original required figure.
-   */
-  taxRate?: number;
+  drawdownYears?: number;
 };
 
 /**
@@ -42,14 +36,14 @@ export type ProjectArgs = {
  * docs/architecture-decisions-2026-05-20.md so the hero number, teaser, and
  * full calculator all produce identical numbers.
  *
- * The optional `annualReturn`, `inflation`, and `taxRate` args let the
- * interactive teaser surface adjustable assumptions. Each one defaults to the
- * original behavior, so existing callers (the hero number) are unaffected.
+ * The optional `annualReturn` and `drawdownYears` args let the interactive
+ * teaser surface adjustable assumptions. Each one defaults to the original
+ * behavior, so existing callers (the hero number) are unaffected.
  */
 export function project(args: ProjectArgs): Projection {
   const {
     assumedAnnualReturnPre,
-    drawdownYears,
+    drawdownYears: defaultDrawdownYears,
     teaserDefaults,
   } = siteConfig.calculators.retirement;
   const monthlyContribution =
@@ -73,13 +67,8 @@ export function project(args: ProjectArgs): Projection {
     ? series[series.length - 1].balance
     : args.saved;
 
-  let requiredNestEgg = args.monthlySpend * 12 * drawdownYears;
-  if (args.inflation && args.inflation > 0) {
-    requiredNestEgg *= Math.pow(1 + args.inflation, years);
-  }
-  if (args.taxRate && args.taxRate > 0 && args.taxRate < 1) {
-    requiredNestEgg /= 1 - args.taxRate;
-  }
+  const yearsInRetirement = args.drawdownYears ?? defaultDrawdownYears;
+  const requiredNestEgg = args.monthlySpend * 12 * yearsInRetirement;
   return { series, finalBalance, requiredNestEgg };
 }
 

@@ -229,10 +229,6 @@ export type SiteConfig = {
         monthlyContribution: number;
         /** Pre-retirement expected annual return (decimal). */
         expectedReturn: number;
-        /** Assumed annual inflation (decimal). */
-        inflation: number;
-        /** Marginal tax bracket applied to pre-tax drawdown (decimal). */
-        taxBracket: number;
       };
     };
     life: {
@@ -677,8 +673,6 @@ export const siteConfig: SiteConfig = {
         monthlySpend: 6000,
         monthlyContribution: 1500,
         expectedReturn: 0.07,
-        inflation: 0.03,
-        taxBracket: 0.22,
       },
     },
     life: {
