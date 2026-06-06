@@ -60,3 +60,4 @@ channel = "stable-25_05"
 [userenv.shared]
 LEAD_FROM_EMAIL = "leads@dimeguard.com"
 LEAD_TO_EMAIL = "stoms@dimeguard.com"
+NEXT_PUBLIC_CALENDLY_URL = "https://calendly.com/stoms-dimeguard/20-minute-consultation"
