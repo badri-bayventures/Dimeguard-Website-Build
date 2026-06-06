@@ -97,9 +97,22 @@ const TOPIC_SECTIONS: ReadonlyArray<{
   title: string;
   topics: readonly string[];
 }> = [
-  { title: "Protection", topics: ["Life insurance", "Insurance", "Legacy of love"] },
+  {
+    title: "Protection",
+    topics: ["Life insurance", "Insurance", "Employer insurance", "Travel insurance"],
+  },
   { title: "Wealth & Investing", topics: ["Building wealth", "Investments"] },
   { title: "Planning", topics: ["Retirement", "Estate planning", "Tax"] },
+  {
+    title: "Family & legacy",
+    topics: [
+      "Legacy of love",
+      "Future generations",
+      "Parenting with purpose",
+      "Visiting parents",
+      "Financial gift",
+    ],
+  },
 ];
 
 const FALLBACK_SECTION_TITLE = "More topics";
