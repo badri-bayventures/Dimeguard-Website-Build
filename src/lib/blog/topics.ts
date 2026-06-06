@@ -104,44 +104,52 @@ const TOPIC_SECTIONS: ReadonlyArray<{
 
 const FALLBACK_SECTION_TITLE = "More topics";
 
-export type TopicCount = { topic: string; count: number };
-export type TopicSection = { title: string; topics: TopicCount[] };
+export type TopicGroup = { title: string; count: number };
+
+/** Reverse lookup from a canonical topic label to its parent section title. */
+const TOPIC_TO_SECTION: ReadonlyMap<string, string> = new Map(
+  TOPIC_SECTIONS.flatMap((section) =>
+    section.topics.map((topic) => [topic, section.title] as const),
+  ),
+);
 
 /**
- * Given the live `[topic, count]` pairs, return the ordered sections with their
- * topics and counts. Only sections that have at least one live topic are
- * returned. Any topic not assigned to a defined section is routed into the
- * "More topics" fallback (sorted alphabetically) so no topic is dropped.
+ * Resolve the parent section title for a canonical topic label. Topics that
+ * aren't assigned to a defined section fall into the "More topics" group, so
+ * every post still belongs to exactly one set of groups.
  */
-export function groupTopicsIntoSections(
-  topicCounts: ReadonlyArray<readonly [string, number]>,
-): TopicSection[] {
-  const remaining = new Map<string, number>(
-    topicCounts.map(([topic, count]) => [topic, count]),
-  );
+export function sectionForTopic(topic: string): string {
+  return TOPIC_TO_SECTION.get(topic) ?? FALLBACK_SECTION_TITLE;
+}
 
-  const sections: TopicSection[] = [];
-  for (const section of TOPIC_SECTIONS) {
-    const topics: TopicCount[] = [];
-    for (const topic of section.topics) {
-      const count = remaining.get(topic);
-      if (count !== undefined) {
-        topics.push({ topic, count });
-        remaining.delete(topic);
-      }
+/**
+ * Given each post's list of canonical topics, return the ordered group-level
+ * filters with a per-group POST count. A post counts once toward a group even
+ * if it carries several topics from that group. Groups with no posts are
+ * omitted. Section order follows TOPIC_SECTIONS, with the "More topics"
+ * fallback last.
+ */
+export function groupPostCounts(
+  postsTopics: ReadonlyArray<ReadonlyArray<string>>,
+): TopicGroup[] {
+  const counts = new Map<string, number>();
+  for (const topics of postsTopics) {
+    const groups = new Set<string>();
+    for (const topic of topics) groups.add(sectionForTopic(topic));
+    for (const group of groups) {
+      counts.set(group, (counts.get(group) ?? 0) + 1);
     }
-    if (topics.length) sections.push({ title: section.title, topics });
   }
 
-  const leftover = [...remaining.entries()].sort((a, b) =>
-    a[0].localeCompare(b[0]),
-  );
-  if (leftover.length) {
-    sections.push({
-      title: FALLBACK_SECTION_TITLE,
-      topics: leftover.map(([topic, count]) => ({ topic, count })),
-    });
+  const ordered: TopicGroup[] = [];
+  for (const section of TOPIC_SECTIONS) {
+    const count = counts.get(section.title);
+    if (count) ordered.push({ title: section.title, count });
+  }
+  const fallbackCount = counts.get(FALLBACK_SECTION_TITLE);
+  if (fallbackCount) {
+    ordered.push({ title: FALLBACK_SECTION_TITLE, count: fallbackCount });
   }
 
-  return sections;
+  return ordered;
 }

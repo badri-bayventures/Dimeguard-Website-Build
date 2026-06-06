@@ -7,9 +7,9 @@ import { Container } from "@/components/container";
 import { Disclosure } from "@/components/disclosure";
 import { listPostSummaries } from "@/lib/blog";
 import {
-  groupTopicsIntoSections,
-  normalizeTopic,
+  groupPostCounts,
   normalizeTopics,
+  sectionForTopic,
 } from "@/lib/blog/topics";
 import { formatDate } from "@/lib/format-date";
 
@@ -20,11 +20,11 @@ export const revalidate = 300;
 
 export const generateMetadata = () => buildMetadata({ path: PATH });
 
-// Build a /blog link that preserves the active topic filter and only adds the
+// Build a /blog link that preserves the active group filter and only adds the
 // page param when it's beyond the first page, keeping page-1 URLs canonical.
-function buildPageHref(topic: string | null, page: number): string {
+function buildPageHref(group: string | null, page: number): string {
   const params = new URLSearchParams();
-  if (topic) params.set("topic", topic);
+  if (group) params.set("group", group);
   if (page > 1) params.set("page", String(page));
   const qs = params.toString();
   return qs ? `${PATH}?${qs}` : PATH;
@@ -45,35 +45,28 @@ export default async function BlogIndexPage({
 }) {
   const posts = await listPostSummaries();
 
-  const topicCounts = new Map<string, number>();
-  for (const post of posts) {
-    for (const topic of topicsForPost(post)) {
-      topicCounts.set(topic, (topicCounts.get(topic) ?? 0) + 1);
-    }
-  }
-  const topicSections = groupTopicsIntoSections([...topicCounts.entries()]);
-  const hasTopics = topicSections.length > 0;
+  // Each post maps to its set of canonical topics; topics stay internal and
+  // only drive which group(s) a post belongs to.
+  const postsTopics = posts.map((post) => topicsForPost(post));
+  const topicGroups = groupPostCounts(postsTopics);
+  const groupTitles = new Set(topicGroups.map((group) => group.title));
+  const hasTopics = topicGroups.length > 0;
 
-  const { topic: rawTopic, page: rawPage } = await searchParams;
-  const requestedTopic = Array.isArray(rawTopic) ? rawTopic[0] : rawTopic;
-  // Normalize the incoming value so both canonical links (?topic=Life insurance)
-  // and raw/bookmarked Notion-tag links (?topic=%23lifeinsurance) still resolve.
-  const normalizedRequested = requestedTopic
-    ? normalizeTopic(requestedTopic)
-    : null;
-  const activeTopic =
-    normalizedRequested && topicCounts.has(normalizedRequested)
-      ? normalizedRequested
-      : null;
+  const { group: rawGroup, page: rawPage } = await searchParams;
+  const requestedGroup = Array.isArray(rawGroup) ? rawGroup[0] : rawGroup;
+  const activeGroup =
+    requestedGroup && groupTitles.has(requestedGroup) ? requestedGroup : null;
 
-  const visiblePosts = activeTopic
-    ? posts.filter((post) => topicsForPost(post).includes(activeTopic))
+  const visiblePosts = activeGroup
+    ? posts.filter((_, i) =>
+        postsTopics[i].some((topic) => sectionForTopic(topic) === activeGroup),
+      )
     : posts;
 
   // On the default (unfiltered) view, lift the latest post into a larger
   // featured card and drop it from the standard grid. Filtered views keep the
   // plain grid behaviour.
-  const gridSource = !activeTopic ? visiblePosts.slice(1) : visiblePosts;
+  const gridSource = !activeGroup ? visiblePosts.slice(1) : visiblePosts;
 
   // Paginate the grid so long lists stay browsable. Page 1 of the unfiltered
   // view also carries the featured card; later pages are a plain grid.
@@ -85,7 +78,7 @@ export default async function BlogIndexPage({
     : 1;
 
   const featuredPost =
-    !activeTopic && currentPage === 1 ? visiblePosts[0] : undefined;
+    !activeGroup && currentPage === 1 ? visiblePosts[0] : undefined;
   const gridPosts = gridSource.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
@@ -142,76 +135,62 @@ export default async function BlogIndexPage({
                     </p>
                   </div>
 
-                  <Link
-                    href={PATH}
-                    aria-current={activeTopic ? undefined : "true"}
-                    className={`mt-4 flex items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${
-                      activeTopic
-                        ? "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)]"
-                        : "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white"
-                    }`}
-                  >
-                    <span className="font-medium">All posts</span>
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs ${
-                        activeTopic
-                          ? "bg-[color:var(--color-surface-muted)] text-[color:var(--color-muted)]"
-                          : "bg-white/15 text-white/80"
-                      }`}
-                    >
-                      {posts.length}
-                    </span>
-                  </Link>
-
-                  <div className="mt-6 space-y-6">
-                    {topicSections.map((section) => (
-                      <section key={section.title}>
-                        <div className="flex items-center gap-2.5 border-b border-[color:var(--color-border)] pb-2">
-                          <span
-                            aria-hidden
-                            className="inline-block h-3.5 w-1 rounded-full bg-[color:var(--color-secondary)]"
-                          />
-                          <h2 className="font-[family-name:var(--font-display)] text-base font-medium tracking-tight text-[color:var(--color-ink)]">
-                            {section.title}
-                          </h2>
-                        </div>
-                        <ul className="mt-3 flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-                          {section.topics.map(({ topic, count }) => {
-                            const isActive = activeTopic === topic;
-                            return (
-                              <li key={topic}>
-                                <Link
-                                  href={`${PATH}?topic=${encodeURIComponent(topic)}`}
-                                  aria-current={isActive ? "true" : undefined}
-                                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors lg:flex lg:w-full lg:items-center lg:justify-between lg:rounded-lg lg:border-0 lg:px-2.5 lg:py-1.5 ${
-                                    isActive
-                                      ? "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white lg:bg-[color:var(--color-ink)] lg:text-white"
-                                      : "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)] lg:bg-transparent lg:hover:bg-[color:var(--color-surface-muted)]"
-                                  }`}
-                                >
-                                  <span>{topic}</span>
-                                  <span
-                                    className={`text-xs tabular-nums ${
-                                      isActive
-                                        ? "text-white/70"
-                                        : "text-[color:var(--color-muted)]"
-                                    }`}
-                                  >
-                                    {count}
-                                  </span>
-                                </Link>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </section>
-                    ))}
-                  </div>
+                  <ul className="mt-4 flex flex-wrap gap-2 lg:flex-col lg:gap-1.5">
+                    <li>
+                      <Link
+                        href={PATH}
+                        aria-current={activeGroup ? undefined : "true"}
+                        className={`flex items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${
+                          activeGroup
+                            ? "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)]"
+                            : "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white"
+                        }`}
+                      >
+                        <span className="font-medium">All posts</span>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs ${
+                            activeGroup
+                              ? "bg-[color:var(--color-surface-muted)] text-[color:var(--color-muted)]"
+                              : "bg-white/15 text-white/80"
+                          }`}
+                        >
+                          {posts.length}
+                        </span>
+                      </Link>
+                    </li>
+                    {topicGroups.map((group) => {
+                      const isActive = activeGroup === group.title;
+                      return (
+                        <li key={group.title}>
+                          <Link
+                            href={`${PATH}?group=${encodeURIComponent(group.title)}`}
+                            aria-current={isActive ? "true" : undefined}
+                            className={`flex items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${
+                              isActive
+                                ? "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white"
+                                : "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)]"
+                            }`}
+                          >
+                            <span className="font-medium">{group.title}</span>
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-xs ${
+                                isActive
+                                  ? "bg-white/15 text-white/80"
+                                  : "bg-[color:var(--color-surface-muted)] text-[color:var(--color-muted)]"
+                              }`}
+                            >
+                              {group.count}
+                            </span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </nav>
               </aside>
             ) : null}
             <div>
-              {activeTopic ? (
+              {activeGroup ? (
                 <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-[color:var(--color-border)] pb-5">
                   <div className="flex items-center gap-2.5">
                     <span
@@ -220,10 +199,10 @@ export default async function BlogIndexPage({
                     />
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--color-ink-soft)]">
-                        Topic
+                        Topics
                       </p>
                       <h2 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-medium tracking-tight text-[color:var(--color-ink)] md:text-3xl">
-                        {activeTopic}
+                        {activeGroup}
                         <span className="ml-2 text-base font-normal text-[color:var(--color-muted)]">
                           {visiblePosts.length}{" "}
                           {visiblePosts.length === 1 ? "post" : "posts"}
@@ -240,7 +219,7 @@ export default async function BlogIndexPage({
                   </Link>
                 </div>
               ) : null}
-              {!activeTopic && featuredPost ? (
+              {!activeGroup && featuredPost ? (
                 <Link
                   href={`/blog/${featuredPost.slug}`}
                   className="group mb-6 flex flex-col overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-white transition-shadow hover:shadow-md md:flex-row"
@@ -354,7 +333,7 @@ export default async function BlogIndexPage({
                 >
                   {currentPage > 1 ? (
                     <Link
-                      href={buildPageHref(activeTopic, currentPage - 1)}
+                      href={buildPageHref(activeGroup, currentPage - 1)}
                       rel="prev"
                       className="inline-flex items-center rounded-lg border border-[color:var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[color:var(--color-ink)] transition-colors hover:text-[color:var(--color-ink-soft)]"
                     >
@@ -367,7 +346,7 @@ export default async function BlogIndexPage({
                       return (
                         <Link
                           key={pageNum}
-                          href={buildPageHref(activeTopic, pageNum)}
+                          href={buildPageHref(activeGroup, pageNum)}
                           aria-current={isCurrent ? "page" : undefined}
                           className={`inline-flex h-10 min-w-10 items-center justify-center rounded-lg border px-3 text-sm font-medium transition-colors ${
                             isCurrent
@@ -382,7 +361,7 @@ export default async function BlogIndexPage({
                   )}
                   {currentPage < totalPages ? (
                     <Link
-                      href={buildPageHref(activeTopic, currentPage + 1)}
+                      href={buildPageHref(activeGroup, currentPage + 1)}
                       rel="next"
                       className="inline-flex items-center rounded-lg border border-[color:var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[color:var(--color-ink)] transition-colors hover:text-[color:var(--color-ink-soft)]"
                     >
