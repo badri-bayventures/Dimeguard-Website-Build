@@ -128,57 +128,86 @@ export default async function BlogIndexPage({
           <div className="grid gap-10 lg:grid-cols-[16rem_1fr]">
             {hasTopics ? (
               <aside className="lg:sticky lg:top-28 lg:self-start">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--color-ink-soft)]">
-                  Topics
-                </p>
-                <ul className="mt-4 flex flex-wrap gap-2 lg:block lg:space-y-0">
-                  <li className="w-full lg:w-auto">
-                    <Link
-                      href={PATH}
-                      aria-current={activeTopic ? undefined : "true"}
-                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors lg:rounded-lg lg:border-0 lg:bg-transparent lg:px-0 lg:py-1 ${
+                <nav
+                  aria-label="Browse topics"
+                  className="rounded-2xl border border-[color:var(--color-border)] bg-white p-5 lg:p-6"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      aria-hidden
+                      className="inline-block h-5 w-1.5 rounded-full bg-[color:var(--color-accent)]"
+                    />
+                    <p className="font-[family-name:var(--font-display)] text-lg font-medium tracking-tight text-[color:var(--color-ink)]">
+                      Browse topics
+                    </p>
+                  </div>
+
+                  <Link
+                    href={PATH}
+                    aria-current={activeTopic ? undefined : "true"}
+                    className={`mt-4 flex items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${
+                      activeTopic
+                        ? "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)]"
+                        : "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white"
+                    }`}
+                  >
+                    <span className="font-medium">All posts</span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs ${
                         activeTopic
-                          ? "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:text-[color:var(--color-ink-soft)]"
-                          : "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white lg:bg-transparent lg:font-semibold lg:text-[color:var(--color-ink)]"
+                          ? "bg-[color:var(--color-surface-muted)] text-[color:var(--color-muted)]"
+                          : "bg-white/15 text-white/80"
                       }`}
                     >
-                      <span>All posts</span>
-                      <span className="text-xs text-[color:var(--color-muted)]">
-                        {posts.length}
-                      </span>
-                    </Link>
-                  </li>
-                  {topicSections.map((section) => (
-                    <li key={section.title} className="w-full lg:mt-6">
-                      <p className="mt-4 mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--color-ink-soft)] lg:mt-0">
-                        {section.title}
-                      </p>
-                      <ul className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-                        {section.topics.map(({ topic, count }) => {
-                          const isActive = activeTopic === topic;
-                          return (
-                            <li key={topic}>
-                              <Link
-                                href={`${PATH}?topic=${encodeURIComponent(topic)}`}
-                                aria-current={isActive ? "true" : undefined}
-                                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors lg:rounded-lg lg:border-0 lg:bg-transparent lg:px-0 lg:py-1 ${
-                                  isActive
-                                    ? "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white lg:bg-transparent lg:font-semibold lg:text-[color:var(--color-ink)]"
-                                    : "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:text-[color:var(--color-ink-soft)]"
-                                }`}
-                              >
-                                <span>{topic}</span>
-                                <span className="text-xs text-[color:var(--color-muted)]">
-                                  {count}
-                                </span>
-                              </Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </li>
-                  ))}
-                </ul>
+                      {posts.length}
+                    </span>
+                  </Link>
+
+                  <div className="mt-6 space-y-6">
+                    {topicSections.map((section) => (
+                      <section key={section.title}>
+                        <div className="flex items-center gap-2.5 border-b border-[color:var(--color-border)] pb-2">
+                          <span
+                            aria-hidden
+                            className="inline-block h-3.5 w-1 rounded-full bg-[color:var(--color-secondary)]"
+                          />
+                          <h2 className="font-[family-name:var(--font-display)] text-base font-medium tracking-tight text-[color:var(--color-ink)]">
+                            {section.title}
+                          </h2>
+                        </div>
+                        <ul className="mt-3 flex flex-wrap gap-2 lg:flex-col lg:gap-1">
+                          {section.topics.map(({ topic, count }) => {
+                            const isActive = activeTopic === topic;
+                            return (
+                              <li key={topic}>
+                                <Link
+                                  href={`${PATH}?topic=${encodeURIComponent(topic)}`}
+                                  aria-current={isActive ? "true" : undefined}
+                                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors lg:flex lg:w-full lg:items-center lg:justify-between lg:rounded-lg lg:border-0 lg:px-2.5 lg:py-1.5 ${
+                                    isActive
+                                      ? "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white lg:bg-[color:var(--color-ink)] lg:text-white"
+                                      : "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)] lg:bg-transparent lg:hover:bg-[color:var(--color-surface-muted)]"
+                                  }`}
+                                >
+                                  <span>{topic}</span>
+                                  <span
+                                    className={`text-xs tabular-nums ${
+                                      isActive
+                                        ? "text-white/70"
+                                        : "text-[color:var(--color-muted)]"
+                                    }`}
+                                  >
+                                    {count}
+                                  </span>
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </section>
+                    ))}
+                  </div>
+                </nav>
               </aside>
             ) : null}
             <div>
