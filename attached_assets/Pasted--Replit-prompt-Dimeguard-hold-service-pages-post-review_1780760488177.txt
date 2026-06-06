@@ -1,0 +1,51 @@
+# Replit prompt — Dimeguard: hold service pages + post-review cleanup (2026-06-06)
+
+Fire in a fresh Replit thread on the `future-release` branch of the Dimeguard-Website-Build repo. Context: post-launch fixes (titles, agent copy, license #, mobile, calculator panel, legal pages, blog redesign, Calendly height fix) are all in on `future-release` and reviewed. Before promoting this branch to production we want to (1) **hold the four secondary service pages out of this release** so they can be surfaced in waves over the following week, and (2) apply a few small accuracy/cleanup fixes found in review.
+
+All changes are reversible config/copy edits. Do NOT delete the service-page files — they stay in the repo, just unlinked and out of the sitemap. Preserve all brand tokens, the `licensure.licensedStates` data, and existing behavior.
+
+---
+
+## Paste-ready prompt
+
+You are continuing the Dimeguard website (Next.js 15 App Router, `site.config.ts`-driven). Make the following changes on the current branch. Keep all existing brand tokens and data structures; these are surgical edits.
+
+### 1. Hold the four secondary service pages out of this release (reversible)
+
+The pages `/401k-rollovers`, `/annuities`, `/tax-planning`, and `/estate-planning` are built and good, but should NOT be discoverable in this deployment. We will re-enable them later. Do this without deleting the page files:
+
+- **Footer:** In `src/site.config.ts`, comment out (do not delete) the four entries in the `serviceLinks` array so none of them render in the footer. Leave a comment: `// Held for staggered release — re-enable in waves (2026-06).`
+- **Sitemap + llms.txt:** For each of those four route objects in the `routes` array, set `canonical: false` and `showInLlms: false`. After this, none of the four paths may appear in `sitemap.xml` or `llms.txt`.
+- **Pages stay live-but-unlinked:** The page files remain; direct URLs still resolve. That's fine — nothing links to them and they're out of the sitemap, so they won't be discovered or indexed.
+- **Header:** No change needed — these were never in the header.
+- After the change, confirm: the footer shows no secondary-service links, and `curl`-ing `/sitemap.xml` and `/llms.txt` returns none of the four paths.
+
+(When we re-enable later, the reverse is: uncomment a `serviceLinks` entry and flip its route's `canonical`/`showInLlms` back to `true`, one or two pages per wave.)
+
+### 2. Calculator fine-print — make it accurate (compliance-sensitive)
+
+In `src/components/calc-teaser.tsx`, the small disclaimer line at the bottom currently reads:
+
+```
+Estimate · {prePct}% pre / {postPct}% in-retirement · {drawdownYears}-yr drawdown · stress-tested both ways. Not advice — for informational purposes only.
+```
+
+Two problems: (a) it shows `{drawdownYears}` (the config default, 25) instead of the user-adjusted `drawdownYearsValue`, so when a visitor changes "Years in retirement" the headline updates but this line doesn't; (b) it claims a `{postPct}%` "in-retirement" return that the calculator does NOT actually model (`project()` never uses `assumedAnnualReturnPost`), and "stress-tested both ways" implies a two-scenario model that doesn't exist.
+
+Fix the line to describe only what the model actually does, using the live adjusted values:
+
+```
+Estimate · {prePct}% annual return · {drawdownYearsValue}-yr retirement · Not advice — for informational purposes only.
+```
+
+Do not introduce any new assumption. `assumedAnnualReturnPost` stays unused.
+
+### 3. Inflation calculator placeholder — keep it out of search until it's real
+
+`/calculators/inflation` is currently a `PageStub` ("Calconic embed lands in step 4"). A thin placeholder shouldn't be crawlable. In its `routes` entry in `src/site.config.ts`, set `canonical: false` and `showInLlms: false` (same treatment as item 1) so it's excluded from `sitemap.xml` and `llms.txt` until the real embed ships. Leave the page reachable by direct URL.
+
+### 4. (Optional, low-priority) Home service-card label consistency
+
+On the home page (`src/app/page.tsx`), the middle service card is titled "Life & disability," but the header nav and page are now "Life Insurance." If you want consistency, rename the card title to "Life insurance" (keep its description, which can still mention disability/LTC). Leave it if you'd rather the card describe the broader scope — this is cosmetic.
+
+When done: report which files changed, and confirm (a) the footer has no secondary-service links, (b) `/sitemap.xml` and `/llms.txt` exclude the four service pages + `/calculators/inflation`, and (c) the calculator fine-print updates live when "Years in retirement" is changed.
