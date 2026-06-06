@@ -45,7 +45,7 @@ export default function LifeInsurancePage() {
           serviceType: "Life insurance",
           path: PATH,
           description:
-            "Term and permanent life insurance through an independent broker — a short conversation about income, dependents, and the coverage that may fit your situation.",
+            "Term and permanent life insurance through a multi-carrier independent agent — a short conversation about income, dependents, and the coverage that may fit your situation.",
         })}
         id="ld-financialservice"
       />

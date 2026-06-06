@@ -166,12 +166,12 @@ export default function RetirementPlanningPage() {
               {
                 question: "Do you charge a fee?",
                 answer:
-                  "I'm an insurance-only broker — there's no planning or advisory fee. Compensation comes from the carrier when you place a policy. If a piece of work falls outside what I do, I'll say so and point you to someone who handles it.",
+                  "I'm an insurance-only agent — there's no planning or advisory fee. Compensation comes from the carrier when you place a policy. If a piece of work falls outside what I do, I'll say so and point you to someone who handles it.",
               },
               {
                 question: "Do you manage investments?",
                 answer:
-                  "No. I'm an insurance-only broker — I don't manage 401(k)s, IRAs, or brokerage accounts. For investment management I refer to a CPA or RIA I trust, and we coordinate around your overall plan.",
+                  "No. I'm an insurance-only agent — I don't manage 401(k)s, IRAs, or brokerage accounts. For investment management I refer to a CPA or RIA I trust, and we coordinate around your overall plan.",
               },
               {
                 question: "What if I already have a 401(k) plan elsewhere?",

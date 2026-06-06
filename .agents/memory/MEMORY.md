@@ -1,1 +1,2 @@
 - [Dev server verification](dev-server-verification.md) — curling public $REPLIT_DEV_DOMAIN gives 502 (mTLS proxy); curl http://localhost:$PORT (usually 5000) instead.
+- [Next.js dev/build share .next](nextjs-dev-build-manifest.md) — `pnpm build` while dev workflow runs corrupts `.next` (routes-manifest ENOENT, 500s); restart the dev workflow after.

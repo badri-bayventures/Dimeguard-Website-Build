@@ -17,6 +17,19 @@ export const generateMetadata = () => buildMetadata({ path: PATH });
 export default async function BlogIndexPage() {
   const posts = await listPostSummaries();
 
+  const topicCounts = new Map<string, number>();
+  for (const post of posts) {
+    const topics =
+      post.tags && post.tags.length ? post.tags : [post.category];
+    for (const topic of topics) {
+      if (!topic) continue;
+      topicCounts.set(topic, (topicCounts.get(topic) ?? 0) + 1);
+    }
+  }
+  const topics = [...topicCounts.entries()].sort((a, b) =>
+    a[0].localeCompare(b[0]),
+  );
+
   return (
     <>
       <JsonLd
@@ -51,7 +64,27 @@ export default async function BlogIndexPage() {
               No posts yet — check back soon.
             </p>
           ) : (
-            <ul className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-10 lg:grid-cols-[16rem_1fr]">
+            {topics.length ? (
+              <aside className="lg:sticky lg:top-28 lg:self-start">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--color-ink-soft)]">
+                  Topics
+                </p>
+                <ul className="mt-4 flex flex-wrap gap-2 lg:flex-col lg:gap-1">
+                  {topics.map(([topic, count]) => (
+                    <li key={topic}>
+                      <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--color-border)] bg-white px-3 py-1.5 text-sm text-[color:var(--color-ink)] lg:rounded-lg lg:border-0 lg:bg-transparent lg:px-0 lg:py-1">
+                        <span>{topic}</span>
+                        <span className="text-xs text-[color:var(--color-muted)]">
+                          {count}
+                        </span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </aside>
+            ) : null}
+            <ul className="grid gap-6 sm:grid-cols-2">
               {posts.map((post) => (
                 <li key={post.slug}>
                   <Link
@@ -105,6 +138,7 @@ export default async function BlogIndexPage() {
                 </li>
               ))}
             </ul>
+          </div>
           )}
         </Container>
       </section>

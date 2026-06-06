@@ -4,6 +4,7 @@ import "./globals.css";
 import { SITE_URL, siteConfig } from "@/site.config";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { CookieConsent } from "@/components/cookie-consent";
 import { JsonLd } from "@/lib/schema/json-ld";
 import { localBusiness, person } from "@/lib/schema";
 
@@ -83,6 +84,7 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
+        <CookieConsent />
       </body>
     </html>
   );

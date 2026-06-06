@@ -18,6 +18,8 @@ type ContactChannel = {
   hint?: string;
 };
 
+const PHONE = "408-582-4271";
+
 export default function ContactPage() {
   const { nap } = siteConfig;
 
@@ -30,14 +32,12 @@ export default function ContactPage() {
       hint: "For quick questions or sending a document.",
     });
   }
-  if (nap.phone) {
-    channels.push({
-      label: "Phone",
-      value: nap.phone,
-      href: `tel:${nap.phone.replace(/[^\d+]/g, "")}`,
-      hint: "Calls returned within one business hour.",
-    });
-  }
+  channels.push({
+    label: "Phone",
+    value: PHONE,
+    href: `tel:${PHONE.replace(/[^\d+]/g, "")}`,
+    hint: "Calls returned within one business hour.",
+  });
   channels.push({
     label: "Book a call",
     value: "20-minute call",
@@ -157,21 +157,24 @@ export default function ContactPage() {
                   <li key={h}>{h}</li>
                 ))}
               </ul>
-              {nap.email || nap.phone ? (
-                <>
-                  <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-ink-soft)]">
-                    Reach us
-                  </p>
-                  <address className="mt-3 not-italic text-[color:var(--color-ink-soft)]">
-                    <div>{nap.name}</div>
-                    <div>
-                      {nap.addressLocality}, {nap.addressRegion}
-                    </div>
-                    {nap.phone ? <div className="mt-1">{nap.phone}</div> : null}
-                    {nap.email ? <div>{nap.email}</div> : null}
-                  </address>
-                </>
-              ) : null}
+              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-ink-soft)]">
+                Reach us
+              </p>
+              <address className="mt-3 not-italic text-[color:var(--color-ink-soft)]">
+                <div>{nap.name}</div>
+                <div>
+                  {nap.addressLocality}, {nap.addressRegion}
+                </div>
+                <div className="mt-1">
+                  <a
+                    href={`tel:${PHONE.replace(/[^\d+]/g, "")}`}
+                    className="hover:text-[color:var(--color-ink)]"
+                  >
+                    {PHONE}
+                  </a>
+                </div>
+                {nap.email ? <div>{nap.email}</div> : null}
+              </address>
             </div>
           </div>
         </div>

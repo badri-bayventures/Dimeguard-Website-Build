@@ -130,6 +130,8 @@ export type SiteConfig = {
   licensure: {
     primaryState: string;
     licensedStates: LicensedState[];
+    /** CA Department of Insurance license number (display only). */
+    licenseNumber: string;
     disclosure: string;
     insuranceOnlyDisclosure: string;
   };
@@ -190,6 +192,11 @@ export type SiteConfig = {
   nav: NavLink[];
   /** Footer-only links (Privacy, Terms, etc.). Kept separate from `nav`. */
   legalLinks: LegalLink[];
+  /**
+   * Secondary service pages (401(k) rollovers, annuities, etc.). Footer-only —
+   * deliberately kept out of the primary header nav.
+   */
+  serviceLinks: LegalLink[];
   routes: RouteMeta[];
   sameAs: {
     googleBusinessProfile?: string;
@@ -220,6 +227,12 @@ export type SiteConfig = {
         currentSavings: number;
         monthlySpend: number;
         monthlyContribution: number;
+        /** Pre-retirement expected annual return (decimal). */
+        expectedReturn: number;
+        /** Assumed annual inflation (decimal). */
+        inflation: number;
+        /** Marginal tax bracket applied to pre-tax drawdown (decimal). */
+        taxBracket: number;
       };
     };
     life: {
@@ -254,7 +267,7 @@ export const siteConfig: SiteConfig = {
   advisor: {
     fullName: "Saral Toms",
     firstName: "Saral",
-    title: "Insurance & Retirement Advisor",
+    title: "Senior Financial Planner",
     photoSrc: "/founders/saral.png",
     knowsLanguage: ["English", "Hindi"],
     bioSnippet:
@@ -265,7 +278,7 @@ export const siteConfig: SiteConfig = {
   founders: [
     {
       name: "Saral Toms",
-      role: "Insurance & Retirement Advisor",
+      role: "Senior Financial Planner",
       photoSrc: "/founders/saral.png",
       knowsLanguage: ["English", "Hindi"],
       bioParagraphs: [
@@ -319,8 +332,9 @@ export const siteConfig: SiteConfig = {
       { code: "CO", name: "Colorado" },
       { code: "NJ", name: "New Jersey" },
     ],
+    licenseNumber: "4344549",
     disclosure:
-      "Licensed insurance broker in California, Texas, Colorado, and New Jersey.",
+      "Licensed insurance agent in California, serving clients across the nation.",
     insuranceOnlyDisclosure:
       "Insurance-only licensure. Not investment, tax, or legal advice — for informational purposes only.",
   },
@@ -388,12 +402,12 @@ export const siteConfig: SiteConfig = {
     displayFontStack: "var(--font-display), Georgia, 'Times New Roman', serif",
     bodyFontStack: "var(--font-body), system-ui, -apple-system, sans-serif",
   },
-  // NOTE: "FIDUCIARY" deliberately omitted. Insurance-only brokers operate
+  // NOTE: "FIDUCIARY" deliberately omitted. Insurance-only agents operate
   // under the suitability standard. To add it back, prepend "FIDUCIARY · "
   // to `right`.
   topTrustBar: {
     enabled: true,
-    left: "INDEPENDENT INSURANCE BROKER · INSURANCE-ONLY",
+    left: "MULTI-CARRIER INDEPENDENT AGENT · INSURANCE-ONLY",
     right: "20-MIN FIRST CALL · NO SCRIPT, NO SALES PITCH",
   },
   locationPin: {
@@ -410,9 +424,9 @@ export const siteConfig: SiteConfig = {
   },
   heroTrustStrip: [
     { top: "20 min", bottom: "first call · no script" },
-    { top: "Independent", bottom: "no carrier captive contract" },
+    { top: "Independent", bottom: "not tied to one carrier" },
     { top: "$0", bottom: "to run your number" },
-    { top: "Multi-carrier", bottom: "independent broker" },
+    { top: "Multi-carrier", bottom: "independent agent" },
   ],
   carrierStrip: {
     enabled: false,
@@ -421,8 +435,8 @@ export const siteConfig: SiteConfig = {
   // TODO[badri]: re-enable Calculators in M2 when real calculator pages ship.
   nav: [
     { href: "/retirement-planning", label: "Retirement Planning", primary: true },
-    // URL stays /life-insurance until Saral confirms disability scope on Friday.
-    { href: "/life-insurance", label: "Life & Disability", primary: true },
+    // URL stays /life-insurance; disability/LTC content lives inside the page.
+    { href: "/life-insurance", label: "Life Insurance", primary: true },
     { href: "/about", label: "About", primary: true },
     { href: "/contact", label: "Contact", primary: true },
     { href: "/blog", label: "Blog", primary: false },
@@ -432,13 +446,19 @@ export const siteConfig: SiteConfig = {
     { href: "/privacy", label: "Privacy" },
     { href: "/terms", label: "Terms" },
   ],
+  serviceLinks: [
+    { href: "/401k-rollovers", label: "401(k) Rollovers" },
+    { href: "/annuities", label: "Annuities & Retirement Income" },
+    { href: "/tax-planning", label: "Tax-Efficient Planning" },
+    { href: "/estate-planning", label: "Estate Planning" },
+  ],
   routes: [
     {
       path: "/",
       title:
         "Insurance, retirement & tax planning · Mountain House, CA · Dimeguard",
       description:
-        "Saral Toms helps Central Valley families think clearly about insurance, retirement, and tax coordination. Independent insurance broker — first call is 20 minutes, no script, no sales pitch.",
+        "Saral Toms helps families think clearly about insurance, retirement, and tax coordination. Multi-carrier independent agent — first call is 20 minutes, no script, no sales pitch.",
       priority: 1.0,
       changeFrequency: "weekly",
       lastModified: "2026-05-25",
@@ -465,7 +485,7 @@ export const siteConfig: SiteConfig = {
       path: "/life-insurance",
       title: "Life & disability · Dimeguard",
       description:
-        "A short conversation about income to replace, dependents, existing coverage, and whether term or permanent insurance may fit your situation. Independent broker.",
+        "A short conversation about income to replace, dependents, existing coverage, and whether term or permanent insurance may fit your situation. Multi-carrier independent agent.",
       priority: 0.9,
       changeFrequency: "monthly",
       lastModified: "2026-05-18",
@@ -547,6 +567,82 @@ export const siteConfig: SiteConfig = {
       showInLlms: true,
       canonical: true,
     },
+    {
+      path: "/401k-rollovers",
+      title: "401(k) rollovers · Dimeguard",
+      description:
+        "A plain-language look at rolling an old 401(k) into an IRA — when it makes sense, the tax-bucket implications, and the trade-offs to weigh before you move money.",
+      priority: 0.6,
+      changeFrequency: "yearly",
+      lastModified: "2026-06-06",
+      llmsSummary:
+        "401(k) rollovers — when a rollover to an IRA makes sense, tax-bucket implications, and trade-offs to weigh.",
+      showInLlms: true,
+      canonical: true,
+    },
+    {
+      path: "/annuities",
+      title: "Annuities & retirement income · Dimeguard",
+      description:
+        "How annuities can turn part of a nest egg into predictable income — the main types, what the guarantees actually mean, and where they fit (and don't) in a retirement plan.",
+      priority: 0.6,
+      changeFrequency: "yearly",
+      lastModified: "2026-06-06",
+      llmsSummary:
+        "Annuities and retirement income — the main types, what guarantees mean, and where they fit in a plan.",
+      showInLlms: true,
+      canonical: true,
+    },
+    {
+      path: "/tax-planning",
+      title: "Tax-efficient planning · Dimeguard",
+      description:
+        "Coordinating the tax buckets — taxable, tax-deferred, and tax-free — so withdrawals in retirement are sequenced with the tax bill in mind. Not tax advice; coordination with your CPA.",
+      priority: 0.6,
+      changeFrequency: "yearly",
+      lastModified: "2026-06-06",
+      llmsSummary:
+        "Tax-efficient planning — coordinating taxable, tax-deferred, and tax-free buckets for retirement withdrawals.",
+      showInLlms: true,
+      canonical: true,
+    },
+    {
+      path: "/estate-planning",
+      title: "Estate planning · Dimeguard",
+      description:
+        "The insurance side of passing things on cleanly — beneficiary alignment, liquidity for taxes and expenses, and where life insurance fits alongside a will or trust drafted by your attorney.",
+      priority: 0.6,
+      changeFrequency: "yearly",
+      lastModified: "2026-06-06",
+      llmsSummary:
+        "Estate planning — beneficiary alignment, liquidity, and where life insurance fits alongside a will or trust.",
+      showInLlms: true,
+      canonical: true,
+    },
+    {
+      path: "/privacy",
+      title: "Privacy policy · Dimeguard",
+      description:
+        "How Dimeguard collects, uses, and protects your information, including California (CCPA/CalOPPA) privacy rights.",
+      priority: 0.3,
+      changeFrequency: "yearly",
+      lastModified: "2026-06-06",
+      llmsSummary: "Privacy policy, including California privacy rights.",
+      showInLlms: false,
+      canonical: false,
+    },
+    {
+      path: "/terms",
+      title: "Terms of use · Dimeguard",
+      description:
+        "The terms governing use of the Dimeguard website, including disclaimers and the insurance-only scope of services.",
+      priority: 0.3,
+      changeFrequency: "yearly",
+      lastModified: "2026-06-06",
+      llmsSummary: "Terms of use for the Dimeguard website.",
+      showInLlms: false,
+      canonical: false,
+    },
   ],
   sameAs: {
     googleBusinessProfile: "",
@@ -557,7 +653,12 @@ export const siteConfig: SiteConfig = {
     calendlyUrl: process.env.NEXT_PUBLIC_CALENDLY_URL ?? "",
     channels: [],
   },
-  social: [],
+  social: [
+    { label: "Facebook", href: "#" },
+    { label: "X", href: "#" },
+    { label: "LinkedIn", href: "#" },
+    { label: "Instagram", href: "#" },
+  ],
   analytics: {
     ga4MeasurementId: process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID ?? "",
     posthogPublicKey: process.env.NEXT_PUBLIC_POSTHOG_KEY ?? "",
@@ -575,6 +676,9 @@ export const siteConfig: SiteConfig = {
         currentSavings: 125000,
         monthlySpend: 6000,
         monthlyContribution: 1500,
+        expectedReturn: 0.07,
+        inflation: 0.03,
+        taxBracket: 0.22,
       },
     },
     life: {

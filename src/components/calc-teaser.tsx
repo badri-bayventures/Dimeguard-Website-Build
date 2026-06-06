@@ -97,7 +97,10 @@ export function CalcTeaser() {
   const ageId = useId();
   const retireAtId = useId();
   const savedId = useId();
-  const spendId = useId();
+  const contributionId = useId();
+  const returnId = useId();
+  const inflationId = useId();
+  const taxId = useId();
 
   const [age, setAge] = useState<string>(String(teaserDefaults.currentAge));
   const [retireAt, setRetireAt] = useState<string>(
@@ -106,17 +109,45 @@ export function CalcTeaser() {
   const [saved, setSaved] = useState<string>(
     formatUsd(teaserDefaults.currentSavings),
   );
-  const [spend, setSpend] = useState<string>(
-    formatUsd(teaserDefaults.monthlySpend),
+  const [contribution, setContribution] = useState<string>(
+    formatUsd(teaserDefaults.monthlyContribution),
   );
 
-  const prePct = Math.round(assumedAnnualReturnPre * 100);
+  // Collapsible "Adjust assumptions" — return / inflation / tax bracket.
+  // Stored as whole-percent strings; clamped to sane bounds before use.
+  const [showAssumptions, setShowAssumptions] = useState(false);
+  const [returnPct, setReturnPct] = useState<string>(
+    String(Math.round(teaserDefaults.expectedReturn * 100)),
+  );
+  const [inflationPct, setInflationPct] = useState<string>(
+    String(Math.round(teaserDefaults.inflation * 100)),
+  );
+  const [taxPct, setTaxPct] = useState<string>(
+    String(Math.round(teaserDefaults.taxBracket * 100)),
+  );
+
+  const clampPct = (v: string, lo: number, hi: number, fallback: number) => {
+    const n = Number(v);
+    if (!Number.isFinite(n) || v.trim() === "") return fallback;
+    return Math.min(hi, Math.max(lo, n));
+  };
+
+  const annualReturn =
+    clampPct(returnPct, 1, 12, Math.round(assumedAnnualReturnPre * 100)) / 100;
+  const inflation =
+    clampPct(inflationPct, 0, 8, Math.round(teaserDefaults.inflation * 100)) /
+    100;
+  const taxRate =
+    clampPct(taxPct, 0, 50, Math.round(teaserDefaults.taxBracket * 100)) / 100;
+
+  const prePct = Math.round(annualReturn * 100);
   const postPct = Math.round(assumedAnnualReturnPost * 100);
 
   // Live projection — recomputes from current field values as the user
   // types. Falls back to default age/retire-at so the chart never collapses,
-  // but `saved` and `spend` always honor user input (including 0) so the
-  // headline stays truthful.
+  // but `saved` and `contribution` always honor user input (including 0) so
+  // the headline stays truthful. Target monthly spend is a fixed assumption
+  // used only for the "needed" line.
   const livePreview = useMemo(() => {
     const ageNum =
       Number.isFinite(Number(age)) && Number(age) > 0
@@ -127,22 +158,34 @@ export function CalcTeaser() {
         ? Number(retireAt)
         : teaserDefaults.targetRetirementAge;
     const savedRaw = parseCurrency(saved);
-    const spendRaw = parseCurrency(spend);
+    const contribRaw = parseCurrency(contribution);
     return project({
       currentAge: ageNum,
       retireAt: retireNum,
       saved: Number.isFinite(savedRaw) ? Math.max(0, savedRaw) : 0,
-      monthlySpend: Number.isFinite(spendRaw) ? Math.max(0, spendRaw) : 0,
+      monthlySpend: teaserDefaults.monthlySpend,
+      monthlyContribution: Number.isFinite(contribRaw)
+        ? Math.max(0, contribRaw)
+        : 0,
+      annualReturn,
+      inflation,
+      taxRate,
     });
-  }, [age, retireAt, saved, spend, teaserDefaults]);
+  }, [
+    age,
+    retireAt,
+    saved,
+    contribution,
+    annualReturn,
+    inflation,
+    taxRate,
+    teaserDefaults,
+  ]);
 
   const shown = livePreview;
   const finalAge = Number(retireAt) || teaserDefaults.targetRetirementAge;
   const startAge = Number(age) || teaserDefaults.currentAge;
-  const spendForLabel = (() => {
-    const raw = parseCurrency(spend);
-    return Number.isFinite(raw) && raw >= 0 ? raw : teaserDefaults.monthlySpend;
-  })();
+  const spendForLabel = teaserDefaults.monthlySpend;
 
   // Allow advisors to opt out / swap the teaser kind. The life-value variant
   // isn't part of the Direction D mockup — fall back to a minimal label.
@@ -204,12 +247,57 @@ export function CalcTeaser() {
             placeholder="$125,000"
           />
           <FieldCurrency
-            id={spendId}
-            label="Spend / mo"
-            value={spend}
-            onChange={setSpend}
-            placeholder="$6,000"
+            id={contributionId}
+            label="Adding / mo"
+            value={contribution}
+            onChange={setContribution}
+            placeholder="$1,500"
           />
+        </div>
+
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowAssumptions((v) => !v)}
+            aria-expanded={showAssumptions}
+            className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70 transition hover:text-[color:var(--color-accent)]"
+          >
+            <span>{showAssumptions ? "Hide" : "Adjust"} assumptions</span>
+            <span aria-hidden className="text-[color:var(--color-accent)]">
+              {showAssumptions ? "−" : "+"}
+            </span>
+          </button>
+          {showAssumptions ? (
+            <div className="mt-3 grid grid-cols-3 gap-3">
+              <FieldNumber
+                id={returnId}
+                label="Return %"
+                value={returnPct}
+                onChange={setReturnPct}
+                min={1}
+                max={12}
+                placeholder="7"
+              />
+              <FieldNumber
+                id={inflationId}
+                label="Inflation %"
+                value={inflationPct}
+                onChange={setInflationPct}
+                min={0}
+                max={8}
+                placeholder="3"
+              />
+              <FieldNumber
+                id={taxId}
+                label="Tax %"
+                value={taxPct}
+                onChange={setTaxPct}
+                min={0}
+                max={50}
+                placeholder="22"
+              />
+            </div>
+          ) : null}
         </div>
 
         <div className="flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.18em] text-white/55">

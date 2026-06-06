@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { siteConfig } from "@/site.config";
 import { Hero } from "@/components/hero";
 import { HeroTrustStrip } from "@/components/hero-trust-strip";
@@ -11,15 +12,21 @@ import { HeroNumber } from "@/components/hero-number";
 import { MeetAdvisor } from "@/components/meet-advisor";
 import { CalcTeaser } from "@/components/calc-teaser";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { listPostSummaries } from "@/lib/blog";
+import { formatDate } from "@/lib/format-date";
+
+export const revalidate = 300;
 
 export const generateMetadata = () => buildMetadata({ path: "/" });
 
-export default function Home() {
+export default async function Home() {
   const bookCallHref = "/book?source=hero";
+  const recentPosts = (await listPostSummaries()).slice(0, 3);
 
   return (
     <>
       <Hero
+        eyebrow="Independent Financial Doctor"
         badge={
           siteConfig.heroBadge.enabled
             ? { label: siteConfig.heroBadge.label }
@@ -60,7 +67,7 @@ export default function Home() {
             <SectionHeading
               eyebrow="THE DIMEGUARD NUMBER"
               title="See where you stand in 90 seconds."
-              lede="Five inputs. A real projection. No signup — your numbers stay on this page."
+              lede="Four inputs. A real projection. No signup — your numbers stay on this page."
             />
             <p className="mt-6 text-base text-[color:var(--color-ink)]/70">
               The projection updates live as you type, using the same math as
@@ -104,6 +111,54 @@ export default function Home() {
           />
         </div>
       </Section>
+
+      {recentPosts.length ? (
+        <Section tone="muted">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <SectionHeading
+              eyebrow="From the blog"
+              title="Notes on planning."
+            />
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--color-ink)] underline decoration-[color:var(--color-secondary)] decoration-2 underline-offset-4 hover:text-[color:var(--color-ink-soft)]"
+            >
+              All posts →
+            </Link>
+          </div>
+          <ul className="mt-10 grid gap-6 md:grid-cols-3">
+            {recentPosts.map((post) => (
+              <li key={post.slug}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group flex h-full flex-col rounded-2xl border border-[color:var(--color-border)] bg-white p-6 transition-shadow hover:shadow-md"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center rounded-full bg-[color:var(--color-surface-muted)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--color-ink-soft)]">
+                      {post.category}
+                    </span>
+                    <time
+                      dateTime={post.publishedDate}
+                      className="text-xs text-[color:var(--color-muted)]"
+                    >
+                      {formatDate(post.publishedDate)}
+                    </time>
+                  </div>
+                  <h3 className="mt-4 font-[family-name:var(--font-display)] text-xl font-medium tracking-tight text-[color:var(--color-ink)]">
+                    {post.title}
+                  </h3>
+                  <p className="mt-3 flex-1 text-sm text-[color:var(--color-muted)]">
+                    {post.summary}
+                  </p>
+                  <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-ink)] group-hover:underline">
+                    Read post →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
 
       <Section tone="surface">
         <MeetAdvisor />
@@ -178,12 +233,12 @@ export default function Home() {
               {
                 question: "Are you licensed outside of California?",
                 answer:
-                  "I’m licensed as an insurance broker in multiple states, including California. If you’re outside California, mention your state on the first call and I’ll confirm I can serve you.",
+                  "I’m a licensed insurance agent based in California, serving clients across the nation. Mention your state on the first call and I’ll confirm I can serve you. In-person meetings are available on request.",
               },
               {
                 question: "Do you give investment or tax advice?",
                 answer:
-                  "No. I’m an insurance-only broker. The site shows estimates and frameworks; for tax filing or investment management, I’ll refer you to a CPA or RIA I trust.",
+                  "No. I’m an insurance-only agent. The site shows estimates and frameworks; for tax filing or investment management, I’ll refer you to a CPA or RIA I trust.",
               },
               {
                 question: "What if I just want to download the spreadsheets?",

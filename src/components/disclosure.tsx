@@ -10,7 +10,7 @@ export function Disclosure({ className = "" }: { className?: string }) {
     <p
       className={`text-xs leading-relaxed text-[color:var(--color-muted)] ${className}`.trim()}
     >
-      {siteConfig.advisor.fullName} is a licensed insurance broker.{" "}
+      {siteConfig.advisor.fullName} is a licensed insurance agent.{" "}
       {siteConfig.licensure.insuranceOnlyDisclosure}
     </p>
   );
