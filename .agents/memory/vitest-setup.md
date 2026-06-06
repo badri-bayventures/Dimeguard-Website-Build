@@ -1,17 +1,26 @@
 ---
-name: Vitest setup in this Next.js app
-description: How the Vitest + React Testing Library harness is wired and the version pin that makes it work.
+name: Vitest is firewall-blocked in the main environment
+description: Why vitest-based test suites cannot be installed in this repl's main environment, and what that means for testing tasks.
 ---
 
-# Vitest setup
+# Vitest is blocked by the package firewall (main environment)
 
-Test harness: `vitest run` (script `test`), jsdom env, `@testing-library/react` + `@testing-library/jest-dom`. Config in `vitest.config.ts`, global matchers loaded via `vitest.setup.ts` (`import "@testing-library/jest-dom/vitest"`). Tests live next to source as `*.test.tsx`.
+Installing `vitest` in the **main** Replit environment fails with
+`ERR_PNPM_FETCH_403 GET http://package-firewall.replit.local/npm/vitest/-/vitest-<ver>.tgz: Forbidden`
+("No authorization header was set"). This happens via raw `pnpm install`, `pnpm add`,
+AND the supported `installLanguagePackages` tool — it is a package-security block, not a transient hiccup.
 
-## Pin @vitejs/plugin-react to v4, NOT v6
-**Why:** Vitest 3.x bundles Vite 7. `@vitejs/plugin-react@6` declares peer `vite@^8` and imports `vite/internal`, which Vite 7 does not export — config load fails with `ERR_PACKAGE_PATH_NOT_EXPORTED ... './internal'`. `@vitejs/plugin-react@^4` works with Vite 7.
-**How to apply:** When bumping vitest/vite or adding the react plugin, keep plugin-react compatible with the Vite version vitest ships, or tests won't even load.
+**Why this matters:** Isolated task agents run in a *different* environment where vitest installs
+fine (a test task merged a working `pnpm test` suite). But once merged, the main environment's
+`pnpm install` hard-fails on the vitest tarball, so **every post-merge setup breaks** and the
+lockfile can't be resynced.
 
-## Other gotchas
-- `vite-tsconfig-paths` scans every tsconfig under the repo, including `.local/skills/**`, and prints parse warnings. Scope it: `tsconfigPaths({ projects: ["tsconfig.json"], ignoreConfigErrors: true })`.
-- esbuild's postinstall build script is gated by pnpm; it's allowlisted via `pnpm.onlyBuiltDependencies: ["esbuild"]` in package.json. Without it vitest can't transform.
-- `siteConfig.contact.calendlyUrl` reads `process.env.NEXT_PUBLIC_CALENDLY_URL` at module load, so to test env-dependent rendering set the env var, `vi.resetModules()`, then dynamic-import the component.
+**How to apply:**
+- Do NOT add vitest (or vitest-based test scaffolding) to this project — it will break post-merge
+  installs in main even if it passed in the task agent's env.
+- Any "add automated tests" task here will hit the same wall. Flag it to the user before assigning;
+  prefer a different verification approach (e.g. manual/e2e via the testing skill, or no unit harness).
+- If a merge re-introduces vitest, the fix is to remove `vitest`, `@vitejs/plugin-react`, `jsdom`,
+  `@testing-library/*`, `vite-tsconfig-paths` from package.json, delete `vitest.config.ts`,
+  `vitest.setup.ts`, and any `*.test.tsx`, then `pnpm install` to resync. App build/runtime never
+  depended on these (all dev-only); Vercel is unaffected (it installs from real npm, not the firewall).
