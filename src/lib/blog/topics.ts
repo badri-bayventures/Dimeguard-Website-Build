@@ -84,3 +84,64 @@ export function normalizeTopics(raw: string[] | undefined): string[] {
   }
   return out;
 }
+
+/**
+ * Editorial grouping of canonical topic labels under parent sections. The
+ * labels here must match the output of `normalizeTopic` exactly so the live
+ * topic list slots into the right section. Topics that aren't listed here fall
+ * into a "More topics" group, so nothing is ever hidden.
+ *
+ * Section order, and topic order within each section, follow this definition.
+ */
+const TOPIC_SECTIONS: ReadonlyArray<{
+  title: string;
+  topics: readonly string[];
+}> = [
+  { title: "Protection", topics: ["Life insurance", "Insurance", "Legacy of love"] },
+  { title: "Wealth & Investing", topics: ["Building wealth", "Investments"] },
+  { title: "Planning", topics: ["Retirement", "Estate planning", "Tax"] },
+];
+
+const FALLBACK_SECTION_TITLE = "More topics";
+
+export type TopicCount = { topic: string; count: number };
+export type TopicSection = { title: string; topics: TopicCount[] };
+
+/**
+ * Given the live `[topic, count]` pairs, return the ordered sections with their
+ * topics and counts. Only sections that have at least one live topic are
+ * returned. Any topic not assigned to a defined section is routed into the
+ * "More topics" fallback (sorted alphabetically) so no topic is dropped.
+ */
+export function groupTopicsIntoSections(
+  topicCounts: ReadonlyArray<readonly [string, number]>,
+): TopicSection[] {
+  const remaining = new Map<string, number>(
+    topicCounts.map(([topic, count]) => [topic, count]),
+  );
+
+  const sections: TopicSection[] = [];
+  for (const section of TOPIC_SECTIONS) {
+    const topics: TopicCount[] = [];
+    for (const topic of section.topics) {
+      const count = remaining.get(topic);
+      if (count !== undefined) {
+        topics.push({ topic, count });
+        remaining.delete(topic);
+      }
+    }
+    if (topics.length) sections.push({ title: section.title, topics });
+  }
+
+  const leftover = [...remaining.entries()].sort((a, b) =>
+    a[0].localeCompare(b[0]),
+  );
+  if (leftover.length) {
+    sections.push({
+      title: FALLBACK_SECTION_TITLE,
+      topics: leftover.map(([topic, count]) => ({ topic, count })),
+    });
+  }
+
+  return sections;
+}
