@@ -90,9 +90,7 @@ export function SiteFooter() {
       </Container>
       <div className="border-t border-white/10">
         <Container className="flex flex-col items-start justify-between gap-3 py-5 text-xs text-white/60 md:flex-row md:items-center">
-          <div suppressHydrationWarning>
-            © {year} {siteConfig.business.legalName}. All rights reserved.
-          </div>
+          <div>© {year} {siteConfig.business.legalName}. All rights reserved.</div>
           <div className="flex items-center gap-4">
             {siteConfig.legalLinks.map((l) => (
               <Link
