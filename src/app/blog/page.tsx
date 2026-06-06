@@ -143,7 +143,7 @@ export default async function BlogIndexPage({
                         className={`flex items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${
                           activeGroup
                             ? "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)]"
-                            : "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white"
+                            : "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white!"
                         }`}
                       >
                         <span className="font-medium">All posts</span>
@@ -167,7 +167,7 @@ export default async function BlogIndexPage({
                             aria-current={isActive ? "true" : undefined}
                             className={`flex items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${
                               isActive
-                                ? "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white"
+                                ? "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white!"
                                 : "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:border-[color:var(--color-ink)]"
                             }`}
                           >
