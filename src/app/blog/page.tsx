@@ -14,10 +14,21 @@ import {
 import { formatDate } from "@/lib/format-date";
 
 const PATH = "/blog";
+const PAGE_SIZE = 9;
 
 export const revalidate = 300;
 
 export const generateMetadata = () => buildMetadata({ path: PATH });
+
+// Build a /blog link that preserves the active topic filter and only adds the
+// page param when it's beyond the first page, keeping page-1 URLs canonical.
+function buildPageHref(topic: string | null, page: number): string {
+  const params = new URLSearchParams();
+  if (topic) params.set("topic", topic);
+  if (page > 1) params.set("page", String(page));
+  const qs = params.toString();
+  return qs ? `${PATH}?${qs}` : PATH;
+}
 
 function topicsForPost(post: { tags?: string[]; category?: string }): string[] {
   const raw =
@@ -43,7 +54,7 @@ export default async function BlogIndexPage({
   const topicSections = groupTopicsIntoSections([...topicCounts.entries()]);
   const hasTopics = topicSections.length > 0;
 
-  const { topic: rawTopic } = await searchParams;
+  const { topic: rawTopic, page: rawPage } = await searchParams;
   const requestedTopic = Array.isArray(rawTopic) ? rawTopic[0] : rawTopic;
   // Normalize the incoming value so both canonical links (?topic=Life insurance)
   // and raw/bookmarked Notion-tag links (?topic=%23lifeinsurance) still resolve.
@@ -62,8 +73,23 @@ export default async function BlogIndexPage({
   // On the default (unfiltered) view, lift the latest post into a larger
   // featured card and drop it from the standard grid. Filtered views keep the
   // plain grid behaviour.
-  const featuredPost = !activeTopic ? visiblePosts[0] : undefined;
-  const gridPosts = featuredPost ? visiblePosts.slice(1) : visiblePosts;
+  const gridSource = !activeTopic ? visiblePosts.slice(1) : visiblePosts;
+
+  // Paginate the grid so long lists stay browsable. Page 1 of the unfiltered
+  // view also carries the featured card; later pages are a plain grid.
+  const totalPages = Math.max(1, Math.ceil(gridSource.length / PAGE_SIZE));
+  const requestedPage = Array.isArray(rawPage) ? rawPage[0] : rawPage;
+  const parsedPage = Number.parseInt(requestedPage ?? "1", 10);
+  const currentPage = Number.isFinite(parsedPage)
+    ? Math.min(Math.max(parsedPage, 1), totalPages)
+    : 1;
+
+  const featuredPost =
+    !activeTopic && currentPage === 1 ? visiblePosts[0] : undefined;
+  const gridPosts = gridSource.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
 
   return (
     <>
@@ -263,6 +289,50 @@ export default async function BlogIndexPage({
                   </li>
                 ))}
               </ul>
+              {totalPages > 1 ? (
+                <nav
+                  aria-label="Blog pages"
+                  className="mt-12 flex flex-wrap items-center justify-center gap-2"
+                >
+                  {currentPage > 1 ? (
+                    <Link
+                      href={buildPageHref(activeTopic, currentPage - 1)}
+                      rel="prev"
+                      className="inline-flex items-center rounded-lg border border-[color:var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[color:var(--color-ink)] transition-colors hover:text-[color:var(--color-ink-soft)]"
+                    >
+                      ← Previous
+                    </Link>
+                  ) : null}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (pageNum) => {
+                      const isCurrent = pageNum === currentPage;
+                      return (
+                        <Link
+                          key={pageNum}
+                          href={buildPageHref(activeTopic, pageNum)}
+                          aria-current={isCurrent ? "page" : undefined}
+                          className={`inline-flex h-10 min-w-10 items-center justify-center rounded-lg border px-3 text-sm font-medium transition-colors ${
+                            isCurrent
+                              ? "border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-white"
+                              : "border-[color:var(--color-border)] bg-white text-[color:var(--color-ink)] hover:text-[color:var(--color-ink-soft)]"
+                          }`}
+                        >
+                          {pageNum}
+                        </Link>
+                      );
+                    },
+                  )}
+                  {currentPage < totalPages ? (
+                    <Link
+                      href={buildPageHref(activeTopic, currentPage + 1)}
+                      rel="next"
+                      className="inline-flex items-center rounded-lg border border-[color:var(--color-border)] bg-white px-3 py-2 text-sm font-medium text-[color:var(--color-ink)] transition-colors hover:text-[color:var(--color-ink-soft)]"
+                    >
+                      Next →
+                    </Link>
+                  ) : null}
+                </nav>
+              ) : null}
             </div>
           </div>
           )}
