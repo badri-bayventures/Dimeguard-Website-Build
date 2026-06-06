@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { InlineWidget } from "react-calendly";
+import { InlineWidget, useCalendlyEventListener } from "react-calendly";
 import { siteConfig, resolveBookingSource } from "@/site.config";
 import { track } from "@/lib/analytics/track";
 import { ButtonLink } from "./button";
@@ -20,12 +20,22 @@ export function BookingExperience() {
   const { key, copy } = resolveBookingSource(searchParams.get("source"));
   const calendlyUrl = siteConfig.contact.calendlyUrl;
 
+  // Auto-fit the embed to its content. Calendly broadcasts the scheduling
+  // page's true height as it changes (date picker → time slots → confirm),
+  // so we grow the frame to match and never show an inner scrollbar. The
+  // initial value is a tall fallback for before the first resize message.
+  const [embedHeight, setEmbedHeight] = useState("1000px");
+
   // Fire a booking-page view event tagged with the resolved entry-point
   // source so Saral can see conversion by source in GA4 / PostHog. No-ops
   // when analytics isn't connected (track() guards on window.posthog/gtag).
   useEffect(() => {
     track("booking_page_viewed", { source: key });
   }, [key]);
+
+  useCalendlyEventListener({
+    onPageHeightResize: (e) => setEmbedHeight(e.data.payload.height),
+  });
 
   return (
     <section className="bg-[color:var(--color-surface-muted)]">
@@ -82,14 +92,14 @@ export function BookingExperience() {
         {/* Right column — inline Calendly widget in the brand palette. */}
         <div className="mt-8 md:col-span-7 md:mt-0 lg:col-span-8">
           {calendlyUrl ? (
-            <div className="overflow-hidden rounded-3xl border border-[color:var(--color-border)] bg-white shadow-[var(--shadow-card)]">
+            <div className="overflow-hidden rounded-3xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] shadow-[var(--shadow-card)]">
               <InlineWidget
                 url={calendlyUrl}
-                styles={{ height: "780px", minWidth: "280px" }}
+                styles={{ height: embedHeight, minWidth: "280px" }}
                 pageSettings={{
-                  backgroundColor: "FFFFFF",
+                  backgroundColor: "F5F1E8",
                   primaryColor: "143A4A",
-                  textColor: "1A1A1A",
+                  textColor: "143A4A",
                   hideEventTypeDetails: false,
                   hideLandingPageDetails: false,
                   hideGdprBanner: true,
