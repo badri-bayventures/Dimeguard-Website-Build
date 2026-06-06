@@ -211,6 +211,35 @@ export default async function BlogIndexPage({
               </aside>
             ) : null}
             <div>
+              {activeTopic ? (
+                <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-[color:var(--color-border)] pb-5">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      aria-hidden
+                      className="inline-block h-7 w-1.5 rounded-full bg-[color:var(--color-accent)]"
+                    />
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--color-ink-soft)]">
+                        Topic
+                      </p>
+                      <h2 className="mt-1 font-[family-name:var(--font-display)] text-2xl font-medium tracking-tight text-[color:var(--color-ink)] md:text-3xl">
+                        {activeTopic}
+                        <span className="ml-2 text-base font-normal text-[color:var(--color-muted)]">
+                          {visiblePosts.length}{" "}
+                          {visiblePosts.length === 1 ? "post" : "posts"}
+                        </span>
+                      </h2>
+                    </div>
+                  </div>
+                  <Link
+                    href={PATH}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-medium text-[color:var(--color-ink)] transition-colors hover:border-[color:var(--color-ink)]"
+                  >
+                    <span aria-hidden>←</span>
+                    All posts
+                  </Link>
+                </div>
+              ) : null}
               {!activeTopic && featuredPost ? (
                 <Link
                   href={`/blog/${featuredPost.slug}`}
