@@ -97,7 +97,9 @@ export function CalcTeaser() {
   const ageId = useId();
   const retireAtId = useId();
   const savedId = useId();
-  const spendId = useId();
+  const contributionId = useId();
+  const returnId = useId();
+  const drawdownId = useId();
 
   const [age, setAge] = useState<string>(String(teaserDefaults.currentAge));
   const [retireAt, setRetireAt] = useState<string>(
@@ -106,17 +108,38 @@ export function CalcTeaser() {
   const [saved, setSaved] = useState<string>(
     formatUsd(teaserDefaults.currentSavings),
   );
-  const [spend, setSpend] = useState<string>(
-    formatUsd(teaserDefaults.monthlySpend),
+  const [contribution, setContribution] = useState<string>(
+    formatUsd(teaserDefaults.monthlyContribution),
   );
 
-  const prePct = Math.round(assumedAnnualReturnPre * 100);
-  const postPct = Math.round(assumedAnnualReturnPost * 100);
+  // Collapsible "Adjust assumptions" — annual return / years in retirement.
+  // Stored as whole-number strings; clamped to sane bounds before use. These
+  // overrides feed only the live preview below; they never mutate siteConfig.
+  const [showAssumptions, setShowAssumptions] = useState(false);
+  const [returnPct, setReturnPct] = useState<string>(
+    String(Math.round(teaserDefaults.expectedReturn * 100)),
+  );
+  const [drawdownYearsStr, setDrawdownYearsStr] = useState<string>(
+    String(drawdownYears),
+  );
+
+  const clampNum = (v: string, lo: number, hi: number, fallback: number) => {
+    const n = Number(v);
+    if (!Number.isFinite(n) || v.trim() === "") return fallback;
+    return Math.min(hi, Math.max(lo, n));
+  };
+
+  const annualReturn =
+    clampNum(returnPct, 1, 12, Math.round(assumedAnnualReturnPre * 100)) / 100;
+  const drawdownYearsValue = clampNum(drawdownYearsStr, 1, 50, drawdownYears);
+
+  const prePct = Math.round(annualReturn * 100);
 
   // Live projection — recomputes from current field values as the user
   // types. Falls back to default age/retire-at so the chart never collapses,
-  // but `saved` and `spend` always honor user input (including 0) so the
-  // headline stays truthful.
+  // but `saved` and `contribution` always honor user input (including 0) so
+  // the headline stays truthful. Target monthly spend is a fixed assumption
+  // used only for the "needed" line.
   const livePreview = useMemo(() => {
     const ageNum =
       Number.isFinite(Number(age)) && Number(age) > 0
@@ -127,22 +150,32 @@ export function CalcTeaser() {
         ? Number(retireAt)
         : teaserDefaults.targetRetirementAge;
     const savedRaw = parseCurrency(saved);
-    const spendRaw = parseCurrency(spend);
+    const contribRaw = parseCurrency(contribution);
     return project({
       currentAge: ageNum,
       retireAt: retireNum,
       saved: Number.isFinite(savedRaw) ? Math.max(0, savedRaw) : 0,
-      monthlySpend: Number.isFinite(spendRaw) ? Math.max(0, spendRaw) : 0,
+      monthlySpend: teaserDefaults.monthlySpend,
+      monthlyContribution: Number.isFinite(contribRaw)
+        ? Math.max(0, contribRaw)
+        : 0,
+      annualReturn,
+      drawdownYears: drawdownYearsValue,
     });
-  }, [age, retireAt, saved, spend, teaserDefaults]);
+  }, [
+    age,
+    retireAt,
+    saved,
+    contribution,
+    annualReturn,
+    drawdownYearsValue,
+    teaserDefaults,
+  ]);
 
   const shown = livePreview;
   const finalAge = Number(retireAt) || teaserDefaults.targetRetirementAge;
   const startAge = Number(age) || teaserDefaults.currentAge;
-  const spendForLabel = (() => {
-    const raw = parseCurrency(spend);
-    return Number.isFinite(raw) && raw >= 0 ? raw : teaserDefaults.monthlySpend;
-  })();
+  const spendForLabel = teaserDefaults.monthlySpend;
 
   // Allow advisors to opt out / swap the teaser kind. The life-value variant
   // isn't part of the Direction D mockup — fall back to a minimal label.
@@ -204,12 +237,52 @@ export function CalcTeaser() {
             placeholder="$125,000"
           />
           <FieldCurrency
-            id={spendId}
-            label="Spend / mo"
-            value={spend}
-            onChange={setSpend}
-            placeholder="$6,000"
+            id={contributionId}
+            label="Adding / mo"
+            value={contribution}
+            onChange={setContribution}
+            placeholder="$1,500"
           />
+        </div>
+
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowAssumptions((v) => !v)}
+            aria-expanded={showAssumptions}
+            className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70 transition hover:text-[color:var(--color-accent)]"
+          >
+            <span>{showAssumptions ? "Hide" : "Adjust"} assumptions</span>
+            <span aria-hidden className="text-[color:var(--color-accent)]">
+              {showAssumptions ? "−" : "+"}
+            </span>
+          </button>
+          {showAssumptions ? (
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <FieldNumber
+                id={returnId}
+                label="Annual return %"
+                value={returnPct}
+                onChange={setReturnPct}
+                min={1}
+                max={12}
+                placeholder="7"
+              />
+              <FieldNumber
+                id={drawdownId}
+                label="Years in retirement"
+                value={drawdownYearsStr}
+                onChange={setDrawdownYearsStr}
+                min={1}
+                max={50}
+                placeholder="25"
+              />
+            </div>
+          ) : (
+            <p className="mt-2 text-[11px] text-white/55">
+              Assumes a 7% annual return and a 25-year retirement — adjust.
+            </p>
+          )}
         </div>
 
         <div className="flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.18em] text-white/55">
@@ -251,9 +324,8 @@ export function CalcTeaser() {
         </Link>
 
         <p className="text-[10px] leading-relaxed text-white/55">
-          Estimate · {prePct}% pre / {postPct}% in-retirement · {drawdownYears}-yr
-          drawdown · stress-tested both ways. Not advice — for informational
-          purposes only.
+          Estimate · {prePct}% annual return · {drawdownYearsValue}-yr retirement
+          · Not advice — for informational purposes only.
         </p>
       </div>
     </div>

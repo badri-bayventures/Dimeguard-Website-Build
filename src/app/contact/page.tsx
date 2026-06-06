@@ -19,7 +19,8 @@ type ContactChannel = {
 };
 
 export default function ContactPage() {
-  const { nap, contact } = siteConfig;
+  const { nap } = siteConfig;
+  const telHref = nap.phone ? `tel:${nap.phone.replace(/[^\d+]/g, "")}` : "";
 
   const channels: ContactChannel[] = [];
   if (nap.email) {
@@ -34,18 +35,16 @@ export default function ContactPage() {
     channels.push({
       label: "Phone",
       value: nap.phone,
-      href: `tel:${nap.phone.replace(/[^\d+]/g, "")}`,
+      href: telHref,
       hint: "Calls returned within one business hour.",
     });
   }
-  if (contact.calendlyUrl) {
-    channels.push({
-      label: "Book a call",
-      value: "20-minute Calendly",
-      href: contact.calendlyUrl,
-      hint: "Pick a time that works — no prep required.",
-    });
-  }
+  channels.push({
+    label: "Book a call",
+    value: "20-minute call",
+    href: "/book?source=footer",
+    hint: "Pick a time that works — no prep required.",
+  });
 
   return (
     <>
@@ -159,21 +158,26 @@ export default function ContactPage() {
                   <li key={h}>{h}</li>
                 ))}
               </ul>
-              {nap.email || nap.phone ? (
-                <>
-                  <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-ink-soft)]">
-                    Reach us
-                  </p>
-                  <address className="mt-3 not-italic text-[color:var(--color-ink-soft)]">
-                    <div>{nap.name}</div>
-                    <div>
-                      {nap.addressLocality}, {nap.addressRegion}
-                    </div>
-                    {nap.phone ? <div className="mt-1">{nap.phone}</div> : null}
-                    {nap.email ? <div>{nap.email}</div> : null}
-                  </address>
-                </>
-              ) : null}
+              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-ink-soft)]">
+                Reach us
+              </p>
+              <address className="mt-3 not-italic text-[color:var(--color-ink-soft)]">
+                <div>{nap.name}</div>
+                <div>
+                  {nap.addressLocality}, {nap.addressRegion}
+                </div>
+                {nap.phone ? (
+                  <div className="mt-1">
+                    <a
+                      href={telHref}
+                      className="hover:text-[color:var(--color-ink)]"
+                    >
+                      {nap.phone}
+                    </a>
+                  </div>
+                ) : null}
+                {nap.email ? <div>{nap.email}</div> : null}
+              </address>
             </div>
           </div>
         </div>

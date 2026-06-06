@@ -1,0 +1,47 @@
+eparate from the post-launch fixes prompt. Fire in its own Replit thread. Goal: replace the raw Calendly link with a branded two-column booking experience that mirrors the w3bly.com booking page — calendar widget on the right, a fixed left panel whose copy changes based on where the visitor came from — and keep BOTH booking entry points, tagging the source into the booked meeting so Saral knows the origin.
+
+Reference implementation: the booking page on w3bly.com (in this workspace at `w3bly-com/`) — match that layout/pattern.
+
+Brand tokens (from `site.config.ts`): ink `#143A4A` (teal), accent `#C8E04A` (lime), secondary `#5BC0E8` (cyan), surfaceMuted `#F5F1E8`.
+
+Calendly event: `https://calendly.com/stoms-dimeguard/20-minute-consultation`
+
+---
+
+## Paste-ready prompt
+
+You are working on the Dimeguard website (Next.js 15 App Router, `site.config.ts`-driven). Build a branded, source-aware booking page using the existing 20-minute Calendly event. Mirror the two-column booking layout used on the w3bly.com site (`w3bly-com/`).
+
+### 1. Booking page (`/book`)
+- Two-column layout:
+  - **Left panel (fixed/sticky):** dynamic content driven by a `?source=` query param — a heading, a short supporting line, and 2–3 reassurance bullets (e.g., "20 minutes," "No prep needed," "Straight answers"). Use the brand palette (ink background or surfaceMuted, lime/cyan accents).
+  - **Right column:** the Calendly inline widget for the 20-minute event.
+- Responsive: on mobile, stack the left panel above the widget (single column), left panel no longer sticky.
+
+### 2. Source-aware left panel
+- Read `source` from the query string. Define a `sourceConfig` map, e.g.:
+  - `hero` → "Book a 20-minute retirement conversation" / general framing
+  - `retirement` → retirement-planning-specific framing
+  - `life` → life-insurance-specific framing
+  - `footer` / default → generic fallback
+- Each entry supplies `{ heading, subcopy, bullets }`. Unknown or missing `source` falls back to the default. Keep this map in or near `site.config.ts` so copy is editable without touching components.
+
+### 3. Calendly embed (palette-matched + source tracking)
+- Use `react-calendly`'s `InlineWidget` (add the dependency).
+- `pageSettings` to match the palette (hex WITHOUT the `#`):
+  - `primaryColor: '143A4A'` (ink — buttons/active states)
+  - `textColor: '1A1A1A'`
+  - `backgroundColor: 'FFFFFF'`
+  - `hideEventTypeDetails: false`, `hideLandingPageDetails: false`
+- Pass the source through Calendly's `utm` prop so the origin is captured on the booked event and shows in Saral's calendar/notification:
+  - `utm: { utmSource: 'website', utmCampaign: <source>, utmContent: <source> }`
+- These UTM values surface in the Calendly event details and the confirmation emails, so the booked meeting carries where the lead came from.
+
+### 4. Keep BOTH booking entry points (do not remove either)
+- Wire every existing booking CTA to `/book` with the appropriate `source`:
+  - Homepage hero "Book a call" → `/book?source=hero`
+  - Service pages "Schedule consultation" → `/book?source=retirement` or `?source=life` per page
+  - Footer / any other booking link → `/book?source=footer`
+- Do not delete the "Schedule consultation" CTA — both paths stay; they just carry different `source` values.
+
+When done: report the files changed, and confirm the left panel changes with `?source=` and the Calendly widget renders in brand colors on both desktop and mobile.

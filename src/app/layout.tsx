@@ -4,6 +4,8 @@ import "./globals.css";
 import { SITE_URL, siteConfig } from "@/site.config";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { CookieConsent } from "@/components/cookie-consent";
+import { Analytics } from "@/components/analytics";
 import { JsonLd } from "@/lib/schema/json-ld";
 import { localBusiness, person } from "@/lib/schema";
 
@@ -56,22 +58,18 @@ export default function RootLayout({
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
-        {/*
-          Site-wide structured data lives in <head> so every page's
-          view-source shows LocalBusiness + Person inline at the top of the
-          document. Page-specific blocks (FAQPage, FinancialService,
-          BreadcrumbList) are rendered from each page body — Google
-          explicitly supports JSON-LD in either head or body, and Next.js
-          App Router has no supported per-page <head> script injection.
-        */}
-        <JsonLd data={localBusiness(siteConfig)} id="ld-localbusiness" />
-        <JsonLd data={person(siteConfig)} id="ld-person" />
-      </head>
       <body
         className="min-h-full flex flex-col bg-[color:var(--color-surface)] text-[color:var(--color-ink)]"
         suppressHydrationWarning
       >
+        {/*
+          Site-wide structured data. Rendered in the body (not an explicit
+          <head>) to match how every page renders its page-specific JSON-LD
+          and to avoid manual <head> management in the App Router, which
+          React 19 reconciles specially. Google reads JSON-LD from the body.
+        */}
+        <JsonLd data={localBusiness(siteConfig)} id="ld-localbusiness" />
+        <JsonLd data={person(siteConfig)} id="ld-person" />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-[color:var(--color-ink)] focus:px-3 focus:py-2 focus:text-sm focus:text-white"
@@ -83,6 +81,8 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
+        <CookieConsent />
+        <Analytics />
       </body>
     </html>
   );

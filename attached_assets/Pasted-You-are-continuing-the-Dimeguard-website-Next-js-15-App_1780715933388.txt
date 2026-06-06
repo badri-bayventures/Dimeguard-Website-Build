@@ -1,0 +1,42 @@
+You are continuing the Dimeguard website (Next.js 15 App Router, `site.config.ts`-driven, deployed on Vercel). The site is live. Make the following launch-hardening fixes. Do not add new features beyond what is listed. Preserve existing brand tokens, nav structure, and the `licensure.licensedStates` data structure (sitemap + JSON-LD depend on it — only change visible copy).
+
+### 1. Titles / positioning (3 exact spots only)
+1. **Home hero top line** → "Independent Financial Doctor" (replace any "insurance agent" framing).
+2. **Home "Meet Saral" section** → "Senior Financial Planner" (replace "Insurance & Retirement Advisor").
+3. **About page** → "Senior Financial Planner".
+Do not change titles anywhere else.
+
+### 2. Copy cleanup (site-wide)
+- Replace "broker" → "agent" everywhere; use "licensed insurance agent," never "broker."
+- Remove any "captive agent" reference.
+- Add "multi-carrier independent agent" and "client-focused" framing where carrier/independence is described.
+- Service area: use "Licensed in California" + "Serving clients across the nation." Add "In-person available on request" with base location Mountain House, CA. Remove every specific multi-state list from visible copy (CA/TX/CO/NJ etc.) — keep them only in `site.config.ts` data/schema.
+- Footer: add Saral's **California insurance license number** (California only — do NOT add Texas or other states). Keep the licensing line minimal; no per-state detail. CA insurance number is 4344549
+
+### 3. Mobile fix
+- On iPhone 12 Mini (and small viewports generally), content is cut off on the right side and the large dollar-number display (hero "$" figure) has alignment/spacing issues. Fix the overflow + spacing so nothing clips and the big number is centered/contained on small screens.
+
+### 4. Calculator
+- Reduce the up-front retirement calculator to **3–4 inputs** (e.g., current age, monthly contribution, current savings, retirement age). It is too heavy right now.
+- Add an expandable "Adjust assumptions" section exposing the remaining variables (expected return rate, inflation rate, tax bracket) as **editable fields constrained to bounded ranges** (sliders or min/max-validated inputs), not free-form. Defaults come from `siteConfig.calculators.retirement.teaserDefaults` so the hero number stays single-sourced.
+
+### 5. Legal / compliance
+- Generate standard **Privacy Policy** and **Terms of Service** pages (US small-business financial-services boilerplate; CA/CalOPPA-aware). Link both in the footer.
+- Add a lightweight **cookie-consent banner** (analytics are running — PostHog/GA). Simple accept/dismiss, no heavy CMP.
+
+### 6. Contact + social
+- Add business phone **408-582-4271** to the contact page (display only).
+- Add **placeholder social icons** (Facebook, X, LinkedIn, Instagram) in the footer — render the icons but leave hrefs as "#" placeholders until handles are provided.
+
+### 7. Blog visibility
+- Feature a blog block on the **home page**, placed AFTER the core service + calculator sections (not near the top).
+- Add a blog-topics listing in a side margin (sidebar) on the blog/content layout.
+
+### 8. Favicon
+- The site currently shows the default Vercel favicon. Replace it with the Dimeguard brand mark derived from the existing logo (`/logo.png`). Use only the **icon/seal portion** of the logo (crop out the wordmark — it won't read at small sizes). Generate the full favicon set for Next.js App Router: `app/favicon.ico`, `app/icon.png`, and `app/apple-icon.png` at appropriate sizes. Remove the Vercel default.
+
+### 9. Service pages → footer
+- Create dedicated pages for Saral's secondary services and link them all in the **footer** for now (401(k) rollovers included). Do NOT add 401(k) rollovers or other secondary services to the header yet — header placement is being decided later.
+- Header nav holds at: Retirement Planning · **Life Insurance** · About · Contact. (Rename the existing "Life & Disability" header item to "Life Insurance" — keep disability/LTC content inside that page.)
+
+When done: report which files changed and confirm the favicon, legal pages render correctly on a mobile viewport.

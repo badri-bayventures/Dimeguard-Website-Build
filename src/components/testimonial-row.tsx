@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
  *
  * Copy rules apply: no outcome-implying testimonials (e.g. "Saral made me
  * $X"). Use process-oriented quotes (e.g. "He explained our options clearly")
- * so we stay compliant with insurance-broker advertising rules.
+ * so we stay compliant with insurance-agent advertising rules.
  */
 export type Testimonial = {
   quote: ReactNode;
