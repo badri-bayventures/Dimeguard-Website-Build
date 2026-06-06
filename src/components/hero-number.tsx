@@ -26,7 +26,7 @@ export function HeroNumber() {
       <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--color-ink-soft)]">
         Projected — a sample profile
       </p>
-      <div className="relative mt-4 w-full overflow-hidden">
+      <div className="relative mt-4 w-full overflow-hidden [container-type:inline-size]">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 mx-auto h-full w-full rounded-full opacity-60 blur-3xl"
@@ -39,7 +39,7 @@ export function HeroNumber() {
           className="max-w-full font-[family-name:var(--font-display)] leading-none tracking-tight text-[color:var(--color-accent)] md:text-right"
           style={{
             fontWeight: 500,
-            fontSize: "clamp(3.75rem, 18vw, 10rem)",
+            fontSize: "clamp(3rem, 22cqi, 8.5rem)",
           }}
         >
           {formatMillions(finalBalance)}
