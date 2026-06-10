@@ -256,7 +256,7 @@ export type SiteConfig = {
  * absolute URLs in JSON-LD.
  */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://dimeguard.com"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dimeguard.com"
 ).replace(/\/$/, "");
 
 export const siteConfig: SiteConfig = {
