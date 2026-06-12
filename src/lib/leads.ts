@@ -41,12 +41,27 @@ function escapeHtml(value: string): string {
 /**
  * Notify the team about a new lead across every configured channel.
  *
- * Today this is email-only. To add a channel (e.g. SMS via Twilio or an
- * Airtable record), add another sender call here. Each channel is responsible
- * for throwing on failure so the caller can surface a clear error.
+ * Email is the success criterion: if it fails, we rethrow so the route can
+ * surface a clear error to the visitor. Airtable is best-effort — an Airtable
+ * outage must never fail the submission, so its failures are logged (no PII)
+ * and swallowed. SMS via Twilio is deferred to a later milestone.
  */
 export async function notifyLead(lead: Lead): Promise<void> {
-  await sendLeadEmail(lead);
+  const [emailResult, airtableResult] = await Promise.allSettled([
+    sendLeadEmail(lead),
+    createLeadRecord(lead),
+  ]);
+
+  if (airtableResult.status === "rejected") {
+    const reason = airtableResult.reason;
+    console.error("[lead] Airtable logging failed", {
+      error: reason instanceof Error ? reason.message : String(reason),
+    });
+  }
+
+  if (emailResult.status === "rejected") {
+    throw emailResult.reason;
+  }
 }
 
 async function sendLeadEmail(lead: Lead): Promise<void> {
@@ -94,5 +109,62 @@ ${lines
 
   if (error) {
     throw new Error(`Resend failed to send lead email: ${error.message}`);
+  }
+}
+
+/**
+ * Log the lead to Airtable as a structured, searchable record.
+ *
+ * Enabled only when all three Airtable env vars are present; otherwise it's a
+ * clean no-op (no error logged) so submissions still succeed without the
+ * channel configured. Uses the Airtable REST API directly (no SDK). Throws on
+ * any non-2xx response so the caller can log the failure.
+ */
+async function createLeadRecord(lead: Lead): Promise<void> {
+  const apiKey = process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID;
+  const tableName = process.env.AIRTABLE_TABLE_NAME;
+
+  // All three must be set, otherwise the channel cleanly no-ops.
+  if (!apiKey || !baseId || !tableName) {
+    return;
+  }
+
+  const fields: Record<string, string> = {
+    Name: lead.name,
+    Source: lead.source,
+    Status: "New",
+  };
+  if (lead.phone !== undefined) {
+    fields.Phone = lead.phone;
+  }
+  if (lead.email !== undefined) {
+    fields.Email = lead.email;
+  }
+  if (lead.message !== undefined) {
+    fields.Comment = lead.message;
+  }
+
+  const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(
+    tableName,
+  )}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      records: [{ fields }],
+      typecast: true,
+    }),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(
+      `Airtable failed to create lead record (${response.status}): ${detail}`,
+    );
   }
 }

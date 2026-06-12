@@ -1,0 +1,72 @@
+# Dimeguard — Replit prompt: Airtable lead-log channel ONLY (2026-06-11)
+
+> Supersedes Part C of `replit-prompt-sms-airtable-2026-06-05.md`. **SMS/Twilio is
+> DEFERRED to M3/M4 (volume-gated, Badri 6/11)** — this prompt adds the Airtable
+> channel only. Written against repo HEAD `5efbe76` (verified: `/api/lead` is
+> email-only; the only caller is the contact form, which sends no `source` key,
+> so the route defaults it to "Website contact form").
+>
+> Airtable side is DONE: base `appYuTgqVVZLVAx98`, table `Leads`, Source
+> single-select already includes "Website contact form" + the four future enum
+> values. Envs go in BOTH Replit Secrets (dev) and Vercel (production).
+
+---
+
+## Paste to the Dimeguard Repl agent
+
+PROJECT: Dimeguard website (Next.js, App Router). The lead pipeline (`src/app/api/lead/route.ts` + `src/lib/leads.ts`) currently sends one notification email via Resend. Add ONE new channel — an Airtable record — that fires alongside the email. Do NOT add SMS/Twilio (explicitly deferred). Do NOT modify the email behavior, the contact form's UX, the route's validation/responses, calculators, brand tokens, or Notion.
+
+INSPECT FIRST
+- Read `src/lib/leads.ts`: the `Lead` type is `{ name, email?, phone?, message?, source, receivedAt }`, and `notifyLead()` currently awaits `sendLeadEmail()` and throws on failure (the route turns that into a 502).
+
+IMPLEMENT — `createLeadRecord(lead: Lead)` in `src/lib/leads.ts`, using the Airtable REST API directly (no SDK):
+- Enabled only if `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, and `AIRTABLE_TABLE_NAME` are ALL set; otherwise return a skipped status without logging an error (clean no-op — this is by design).
+- POST `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}` with `Authorization: Bearer ${AIRTABLE_API_KEY}` and body:
+  ```json
+  {
+    "records": [{ "fields": {
+      "Name": lead.name,
+      "Phone": lead.phone,        // omit key if undefined
+      "Email": lead.email,        // omit key if undefined
+      "Comment": lead.message,    // omit key if undefined
+      "Source": lead.source,
+      "Status": "New"
+    }}],
+    "typecast": true
+  }
+  ```
+- `"typecast": true` is REQUIRED — it lets new `Source` values auto-create select options.
+- Do NOT write `Submitted At` (it's an Airtable created-time field), `Page`, or `Resource ID` (reserved for future calculator/resource lead gates).
+- Throw on non-2xx with the Airtable error message included.
+
+WIRE INTO `notifyLead()` — email remains the success criterion, Airtable is best-effort:
+- Run both channels concurrently (e.g. `Promise.allSettled([sendLeadEmail(lead), createLeadRecord(lead)])`).
+- If the EMAIL channel rejected, rethrow its error — the route's current 502 behavior and the visitor-facing success/error states must not change in any way.
+- If the Airtable channel rejected, log it server-side (`console.error("[lead] airtable channel failed", …)` — message only, no PII dump) and continue. An Airtable outage must never fail the submission.
+
+OFF-LIMITS
+- The Resend email path (logic, env names, from/to, replyTo), the contact form markup/UX, the route's validation rules and response shapes, the honeypot, calculators, Notion/blog, all other pages.
+- No new client-exposed `NEXT_PUBLIC_` vars. Server-side only.
+- No `twilio` package, no SMS code — deferred deliberately.
+
+ENV (set in Replit Secrets; Badri mirrors to Vercel for production):
+- `AIRTABLE_API_KEY` — personal access token
+- `AIRTABLE_BASE_ID` = `appYuTgqVVZLVAx98`
+- `AIRTABLE_TABLE_NAME` = `Leads`
+
+WHEN DONE
+- List files changed (should be `src/lib/leads.ts` only, plus possibly a comment touch-up in the route).
+- Confirm: a contact-form submission on the preview (a) still emails exactly as before, (b) creates an Airtable row with Source "Website contact form" and Status "New", and (c) with the three env vars removed, the channel cleanly no-ops and submissions still succeed.
+
+---
+
+## Verify after deploy to production (Badri/Claude)
+
+1. One curl against prod (fires a real email to LEAD_TO_EMAIL — heads-up or flip it first):
+   `curl -s -X POST https://www.dimeguard.com/api/lead -H 'Content-Type: application/json' -d '{"name":"W3bly Test — ignore","email":"tn.badri@gmail.com","phone":"+14085551234","message":"Airtable channel verification","source":"contact_form"}'`
+   → row lands with Source `contact_form`.
+2. One REAL contact-form submission in the browser → row lands with Source "Website contact form", Status "New", Submitted At stamped.
+3. Delete both test rows (or set Status → Closed).
+
+The old 4-source curl matrix in `airtable-leads-runbook-2026-06-11.md` applies only
+when the calculator/resource lead gates ship (M2) — those forms don't exist yet.
