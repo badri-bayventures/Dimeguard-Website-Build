@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/cookie-consent";
 import { Analytics } from "@/components/analytics";
+import { AnalyticsPageViews } from "@/components/analytics-page-views";
 import { JsonLd } from "@/lib/schema/json-ld";
 import { localBusiness, person } from "@/lib/schema";
 
@@ -83,6 +84,7 @@ export default function RootLayout({
         <SiteFooter />
         <CookieConsent />
         <Analytics />
+        <AnalyticsPageViews />
       </body>
     </html>
   );
