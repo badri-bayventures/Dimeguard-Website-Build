@@ -35,6 +35,9 @@ export function SiteHeader() {
             className="flex items-center"
             onClick={() => setMenuOpen(false)}
           >
+            {/* White-base variant: the colored/dark-mark logo on a transparent
+                background, used because the header sits on the light
+                --color-surface. A white-mark logo would be invisible here. */}
             <Image
               src="/logo.png"
               alt={siteConfig.business.legalName}

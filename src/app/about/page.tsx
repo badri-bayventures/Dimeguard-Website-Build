@@ -69,8 +69,8 @@ export default function AboutPage() {
 
   const why = [
     {
-      t: "Built around the Central Valley.",
-      d: "Based in Mountain House. Most clients live within driving distance — Tracy, Manteca, Lathrop, Stockton, Modesto.",
+      t: "Built around the Central Valley, Tri-Valley, and Bay Area.",
+      d: "Based in Mountain House. Most clients live within driving distance — Tracy, Manteca, Lathrop, Stockton, Modesto — and across the Tri-Valley and Bay Area.",
     },
     {
       t: "A first-generation-family lens.",
@@ -123,14 +123,15 @@ export default function AboutPage() {
           isTwo ? (
             <>
               An independent insurance practice based in Mountain House,
-              serving the Central Valley. Built on slow conversations and a
-              short product list.
+              serving the Central Valley, Tri-Valley, and Bay Area. Built on
+              slow conversations and a short product list.
             </>
           ) : (
             <>
               An independent insurance practice based in Mountain House,
-              serving the Central Valley. Built on slow conversations,
-              written summaries, and a deliberately small client list.
+              serving the Central Valley, Tri-Valley, and Bay Area. Built on
+              slow conversations, written summaries, and a deliberately small
+              client list.
             </>
           )
         }

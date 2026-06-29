@@ -130,7 +130,7 @@ export default function ContactPage() {
             <SectionHeading
               eyebrow="Where we are"
               title="Based in Mountain House, CA."
-              lede="Most meetings happen by video or phone. In-person available on request for Central Valley clients."
+              lede="Most meetings happen by video or phone. In-person available on request for Central Valley and Bay Area clients."
             />
             <div className="mt-8">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-ink-soft)]">
@@ -162,10 +162,6 @@ export default function ContactPage() {
                 Reach us
               </p>
               <address className="mt-3 not-italic text-[color:var(--color-ink-soft)]">
-                <div>{nap.name}</div>
-                <div>
-                  {nap.addressLocality}, {nap.addressRegion}
-                </div>
                 {nap.phone ? (
                   <div className="mt-1">
                     <a

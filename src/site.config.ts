@@ -267,7 +267,7 @@ export const siteConfig: SiteConfig = {
     photoSrc: "/founders/saral.png",
     knowsLanguage: ["English", "Hindi"],
     bioSnippet:
-      "Saral works one-on-one with first-generation families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley.",
+      "Saral works one-on-one with first-generation families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley, Tri-Valley, and Bay Area.",
   },
   // Second founder entry stays commented out until Saral confirms his business
   // partner's public-inclusion decision.
@@ -310,15 +310,7 @@ export const siteConfig: SiteConfig = {
     phone: "408-582-4271",
     email: "",
     openingHours: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"],
-    areaServed: [
-      "Mountain House",
-      "Tracy",
-      "Manteca",
-      "Lathrop",
-      "Stockton",
-      "Modesto",
-      "Central Valley",
-    ],
+    areaServed: ["Central Valley", "Tri-Valley", "Bay Area"],
   },
   licensure: {
     primaryState: "CA",

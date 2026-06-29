@@ -9,7 +9,6 @@ import { Faq } from "@/components/faq";
 import { Disclosure } from "@/components/disclosure";
 import { ButtonLink } from "@/components/button";
 import { HeroNumber } from "@/components/hero-number";
-import { MeetAdvisor } from "@/components/meet-advisor";
 import { CalcTeaser } from "@/components/calc-teaser";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { listPostSummaries } from "@/lib/blog";
@@ -109,58 +108,6 @@ export default async function Home() {
             cta="See the tools"
           />
         </div>
-      </Section>
-
-      {recentPosts.length ? (
-        <Section tone="muted">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <SectionHeading
-              eyebrow="From the blog"
-              title="Notes on planning."
-            />
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--color-ink)] underline decoration-[color:var(--color-secondary)] decoration-2 underline-offset-4 hover:text-[color:var(--color-ink-soft)]"
-            >
-              All posts →
-            </Link>
-          </div>
-          <ul className="mt-10 grid gap-6 md:grid-cols-3">
-            {recentPosts.map((post) => (
-              <li key={post.slug}>
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="group flex h-full flex-col rounded-2xl border border-[color:var(--color-border)] bg-white p-6 transition-shadow hover:shadow-md"
-                >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center rounded-full bg-[color:var(--color-surface-muted)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--color-ink-soft)]">
-                      {post.category}
-                    </span>
-                    <time
-                      dateTime={post.publishedDate}
-                      className="text-xs text-[color:var(--color-muted)]"
-                    >
-                      {formatDate(post.publishedDate)}
-                    </time>
-                  </div>
-                  <h3 className="mt-4 font-[family-name:var(--font-display)] text-xl font-medium tracking-tight text-[color:var(--color-ink)]">
-                    {post.title}
-                  </h3>
-                  <p className="mt-3 flex-1 text-sm text-[color:var(--color-muted)]">
-                    {post.summary}
-                  </p>
-                  <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-ink)] group-hover:underline">
-                    Read post →
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      ) : null}
-
-      <Section tone="surface">
-        <MeetAdvisor />
       </Section>
 
       <Section tone="muted">
@@ -281,6 +228,48 @@ export default async function Home() {
       </Section>
 
       <CarrierStrip />
+
+      {recentPosts.length ? (
+        <Section tone="surface">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <SectionHeading eyebrow="Latest insights" title="Notes on planning." />
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--color-ink)] underline decoration-[color:var(--color-secondary)] decoration-2 underline-offset-4 hover:text-[color:var(--color-ink-soft)]"
+            >
+              All posts →
+            </Link>
+          </div>
+          <ul className="mt-8 grid gap-5 md:grid-cols-3">
+            {recentPosts.map((post) => (
+              <li key={post.slug}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group flex h-full flex-col rounded-2xl border border-[color:var(--color-border)] bg-white p-5 transition-shadow hover:shadow-md"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center rounded-full bg-[color:var(--color-surface-muted)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--color-ink-soft)]">
+                      {post.category}
+                    </span>
+                    <time
+                      dateTime={post.publishedDate}
+                      className="text-xs text-[color:var(--color-muted)]"
+                    >
+                      {formatDate(post.publishedDate)}
+                    </time>
+                  </div>
+                  <h3 className="mt-3 font-[family-name:var(--font-display)] text-base font-medium tracking-tight text-[color:var(--color-ink)]">
+                    {post.title}
+                  </h3>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-ink)] group-hover:underline">
+                    Read post →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
 
       <div className="border-t border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)]">
         <div className="mx-auto max-w-6xl px-6 py-8 md:px-8">
