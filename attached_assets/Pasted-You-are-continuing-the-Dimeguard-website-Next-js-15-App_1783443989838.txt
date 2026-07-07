@@ -1,0 +1,59 @@
+You are continuing the Dimeguard website (Next.js 15 App Router, `site.config.ts`-driven, deployed on Vercel). The site is live. Make exactly the following changes — no new features, no new pages beyond what's listed. Preserve existing brand tokens, nav structure, and the `licensure.licensedStates` data structure (sitemap + JSON-LD depend on it — only change visible copy).
+
+### 1. Footer — licensure line + remove contact details
+The footer currently reads (approximately):
+> Mountain House, CA · 408-582-4271
+> Licensed insurance agent in California, serving clients across the nation.
+> CA Insurance Lic. #4344549
+> Insurance-only licensure. Not investment, tax, or legal advice — for informational purposes only.
+
+Make these changes:
+- Change "Licensed insurance agent in California, serving clients across the nation." → **"Licensed in California, serving clients across the nation."** (drop the words "insurance agent").
+- **Remove the standalone "Mountain House, CA" address line** from the footer.
+- **Remove the phone number (408-582-4271)** from the footer.
+- Remove any **second / redundant "insurance in CA"-style descriptor line** so licensure is stated exactly **once** (the "Licensed in California…" line above). Keep the license-number line (`CA Insurance Lic. #4344549`) and keep the legal disclaimer ("Insurance-only licensure. Not investment, tax, or legal advice…").
+
+### 2. Contact page — add in-person line
+- Add the line: **"In-person available on request for Central Valley and Bay Area clients."**
+
+### 3. Service area — widen the geography
+- Wherever the site states the service area (currently "based in Mountain House, serving the Central Valley"), change it to serve **Central Valley, Tri-Valley, and Bay Area** (list all three). Keep "Licensed in California / serving clients across the nation" framing where it already exists.
+
+### 4. "Reach Us" block — email + phone only
+- In the "Reach Us" block (contact area), display **email and phone only**. **Remove the "Mountain House, CA" location line** from this block. The email shown must be **hello@dimeguard.com** (see #9).
+
+### 5. Remove the homepage About / "Meet Saral" block (hide, don't delete)
+- The homepage currently has an About / "Meet Saral" block sitting after the calculator. **Remove it from the homepage flow entirely** — do NOT relocate it to the footer. Goal: free up homepage vertical space so the calculator is the homepage's primary feature, and remove Saral's personal bio/photo from the homepage per client request.
+- **Hide, don't delete:** comment out the block (or flag it off in `site.config.ts`) so it can be restored in one edit later. Do not delete the component, its copy, or Saral's photo assets.
+
+### 6. Calculator — assumptions always visible (remove click-to-reveal)
+Read `src/lib/calc/retirement.ts` and `siteConfig.calculators.retirement` before changing anything.
+- The current calculator hides its assumptions behind an expandable **"Adjust assumptions"** panel (added earlier). **Remove the collapse/expand behavior** — the two real assumption controls must be **always visible inline**, not click-to-reveal:
+  - **Annual return** — default **7%** (wired to the projection's `rPre` / `assumedAnnualReturnPre`).
+  - **Years in retirement** — default **25** (wired to `drawdownYears`).
+- Render them as **bounded sliders** (min/max validated, not free-form) with their default values shown, recomputing the displayed result live.
+- **Do NOT add an inflation field or a tax field** — those are not in the model.
+- Overrides recompute the on-screen result only; they must **not** mutate stored config defaults or the hero teaser number (hero stays single-sourced from `teaserDefaults`).
+- Keep a one-line plain-language summary visible (e.g. "Assumes a 7% annual return and a 25-year retirement — adjust the sliders to your situation.").
+- **UX/visual reference: annuityalliance.com** — clean, trusted-professional, editorial. The math should read open and labeled, not hidden. Tighten the rates/controls layout toward that calm, transparent feel.
+
+### 7. Logo — header vs footer variants + palette/texture fix
+- Use the **white-base logo variant in the header** and the **blue-base logo variant in the footer**.
+- Fix the logo's palette/texture so it matches the site: transparent background (no off-white/grey box), clean edges, and the blue tuned to the brand navy token already used in the footer (reference: `#15273f` / `#1f3a5c` — read the actual footer background token and match it rather than hardcoding a mismatched blue).
+- ⚠️ If only a single flattened raster (`/logo.png`) exists, you cannot cleanly recolor it — request the white-base and blue-base source files (or an SVG) before implementing. Do not ship a muddy auto-recolor.
+
+### 8. Blog — better placement
+- The homepage currently has a "From the blog" block mid-page. With the About block moving out (#5), **demote the homepage blog block to a slim 3-card "Latest insights" strip directly above the footer** (lowest-priority real estate), so the calculator + core services lead the page. Keep `/blog` reachable from the header nav and footer. Do not add new posts.
+
+### 9. Primary contact email → hello@dimeguard.com
+- The client has created **hello@dimeguard.com** as the business's primary contact address. Replace **stoms@dimeguard.com** with **hello@dimeguard.com** everywhere it is **displayed or linked** on the site: the contact page "Reach Us" block, any `mailto:` links, `site.config.ts` NAP/contact fields, and the JSON-LD / structured-data contact email if present.
+- Do **NOT** touch the Resend lead-routing env vars (`LEAD_TO_EMAIL`, `LEAD_FROM_EMAIL`) — those are environment config, not code, and are handled separately.
+
+### 10. Hide the About page + Saral's personal presence (hide, don't delete)
+The client wants his personal presence (name, bio, photo) and the About page **hidden for now — not removed**. Everything must be trivially reversible. Use the exact same hide mechanism already in place for the held service pages in `site.config.ts`:
+- **Remove `/about` from the header nav and footer nav** (comment out its nav entries, don't delete them).
+- Set the `/about` route to **`canonical: false` + `showInLlms: false`** so it drops out of `sitemap.xml` and `llms.txt`. The route must **still return 200** by direct URL — do not delete the page, its content, or add a redirect.
+- On the remaining visible pages (especially the contact page), **replace visible personal references to "Saral" / "Saral Toms"** with neutral firm phrasing ("Dimeguard", "our advisor", "we") in the rendered copy. Keep the underlying config values and any commented-out originals so this reverses cleanly.
+- **Do not** change the Calendly URL (it contains "stoms" but is not visible copy), the `Person`/founder structured data can be left as-is unless it renders visibly, and do not delete any photo assets.
+
+When done: report which files changed and confirm on a mobile viewport that (a) the footer no longer shows the address/phone, (b) the calculator assumptions are visible without a click, (c) the homepage leads with the calculator (About block removed, blog demoted to the pre-footer strip), (d) hello@dimeguard.com is the only email shown anywhere on the site, and (e) About is absent from header + footer nav and out of sitemap.xml, while /about still returns 200 directly.
