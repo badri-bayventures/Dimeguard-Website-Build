@@ -1,0 +1,23 @@
+You are continuing the Dimeguard website (Next.js 15 App Router, deployed on Vercel). Make exactly these width/density changes — no copy changes, no new sections.
+
+### 1. Page container — one notch wider
+In `src/components/container.tsx`, change the container class `max-w-7xl` → **`max-w-[85rem]`** (1280px → 1360px). Keep `px-6 md:px-8` as is. This is the only global width change — do NOT stretch content to full window width anywhere.
+
+### 2. Carrier band — wider rail + 6 slots everywhere
+In `src/components/carrier-band.tsx`:
+- `DESKTOP_SLOTS` 5 → **6**. Remove `MOBILE_SLOTS` and the `hidden sm:flex` per-slot logic entirely — all 6 slots render at every breakpoint.
+- Both `<ul>` grids (cycling and static): `max-w-4xl` → **`max-w-6xl`**, and grid columns → **`grid-cols-2 sm:grid-cols-3 lg:grid-cols-6`** (phones 2×3, tablets 3×2, desktop one row of 6).
+- The cycling modulo already uses `DESKTOP_SLOTS`, so rotation follows automatically — verify `nextSlotRef` wraps at 6.
+- **Static/reduced-motion fallback: render ALL configured logos, not a slice.** Replace `staticItems = items.slice(0, DESKTOP_SLOTS)` with the full `items` list — with 11 logos and the responsive grid above it wraps to two clean rows. (Keep the staggered `carrierReveal` delays; cap the delay index so late rows don't wait absurdly long, e.g. `animationDelay: `${Math.min(i, 8) * 90}ms``.)
+
+### 3. Section rhythm — open up the visual rows (text stays narrow)
+- In `src/app/page.tsx`, the pre-footer disclosure strip uses its own `mx-auto max-w-6xl px-6 py-8 md:px-8` wrapper — replace that wrapper with the shared `Container` component so it aligns with the new page width.
+- Leave `SectionHeading`'s `max-w-3xl` and the hero's `max-w-3xl`/`max-w-2xl` text constraints EXACTLY as they are — prose width is deliberate typography, not wasted space.
+
+### 4. Verify
+- Desktop ≥1280px: carrier band shows 6 logos in one row on the wider rail, cycling one slot at a time.
+- Mobile: 2×3 grid of 6, still cycling.
+- With `prefers-reduced-motion: reduce` (simulate in devtools): all 11 logos in a static wrapped grid, no cycling.
+- No horizontal scrollbar at any viewport; no text column got wider.
+
+When done: report files changed and confirm the four checks above.

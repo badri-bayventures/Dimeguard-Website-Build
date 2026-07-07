@@ -9,21 +9,20 @@ import { Container } from "./container";
  * Independent / multi-carrier trust band. Renders the carrier + partner logos
  * from siteConfig.carriers (never hardcoded) as a quietly-alive strip:
  *
- * - Desktop: 5 fixed-size slots in a row; mobile: a 2×2 grid of 4 slots.
+ * - Six fixed-size slots at every breakpoint: 2×3 on phones, 3×2 on tablets,
+ *   one row of 6 on desktop.
  * - The full list cycles through the slots by crossfade-in-place — one slot at
  *   a time swaps its logo (out drifts down, in drifts up) on an offset
  *   schedule, so nothing ever scrolls or races.
  * - Cycling pauses when the band is off-screen (IntersectionObserver).
- * - If there are as many logos as slots (or fewer), cycling is skipped and all
- *   logos render static with a one-time staggered fade-up on first view.
- * - prefers-reduced-motion: no cycling, no reveal — a static grid of the first
- *   N logos.
+ * - If there are as many logos as slots (or fewer), cycling is skipped.
+ * - prefers-reduced-motion / static fallback: ALL configured logos in a
+ *   wrapped static grid (with a capped staggered reveal when motion is OK).
  * - Logos are monochrome (grayscale + dimmed) at rest, full color on hover, and
  *   sit in fixed-size boxes so a swap never shifts layout.
  */
 
-const DESKTOP_SLOTS = 5;
-const MOBILE_SLOTS = 4;
+const DESKTOP_SLOTS = 6;
 const SWAP_INTERVAL_MS = 2700;
 const CROSSFADE_MS = 600;
 
@@ -88,8 +87,8 @@ export function CarrierBand() {
 
   if (!enabled || items.length === 0) return null;
 
-  // Static presentation (reduced motion, or <= slot count): first N logos.
-  const staticItems = items.slice(0, DESKTOP_SLOTS);
+  // Static presentation (reduced motion, or <= slot count): all logos.
+  const staticItems = items;
 
   return (
     <section
@@ -113,31 +112,24 @@ export function CarrierBand() {
         </div>
 
         {canCycle ? (
-          <ul className="mx-auto mt-10 grid max-w-4xl grid-cols-2 place-items-center gap-x-6 gap-y-8 sm:grid-cols-5 md:mt-14 md:gap-x-10">
+          <ul className="mx-auto mt-10 grid max-w-6xl grid-cols-2 place-items-center gap-x-6 gap-y-8 sm:grid-cols-3 md:mt-14 md:gap-x-10 lg:grid-cols-6">
             {slots.map((logo, i) => (
-              <li
-                key={`slot-${i}`}
-                className={`flex w-full justify-center ${
-                  i >= MOBILE_SLOTS ? "hidden sm:flex" : "flex"
-                }`}
-              >
+              <li key={`slot-${i}`} className="flex w-full justify-center">
                 <CrossfadeSlot logo={logo} animate={!reducedMotion} />
               </li>
             ))}
           </ul>
         ) : (
-          <ul className="mx-auto mt-10 grid max-w-4xl grid-cols-2 place-items-center gap-x-6 gap-y-8 sm:grid-cols-5 md:mt-14 md:gap-x-10">
+          <ul className="mx-auto mt-10 grid max-w-6xl grid-cols-2 place-items-center gap-x-6 gap-y-8 sm:grid-cols-3 md:mt-14 md:gap-x-10 lg:grid-cols-6">
             {staticItems.map((logo, i) => (
               <li
                 key={logo.file}
-                className={`flex w-full justify-center ${
-                  i >= MOBILE_SLOTS ? "hidden sm:flex" : "flex"
-                }`}
+                className="flex w-full justify-center"
                 style={
                   revealed && !reducedMotion
                     ? {
                         animation: `carrierReveal 500ms ease-out both`,
-                        animationDelay: `${i * 100}ms`,
+                        animationDelay: `${Math.min(i, 8) * 90}ms`,
                       }
                     : undefined
                 }

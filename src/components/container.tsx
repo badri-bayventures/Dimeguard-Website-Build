@@ -13,7 +13,7 @@ export function Container({
   return (
     <Tag
       {...rest}
-      className={`mx-auto w-full max-w-7xl px-6 md:px-8 ${className}`.trim()}
+      className={`mx-auto w-full max-w-[85rem] px-6 md:px-8 ${className}`.trim()}
     >
       {children}
     </Tag>

@@ -3,6 +3,7 @@ import { siteConfig } from "@/site.config";
 import { Hero } from "@/components/hero";
 import { HeroTrustStrip } from "@/components/hero-trust-strip";
 import { CarrierBand } from "@/components/carrier-band";
+import { Container } from "@/components/container";
 import { Section, SectionHeading } from "@/components/section";
 import { ServiceCard } from "@/components/service-card";
 import { Faq } from "@/components/faq";
@@ -272,9 +273,9 @@ export default async function Home() {
       ) : null}
 
       <div className="border-t border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)]">
-        <div className="mx-auto max-w-6xl px-6 py-8 md:px-8">
+        <Container className="py-8">
           <Disclosure />
-        </div>
+        </Container>
       </div>
     </>
   );
