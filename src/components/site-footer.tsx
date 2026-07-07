@@ -39,15 +39,15 @@ export function SiteFooter() {
       */}
       <Container className="grid gap-12 py-16 md:grid-cols-12">
         <div className="md:col-span-4">
-          {/* Blue-base variant: the white-mark logo on a transparent
-              background, used because the footer sits on the navy
-              --color-ink (#143a4a). Transparent edges sit cleanly on the
-              navy with no plate/box to color-match. */}
+          {/* White vertical lockup for dark backgrounds: the footer sits on
+              the navy --color-ink (#143a4a), so the white variant is used.
+              Transparent edges sit cleanly on the navy with no plate/box to
+              color-match. No CSS filter needed. */}
           <Image
-            src="/logo-on-dark.png"
+            src="/dimeguard-logo-white.png"
             alt={siteConfig.business.legalName}
             width={1280}
-            height={1026}
+            height={1371}
             className="h-24 w-auto md:h-28"
           />
         </div>
