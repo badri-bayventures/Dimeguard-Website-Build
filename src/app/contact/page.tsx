@@ -59,7 +59,7 @@ export default function ContactPage() {
 
       <Hero
         eyebrow="Contact"
-        title={<>Three ways to reach me.</>}
+        title={<>Three ways to reach us.</>}
         lede={
           <>
             Email for quick questions, Calendly for a 20-minute call, or the
@@ -77,7 +77,7 @@ export default function ContactPage() {
               ))}
             </ul>
             <p className="mt-5 text-sm">
-              Mountain House, CA · {nap.email || "stoms@dimeguard.com"}
+              Mountain House, CA · {nap.email}
             </p>
           </div>
         }
@@ -114,8 +114,8 @@ export default function ContactPage() {
           <div className="md:col-span-5">
             <SectionHeading
               eyebrow="Send a note"
-              title="Tell me what's on your mind."
-              lede="Short or long — both are fine. I read every message and reply within one business day."
+              title="Tell us what's on your mind."
+              lede="Short or long — both are fine. We read every message and reply within one business day."
             />
           </div>
           <div className="md:col-span-7">

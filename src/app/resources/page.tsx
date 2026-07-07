@@ -20,7 +20,7 @@ export default function ResourcesPage() {
       <PageStub
         eyebrow="Resources"
         title="Planning tools and spreadsheets."
-        lede="Free files for net worth tracking and monthly budgeting — used in the conversations Saral has with clients every week."
+        lede="Free files for net worth tracking and monthly budgeting — used in the conversations we have with clients every week."
         arrivingIn="Tool list + gated downloads land in steps 3 and 5"
         ctaHref="/"
       />

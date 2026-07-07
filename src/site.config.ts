@@ -297,7 +297,7 @@ export const siteConfig: SiteConfig = {
     domain: "dimeguard.com",
     url: SITE_URL,
     tagline:
-      "Insurance, retirement, and tax planning for Central Valley families.",
+      "Insurance, retirement, and tax planning for Central Valley, Tri-Valley, and Bay Area families.",
     ogImage: "/og/default.png",
   },
   nap: {
@@ -308,7 +308,7 @@ export const siteConfig: SiteConfig = {
     postalCode: "",
     addressCountry: "US",
     phone: "408-582-4271",
-    email: "",
+    email: "hello@dimeguard.com",
     openingHours: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"],
     areaServed: ["Central Valley", "Tri-Valley", "Bay Area"],
   },
@@ -322,7 +322,7 @@ export const siteConfig: SiteConfig = {
     ],
     licenseNumber: "4344549",
     disclosure:
-      "Licensed insurance agent in California, serving clients across the nation.",
+      "Licensed in California, serving clients across the nation.",
     insuranceOnlyDisclosure:
       "Insurance-only licensure. Not investment, tax, or legal advice — for informational purposes only.",
   },
@@ -425,7 +425,9 @@ export const siteConfig: SiteConfig = {
     { href: "/retirement-planning", label: "Retirement Planning", primary: true },
     // URL stays /life-insurance; disability/LTC content lives inside the page.
     { href: "/life-insurance", label: "Life Insurance", primary: true },
-    { href: "/about", label: "About", primary: true },
+    // About is HIDDEN for now — Saral's personal presence removed from the
+    // visible flow. Uncomment to restore it to the header nav.
+    // { href: "/about", label: "About", primary: true },
     { href: "/contact", label: "Contact", primary: true },
     { href: "/blog", label: "Blog", primary: false },
     { href: "/resources", label: "Resources", primary: false },
@@ -447,12 +449,12 @@ export const siteConfig: SiteConfig = {
       title:
         "Insurance, retirement & tax planning · Mountain House, CA · Dimeguard",
       description:
-        "Saral Toms helps families think clearly about insurance, retirement, and tax coordination. Multi-carrier independent agent — first call is 20 minutes, no script, no sales pitch.",
+        "Dimeguard helps families think clearly about insurance, retirement, and tax coordination. Multi-carrier independent agent — first call is 20 minutes, no script, no sales pitch.",
       priority: 1.0,
       changeFrequency: "weekly",
       lastModified: "2026-05-25",
       llmsSummary:
-        "Home page. Insurance, retirement, and tax-aware planning for Central Valley families, by Saral Toms.",
+        "Home page. Insurance, retirement, and tax-aware planning for Central Valley, Tri-Valley, and Bay Area families.",
       showInLlms: true,
       canonical: true,
     },
@@ -494,15 +496,20 @@ export const siteConfig: SiteConfig = {
       lastModified: "2026-05-12",
       llmsSummary:
         "About the founder, Saral Toms — background, approach, and states served.",
-      showInNav: true,
-      showInLlms: true,
-      canonical: true,
+      // About is HIDDEN for now (client removed Saral's personal presence).
+      // The page still returns 200 by direct URL, but it's dropped from the
+      // header nav (see `nav` below), sitemap.xml (canonical:false) and
+      // llms.txt (showInLlms:false). Reverse by restoring these to true and
+      // uncommenting the /about nav entry.
+      showInNav: false,
+      showInLlms: false,
+      canonical: false,
     },
     {
       path: "/resources",
       title: "Planning tools & spreadsheets · Free downloads",
       description:
-        "Free spreadsheets for net worth tracking and monthly budgeting, used in the conversations Saral has with clients every week.",
+        "Free spreadsheets for net worth tracking and monthly budgeting, used in the conversations we have with clients every week.",
       priority: 0.7,
       changeFrequency: "monthly",
       lastModified: "2026-05-15",
@@ -532,9 +539,9 @@ export const siteConfig: SiteConfig = {
       // duplicate of the contact info already exposed on every page (footer
       // NAP, header Calendly CTA, /about reach-out block).
       path: "/contact",
-      title: "Contact Saral Toms · Dimeguard",
+      title: "Contact · Dimeguard",
       description:
-        "Three ways to reach Saral — email, a 20-minute Calendly call, or the contact form. Based in Mountain House, CA; serving the Central Valley.",
+        "Three ways to reach us — email, a 20-minute Calendly call, or the contact form. Based in Mountain House, CA; serving the Central Valley, Tri-Valley, and Bay Area.",
       priority: 0.8,
       changeFrequency: "yearly",
       lastModified: "2026-05-12",

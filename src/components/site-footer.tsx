@@ -9,10 +9,15 @@ export function SiteFooter() {
   // footer-only nav items (Blog, Resources) — primary nav already lives in
   // the header. Legal + social go in the bottom bar.
   const footerNav = siteConfig.nav.filter((item) => !item.primary);
-  const { advisor } = siteConfig;
+  // `advisor` was used by the hidden "Meet Saral" band above — restore this
+  // when uncommenting that block.
+  // const { advisor } = siteConfig;
   return (
     <footer className="mt-24 border-t border-[color:var(--color-border)] bg-[color:var(--color-ink)] text-white">
-      {/* Slim about/bio band — relocated from the homepage main flow. */}
+      {/* Slim about/bio band — HIDDEN for now (client removed Saral's personal
+          presence from the visible flow). Assets/copy retained so this
+          reverses cleanly: uncomment the block below to restore it. */}
+      {/*
       <div className="border-b border-white/10">
         <Container className="flex flex-col gap-4 py-10 md:flex-row md:items-center md:justify-between md:gap-10">
           <div className="max-w-2xl">
@@ -31,6 +36,7 @@ export function SiteFooter() {
           </Link>
         </Container>
       </div>
+      */}
       <Container className="grid gap-12 py-16 md:grid-cols-12">
         <div className="md:col-span-4">
           {/* Blue-base variant: the white-mark logo on a transparent
