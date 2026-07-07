@@ -35,13 +35,16 @@ export function SiteHeader() {
             className="flex items-center"
             onClick={() => setMenuOpen(false)}
           >
+            {/* Full-color vertical lockup for light backgrounds: the header
+                sits on the light --color-surface, so the primary (colored)
+                variant is used here. */}
             <Image
-              src="/logo.png"
+              src="/dimeguard-logo-primary.png"
               alt={siteConfig.business.legalName}
               width={1280}
-              height={1026}
+              height={1371}
               priority
-              className="h-16 w-auto"
+              className="h-14 w-auto"
             />
           </Link>
           <nav

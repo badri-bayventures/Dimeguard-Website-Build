@@ -59,7 +59,7 @@ export default function ContactPage() {
 
       <Hero
         eyebrow="Contact"
-        title={<>Three ways to reach me.</>}
+        title={<>Three ways to reach us.</>}
         lede={
           <>
             Email for quick questions, Calendly for a 20-minute call, or the
@@ -77,7 +77,7 @@ export default function ContactPage() {
               ))}
             </ul>
             <p className="mt-5 text-sm">
-              Mountain House, CA · {nap.email || "stoms@dimeguard.com"}
+              Mountain House, CA · {nap.email}
             </p>
           </div>
         }
@@ -114,8 +114,8 @@ export default function ContactPage() {
           <div className="md:col-span-5">
             <SectionHeading
               eyebrow="Send a note"
-              title="Tell me what's on your mind."
-              lede="Short or long — both are fine. I read every message and reply within one business day."
+              title="Tell us what's on your mind."
+              lede="Short or long — both are fine. We read every message and reply within one business day."
             />
           </div>
           <div className="md:col-span-7">
@@ -130,7 +130,7 @@ export default function ContactPage() {
             <SectionHeading
               eyebrow="Where we are"
               title="Based in Mountain House, CA."
-              lede="Most meetings happen by video or phone. In-person available on request for Central Valley clients."
+              lede="Most meetings happen by video or phone. In-person available on request for Central Valley and Bay Area clients."
             />
             <div className="mt-8">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-ink-soft)]">
@@ -162,10 +162,6 @@ export default function ContactPage() {
                 Reach us
               </p>
               <address className="mt-3 not-italic text-[color:var(--color-ink-soft)]">
-                <div>{nap.name}</div>
-                <div>
-                  {nap.addressLocality}, {nap.addressRegion}
-                </div>
                 {nap.phone ? (
                   <div className="mt-1">
                     <a

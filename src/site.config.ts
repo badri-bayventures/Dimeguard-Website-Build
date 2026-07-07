@@ -35,10 +35,13 @@ export type LegalLink = {
   label: string;
 };
 
-export type Carrier = {
+export type CarrierLogo = {
+  /** Real brand name — also used verbatim as image alt text. */
   name: string;
-  /** Optional path under /public — when present, renders as <Image>. */
-  logoPath?: string;
+  /** Filename under /public/carriers (e.g. "nationwide.svg"). */
+  file: string;
+  /** Insurance carrier vs estate/trust-planning partner. */
+  type: "carrier" | "partner";
 };
 
 export type TrustStripItem = {
@@ -135,7 +138,11 @@ export type SiteConfig = {
     disclosure: string;
     insuranceOnlyDisclosure: string;
   };
-  carriers: Carrier[];
+  /** Independent / multi-carrier trust band on the homepage. */
+  carriers: {
+    enabled: boolean;
+    items: CarrierLogo[];
+  };
   /**
    * Brand tokens. Source of truth: Direction D mockup. Surfaced as CSS
    * custom properties in globals.css. Lime `accent` is button-only; never
@@ -184,11 +191,6 @@ export type SiteConfig = {
   };
   /** 4-column trust strip beneath the hero CTAs. */
   heroTrustStrip: TrustStripItem[];
-  /** Bottom-of-page carrier logo strip. */
-  carrierStrip: {
-    enabled: boolean;
-    eyebrow: string;
-  };
   nav: NavLink[];
   /** Footer-only links (Privacy, Terms, etc.). Kept separate from `nav`. */
   legalLinks: LegalLink[];
@@ -267,7 +269,7 @@ export const siteConfig: SiteConfig = {
     photoSrc: "/founders/saral.png",
     knowsLanguage: ["English", "Hindi"],
     bioSnippet:
-      "Saral works one-on-one with first-generation families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley.",
+      "Saral works one-on-one with first-generation families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley, Tri-Valley, and Bay Area.",
   },
   // Second founder entry stays commented out until Saral confirms his business
   // partner's public-inclusion decision.
@@ -297,7 +299,7 @@ export const siteConfig: SiteConfig = {
     domain: "dimeguard.com",
     url: SITE_URL,
     tagline:
-      "Insurance, retirement, and tax planning for Central Valley families.",
+      "Insurance, retirement, and tax planning for Central Valley, Tri-Valley, and Bay Area families.",
     ogImage: "/og/default.png",
   },
   nap: {
@@ -308,17 +310,9 @@ export const siteConfig: SiteConfig = {
     postalCode: "",
     addressCountry: "US",
     phone: "408-582-4271",
-    email: "",
+    email: "hello@dimeguard.com",
     openingHours: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"],
-    areaServed: [
-      "Mountain House",
-      "Tracy",
-      "Manteca",
-      "Lathrop",
-      "Stockton",
-      "Modesto",
-      "Central Valley",
-    ],
+    areaServed: ["Central Valley", "Tri-Valley", "Bay Area"],
   },
   licensure: {
     primaryState: "CA",
@@ -330,59 +324,46 @@ export const siteConfig: SiteConfig = {
     ],
     licenseNumber: "4344549",
     disclosure:
-      "Licensed insurance agent in California, serving clients across the nation.",
+      "Licensed in California, serving clients across the nation.",
     insuranceOnlyDisclosure:
       "Insurance-only licensure. Not investment, tax, or legal advice — for informational purposes only.",
   },
-  // Carrier list sourced from Saral's existing dimeguard.com /services
-  // "Our Partners" panel. Drop a logo into /public/carriers/ and set
-  // `logoPath` to render it as an image — until then the strip renders the
-  // name as text. `carrierStrip.enabled` stays false until logos land.
-  carriers: [
-    { name: "F&G Annuities & Life" },
-    { name: "Annexus Retirement Solutions" },
-    { name: "Protective" },
-    { name: "Corebridge Financial" },
-    { name: "Aflac" },
-    { name: "Lafayette Life Insurance Company" },
-    { name: "Allianz" },
-    { name: "Foresters Financial" },
-    { name: "Breeze FMO" },
-    { name: "National Life Group" },
-    { name: "North American" },
-    { name: "Manhattan Life" },
-    { name: "Nationwide" },
-    { name: "Mutual of Omaha" },
-    { name: "Experior DebtMedic" },
-    { name: "Lincoln Financial Group" },
-    { name: "Security Benefit" },
-    { name: "Athene" },
-    { name: "AIG" },
-    { name: "Columbus Life Insurance Company" },
-    { name: "Assurity Life Insurance Company" },
-    { name: "Great Western Insurance Company" },
-    { name: "Americo" },
-    { name: "Columbia Financial Group" },
-    { name: "MassMutual" },
-    { name: "Nassau" },
-    { name: "American-Amicable" },
-    { name: "Pan-American Life Insurance Group" },
-    { name: "Transamerica" },
-    { name: "American Equity" },
-    { name: "Liberty Bankers Life" },
-    { name: "NetLaw" },
-    { name: "NIW" },
-    { name: "ScoreNavigator" },
-    { name: "Symetra" },
-    { name: "Global View Capital Management" },
-    { name: "OneAmerica" },
-    { name: "SILAC Insurance Company" },
-    { name: "AuguStar Life" },
-    { name: "Prosperity Life" },
-    { name: "Gerber Life Insurance" },
-    { name: "Guaranty Income Life Insurance Company" },
-    { name: "LegalShield" },
-  ],
+  // Independent / multi-carrier trust band on the homepage. Logos live in
+  // /public/carriers; `file` is the filename, `name` doubles as alt text.
+  // `type` separates insurance carriers from estate/trust-planning partners.
+  // Rendered from config only — never hardcode logo paths in the component.
+  carriers: {
+    enabled: true,
+    items: [
+      { name: "Nationwide", file: "nationwide.svg", type: "carrier" },
+      { name: "Mutual of Omaha", file: "mutual-of-omaha.svg", type: "carrier" },
+      {
+        name: "Corebridge Financial",
+        file: "corebridge-financial.svg",
+        type: "carrier",
+      },
+      {
+        name: "F&G Annuities & Life",
+        file: "fg-annuities-life.svg",
+        type: "carrier",
+      },
+      {
+        name: "Foresters Financial",
+        file: "foresters-financial.svg",
+        type: "carrier",
+      },
+      { name: "IMG Global", file: "img-global.svg", type: "carrier" },
+      {
+        name: "National Life Group",
+        file: "national-life-group.png",
+        type: "carrier",
+      },
+      { name: "North American", file: "north-american.png", type: "carrier" },
+      { name: "Allianz", file: "allianz.png", type: "carrier" },
+      { name: "NetLaw", file: "netlaw.svg", type: "partner" },
+      { name: "TrusteeFriend", file: "trusteefriend.png", type: "partner" },
+    ],
+  },
   brand: {
     ink: "#143A4A",
     inkSoft: "#2C5364",
@@ -424,16 +405,14 @@ export const siteConfig: SiteConfig = {
     { top: "$0", bottom: "to run your number" },
     { top: "No pressure", bottom: "nothing pitched on the first call" },
   ],
-  carrierStrip: {
-    enabled: false,
-    eyebrow: "INDEPENDENT · WE PLACE ACROSS MULTIPLE CARRIERS",
-  },
   // TODO[badri]: re-enable Calculators in M2 when real calculator pages ship.
   nav: [
     { href: "/retirement-planning", label: "Retirement Planning", primary: true },
     // URL stays /life-insurance; disability/LTC content lives inside the page.
     { href: "/life-insurance", label: "Life Insurance", primary: true },
-    { href: "/about", label: "About", primary: true },
+    // About is HIDDEN for now — Saral's personal presence removed from the
+    // visible flow. Uncomment to restore it to the header nav.
+    // { href: "/about", label: "About", primary: true },
     { href: "/contact", label: "Contact", primary: true },
     { href: "/blog", label: "Blog", primary: false },
     { href: "/resources", label: "Resources", primary: false },
@@ -455,12 +434,12 @@ export const siteConfig: SiteConfig = {
       title:
         "Insurance, retirement & tax planning · Mountain House, CA · Dimeguard",
       description:
-        "Saral Toms helps families think clearly about insurance, retirement, and tax coordination. Multi-carrier independent agent — first call is 20 minutes, no script, no sales pitch.",
+        "Dimeguard helps families think clearly about insurance, retirement, and tax coordination. Multi-carrier independent agent — first call is 20 minutes, no script, no sales pitch.",
       priority: 1.0,
       changeFrequency: "weekly",
       lastModified: "2026-05-25",
       llmsSummary:
-        "Home page. Insurance, retirement, and tax-aware planning for Central Valley families, by Saral Toms.",
+        "Home page. Insurance, retirement, and tax-aware planning for Central Valley, Tri-Valley, and Bay Area families.",
       showInLlms: true,
       canonical: true,
     },
@@ -502,15 +481,20 @@ export const siteConfig: SiteConfig = {
       lastModified: "2026-05-12",
       llmsSummary:
         "About the founder, Saral Toms — background, approach, and states served.",
-      showInNav: true,
-      showInLlms: true,
-      canonical: true,
+      // About is HIDDEN for now (client removed Saral's personal presence).
+      // The page still returns 200 by direct URL, but it's dropped from the
+      // header nav (see `nav` below), sitemap.xml (canonical:false) and
+      // llms.txt (showInLlms:false). Reverse by restoring these to true and
+      // uncommenting the /about nav entry.
+      showInNav: false,
+      showInLlms: false,
+      canonical: false,
     },
     {
       path: "/resources",
       title: "Planning tools & spreadsheets · Free downloads",
       description:
-        "Free spreadsheets for net worth tracking and monthly budgeting, used in the conversations Saral has with clients every week.",
+        "Free spreadsheets for net worth tracking and monthly budgeting, used in the conversations we have with clients every week.",
       priority: 0.7,
       changeFrequency: "monthly",
       lastModified: "2026-05-15",
@@ -540,9 +524,9 @@ export const siteConfig: SiteConfig = {
       // duplicate of the contact info already exposed on every page (footer
       // NAP, header Calendly CTA, /about reach-out block).
       path: "/contact",
-      title: "Contact Saral Toms · Dimeguard",
+      title: "Contact · Dimeguard",
       description:
-        "Three ways to reach Saral — email, a 20-minute Calendly call, or the contact form. Based in Mountain House, CA; serving the Central Valley.",
+        "Three ways to reach us — email, a 20-minute Calendly call, or the contact form. Based in Mountain House, CA; serving the Central Valley, Tri-Valley, and Bay Area.",
       priority: 0.8,
       changeFrequency: "yearly",
       lastModified: "2026-05-12",

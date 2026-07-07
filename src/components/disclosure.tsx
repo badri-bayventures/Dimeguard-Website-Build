@@ -10,8 +10,11 @@ export function Disclosure({ className = "" }: { className?: string }) {
     <p
       className={`text-xs leading-relaxed text-[color:var(--color-muted)] ${className}`.trim()}
     >
-      {siteConfig.advisor.fullName} is a licensed insurance agent.{" "}
-      {siteConfig.licensure.insuranceOnlyDisclosure}
+      {/* Neutral firm phrasing — Saral's personal presence is hidden for now.
+          Original: `{siteConfig.advisor.fullName} is a licensed insurance
+          agent.` Restore that when reinstating Saral's public profile. */}
+      {siteConfig.business.legalName} is licensed in California, serving clients
+      across the nation. {siteConfig.licensure.insuranceOnlyDisclosure}
     </p>
   );
 }

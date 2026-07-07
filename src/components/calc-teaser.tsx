@@ -112,10 +112,10 @@ export function CalcTeaser() {
     formatUsd(teaserDefaults.monthlyContribution),
   );
 
-  // Collapsible "Adjust assumptions" — annual return / years in retirement.
+  // Always-visible assumption sliders — annual return / years in retirement.
   // Stored as whole-number strings; clamped to sane bounds before use. These
-  // overrides feed only the live preview below; they never mutate siteConfig.
-  const [showAssumptions, setShowAssumptions] = useState(false);
+  // overrides feed only the live preview below; they never mutate siteConfig
+  // defaults or the hero teaser number.
   const [returnPct, setReturnPct] = useState<string>(
     String(Math.round(teaserDefaults.expectedReturn * 100)),
   );
@@ -245,44 +245,36 @@ export function CalcTeaser() {
           />
         </div>
 
-        <div>
-          <button
-            type="button"
-            onClick={() => setShowAssumptions((v) => !v)}
-            aria-expanded={showAssumptions}
-            className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70 transition hover:text-[color:var(--color-accent)]"
-          >
-            <span>{showAssumptions ? "Hide" : "Adjust"} assumptions</span>
-            <span aria-hidden className="text-[color:var(--color-accent)]">
-              {showAssumptions ? "−" : "+"}
-            </span>
-          </button>
-          {showAssumptions ? (
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <FieldNumber
-                id={returnId}
-                label="Annual return %"
-                value={returnPct}
-                onChange={setReturnPct}
-                min={1}
-                max={12}
-                placeholder="7"
-              />
-              <FieldNumber
-                id={drawdownId}
-                label="Years in retirement"
-                value={drawdownYearsStr}
-                onChange={setDrawdownYearsStr}
-                min={1}
-                max={50}
-                placeholder="25"
-              />
-            </div>
-          ) : (
-            <p className="mt-2 text-[11px] text-white/55">
-              Assumes a 7% annual return and a 25-year retirement — adjust.
-            </p>
-          )}
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/55">
+            Assumptions
+          </p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <FieldSlider
+              id={returnId}
+              label="Annual return"
+              value={annualReturn * 100}
+              display={`${prePct}%`}
+              onChange={(n) => setReturnPct(String(n))}
+              min={1}
+              max={12}
+              step={1}
+            />
+            <FieldSlider
+              id={drawdownId}
+              label="Years in retirement"
+              value={drawdownYearsValue}
+              display={`${drawdownYearsValue} yrs`}
+              onChange={(n) => setDrawdownYearsStr(String(n))}
+              min={1}
+              max={50}
+              step={1}
+            />
+          </div>
+          <p className="mt-3 text-[11px] leading-relaxed text-white/55">
+            Assumes a {prePct}% annual return over a {drawdownYearsValue}-year
+            retirement. Adjust the sliders to see your number update live.
+          </p>
         </div>
 
         <div className="flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.18em] text-white/55">
@@ -360,6 +352,47 @@ function FieldNumber(props: {
         placeholder={props.placeholder}
         className="mt-1.5 w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-base text-white placeholder:text-white/30 focus:border-[color:var(--color-accent)] focus:outline-none focus:ring-2 focus:ring-[color:var(--color-accent)]/40"
       />
+    </div>
+  );
+}
+
+function FieldSlider(props: {
+  id: string;
+  label: string;
+  value: number;
+  display: string;
+  onChange: (v: number) => void;
+  min: number;
+  max: number;
+  step?: number;
+}) {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-2">
+        <label
+          htmlFor={props.id}
+          className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-white/70"
+        >
+          {props.label}
+        </label>
+        <span className="text-sm font-semibold tabular-nums text-[color:var(--color-accent)]">
+          {props.display}
+        </span>
+      </div>
+      <input
+        id={props.id}
+        type="range"
+        min={props.min}
+        max={props.max}
+        step={props.step ?? 1}
+        value={props.value}
+        onChange={(e) => props.onChange(Number(e.target.value))}
+        className="mt-2 w-full accent-[color:var(--color-accent)]"
+      />
+      <div className="mt-1 flex justify-between text-[9px] font-medium uppercase tracking-[0.14em] text-white/35">
+        <span>{props.min}</span>
+        <span>{props.max}</span>
+      </div>
     </div>
   );
 }

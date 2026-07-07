@@ -1,0 +1,47 @@
+You are continuing the Dimeguard website (Next.js 15 App Router, `site.config.ts`-driven, deployed on Vercel). The site is live. Make exactly the following changes — no new features, no new pages beyond what's listed. Preserve existing brand tokens, nav structure, and the `licensure.licensedStates` data structure (sitemap + JSON-LD depend on it — only change visible copy).
+
+### 1. Footer — licensure line + remove contact details
+The footer currently reads (approximately):
+> Mountain House, CA · 408-582-4271
+> Licensed insurance agent in California, serving clients across the nation.
+> CA Insurance Lic. #4344549
+> Insurance-only licensure. Not investment, tax, or legal advice — for informational purposes only.
+
+Make these changes:
+- Change "Licensed insurance agent in California, serving clients across the nation." → **"Licensed in California, serving clients across the nation."** (drop the words "insurance agent").
+- **Remove the standalone "Mountain House, CA" address line** from the footer.
+- **Remove the phone number (408-582-4271)** from the footer.
+- Remove any **second / redundant "insurance in CA"-style descriptor line** so licensure is stated exactly **once** (the "Licensed in California…" line above). Keep the license-number line (`CA Insurance Lic. #4344549`) and keep the legal disclaimer ("Insurance-only licensure. Not investment, tax, or legal advice…").
+
+### 2. Contact page — add in-person line
+- Add the line: **"In-person available on request for Central Valley and Bay Area clients."**
+
+### 3. Service area — widen the geography
+- Wherever the site states the service area (currently "based in Mountain House, serving the Central Valley"), change it to serve **Central Valley, Tri-Valley, and Bay Area** (list all three). Keep "Licensed in California / serving clients across the nation" framing where it already exists.
+
+### 4. "Reach Us" block — email + phone only
+- In the "Reach Us" block (contact area), display **email and phone only**. **Remove the "Mountain House, CA" location line** from this block.
+
+### 5. Move the About section to the footer
+- The homepage currently has an About / "Meet Saral" block sitting after the calculator. **Remove it from the main homepage flow** and relocate that content into the **footer region** (a slim about/bio band above or beside the footer's legal/links area). Goal: free up homepage vertical space so the calculator is the homepage's primary feature. Keep the existing About **page** (`/about`) unchanged — this only moves the homepage About block.
+
+### 6. Calculator — assumptions always visible (remove click-to-reveal)
+Read `src/lib/calc/retirement.ts` and `siteConfig.calculators.retirement` before changing anything.
+- The current calculator hides its assumptions behind an expandable **"Adjust assumptions"** panel (added earlier). **Remove the collapse/expand behavior** — the two real assumption controls must be **always visible inline**, not click-to-reveal:
+  - **Annual return** — default **7%** (wired to the projection's `rPre` / `assumedAnnualReturnPre`).
+  - **Years in retirement** — default **25** (wired to `drawdownYears`).
+- Render them as **bounded sliders** (min/max validated, not free-form) with their default values shown, recomputing the displayed result live.
+- **Do NOT add an inflation field or a tax field** — those are not in the model.
+- Overrides recompute the on-screen result only; they must **not** mutate stored config defaults or the hero teaser number (hero stays single-sourced from `teaserDefaults`).
+- Keep a one-line plain-language summary visible (e.g. "Assumes a 7% annual return and a 25-year retirement — adjust the sliders to your situation.").
+- **UX/visual reference: annuityalliance.com** — clean, trusted-professional, editorial. The math should read open and labeled, not hidden. Tighten the rates/controls layout toward that calm, transparent feel.
+
+### 7. Logo — header vs footer variants + palette/texture fix
+- Use the **white-base logo variant in the header** and the **blue-base logo variant in the footer**.
+- Fix the logo's palette/texture so it matches the site: transparent background (no off-white/grey box), clean edges, and the blue tuned to the brand navy token already used in the footer (reference: `#15273f` / `#1f3a5c` — read the actual footer background token and match it rather than hardcoding a mismatched blue).
+- ⚠️ If only a single flattened raster (`/logo.png`) exists, you cannot cleanly recolor it — request the white-base and blue-base source files (or an SVG) before implementing. Do not ship a muddy auto-recolor.
+
+### 8. Blog — better placement
+- The homepage currently has a "From the blog" block mid-page. With the About block moving out (#5), **demote the homepage blog block to a slim 3-card "Latest insights" strip directly above the footer** (lowest-priority real estate), so the calculator + core services lead the page. Keep `/blog` reachable from the header nav and footer. Do not add new posts.
+
+When done: report which files changed and confirm on a mobile viewport that (a) the footer no longer shows the address/phone, (b) the calculator assumptions are visible without a click, and (c) the homepage leads with the calculator (About relocated, blog demoted to the pre-footer strip).
