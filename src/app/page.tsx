@@ -2,7 +2,7 @@ import Link from "next/link";
 import { siteConfig } from "@/site.config";
 import { Hero } from "@/components/hero";
 import { HeroTrustStrip } from "@/components/hero-trust-strip";
-import { CarrierStrip } from "@/components/carrier-strip";
+import { CarrierBand } from "@/components/carrier-band";
 import { Section, SectionHeading } from "@/components/section";
 import { ServiceCard } from "@/components/service-card";
 import { Faq } from "@/components/faq";
@@ -109,6 +109,8 @@ export default async function Home() {
           />
         </div>
       </Section>
+
+      <CarrierBand />
 
       <Section tone="muted">
         <div className="grid items-start gap-12 md:grid-cols-12">
@@ -226,8 +228,6 @@ export default async function Home() {
           </div>
         </div>
       </Section>
-
-      <CarrierStrip />
 
       {recentPosts.length ? (
         <Section tone="surface">

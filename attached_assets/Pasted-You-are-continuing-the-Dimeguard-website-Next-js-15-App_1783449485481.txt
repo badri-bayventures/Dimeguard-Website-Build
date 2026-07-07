@@ -1,0 +1,48 @@
+You are continuing the Dimeguard website (Next.js 15 App Router, `site.config.ts`-driven, deployed on Vercel). Build ONE new homepage section: an independent–multi-carrier trust band. No other changes.
+
+### 0. Asset cleanup in `public/carriers/` (do this first)
+Rename the uploaded files to clean kebab-case and delete the one superseded file:
+- `bolt-logo-nw-horizontal-full.svg` → `nationwide.svg` (this is the Nationwide logo despite the filename)
+- `mutual-primary-logo.svg` → `mutual-of-omaha.svg`
+- `corebridge-financial-rgb-600x200.svg` → `corebridge-financial.svg`
+- `F&G_Logo.svg` → `fg-annuities-life.svg` (the `&` breaks URLs)
+- `ff-logo-eng.svg` → `foresters-financial.svg`
+- `logo_img.svg` → `img-global.svg`
+- `NLG-logo.png` → `national-life-group.png`
+- `layout_set_logo.png` → `north-american.png`
+- **DELETE `images.png`** (opaque white background) — its replacement `allianz.png` is already in the folder
+- `netlaw.svg` and `trusteefriend.png` keep their names
+
+### Placement
+On the homepage, directly **after the services section** and **before the "Latest insights" pre-footer strip**. Full-width band on the muted surface token (`surfaceMuted` `#F5F1E8`) so it reads as a distinct editorial break between white sections.
+
+### Content (top of the band)
+- Eyebrow, small caps with letter-spacing, ink-soft color: **INDEPENDENT — MULTI-CARRIER**
+- Heading in the site's serif (Fraunces), one line: **"We work with the carriers. We answer to you."**
+- One-line lede below it: **"Dimeguard isn't tied to any one insurer — recommendations come from comparing across carriers like these, supported by estate- and trust-planning partners."**
+- No CTA button in this band. It's a trust signal, not a conversion block.
+- Compliance guardrails: do NOT state a carrier count, do NOT use "best/top/all major carriers," no ratings claims.
+
+### Logo treatment (this is what makes it premium)
+- Read the existing carrier config in `site.config.ts` (there is a dormant carrier-strip structure with `enabled: false`). Rework it to `carriers: { enabled: true, items: [{ name, file, type }] }` where `type` is `'carrier'` or `'partner'`, populated with the 11 renamed files in `public/carriers/` (9 carriers; NetLaw + TrusteeFriend are `'partner'`). Render from config — never hardcode logo paths in the component. Use the real names as `alt` text: Nationwide, Mutual of Omaha, Corebridge Financial, F&G Annuities & Life, Foresters Financial, IMG, National Life Group, North American, Allianz, NetLaw, TrusteeFriend.
+- Uniform visual weight: every logo rendered at a fixed cap height (~30px desktop, ~22px mobile), auto width, generous horizontal breathing room.
+- Monochrome at rest: `filter: grayscale(1)` + ~55% opacity, so mismatched brand colors don't turn the band into a circus. On hover: full color + full opacity, 250ms ease.
+- Each logo needs `alt` text = carrier name.
+
+### Motion — staggered crossfade, NOT a marquee
+- Desktop: a single row of **5 visible slots** (mobile: 2×2 grid of 4 slots).
+- The full carrier list cycles through the slots by **crossfade-in-place**: on an offset schedule, ONE slot at a time swaps its logo — outgoing logo fades out with a 4px downward drift, incoming fades in with a 4px upward drift, ~600ms ease-in-out. Stagger so a swap happens roughly every 2.5–3s, and any given logo dwells ~12–15s. The effect: the band feels quietly alive, nothing ever scrolls or races.
+- **If there are 5 or fewer logos total, skip the cycling entirely**: render all of them static, with a one-time staggered fade-up reveal when the band first scrolls into view (100ms stagger per logo) and the hover treatment above.
+- Pause all cycling when the band is out of the viewport (IntersectionObserver).
+- `prefers-reduced-motion: reduce` → no cycling, no reveal animation; static grid of the first N logos.
+- No third-party animation library — CSS transitions + a small React effect is all this needs.
+
+### Guardrails
+- Homepage only; do not add the band to other pages.
+- Do not touch the calculator, services, blog strip, footer, or anything shipped in the previous batch.
+- Do not re-enable the About block or About nav (deliberately hidden).
+- Keep Core Web Vitals in mind: logos via `next/image`, no layout shift when logos swap (slots are fixed-size boxes).
+
+When done: report the files changed, list which carrier files you found in `public/carriers/`, and confirm (a) the band renders between services and the blog strip, (b) logos are monochrome at rest / color on hover, (c) the crossfade swaps one slot at a time with no horizontal scrolling, and (d) reduced-motion shows a static grid.
+
+---

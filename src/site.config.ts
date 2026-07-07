@@ -35,10 +35,13 @@ export type LegalLink = {
   label: string;
 };
 
-export type Carrier = {
+export type CarrierLogo = {
+  /** Real brand name — also used verbatim as image alt text. */
   name: string;
-  /** Optional path under /public — when present, renders as <Image>. */
-  logoPath?: string;
+  /** Filename under /public/carriers (e.g. "nationwide.svg"). */
+  file: string;
+  /** Insurance carrier vs estate/trust-planning partner. */
+  type: "carrier" | "partner";
 };
 
 export type TrustStripItem = {
@@ -135,7 +138,11 @@ export type SiteConfig = {
     disclosure: string;
     insuranceOnlyDisclosure: string;
   };
-  carriers: Carrier[];
+  /** Independent / multi-carrier trust band on the homepage. */
+  carriers: {
+    enabled: boolean;
+    items: CarrierLogo[];
+  };
   /**
    * Brand tokens. Source of truth: Direction D mockup. Surfaced as CSS
    * custom properties in globals.css. Lime `accent` is button-only; never
@@ -184,11 +191,6 @@ export type SiteConfig = {
   };
   /** 4-column trust strip beneath the hero CTAs. */
   heroTrustStrip: TrustStripItem[];
-  /** Bottom-of-page carrier logo strip. */
-  carrierStrip: {
-    enabled: boolean;
-    eyebrow: string;
-  };
   nav: NavLink[];
   /** Footer-only links (Privacy, Terms, etc.). Kept separate from `nav`. */
   legalLinks: LegalLink[];
@@ -326,55 +328,42 @@ export const siteConfig: SiteConfig = {
     insuranceOnlyDisclosure:
       "Insurance-only licensure. Not investment, tax, or legal advice — for informational purposes only.",
   },
-  // Carrier list sourced from Saral's existing dimeguard.com /services
-  // "Our Partners" panel. Drop a logo into /public/carriers/ and set
-  // `logoPath` to render it as an image — until then the strip renders the
-  // name as text. `carrierStrip.enabled` stays false until logos land.
-  carriers: [
-    { name: "F&G Annuities & Life" },
-    { name: "Annexus Retirement Solutions" },
-    { name: "Protective" },
-    { name: "Corebridge Financial" },
-    { name: "Aflac" },
-    { name: "Lafayette Life Insurance Company" },
-    { name: "Allianz" },
-    { name: "Foresters Financial" },
-    { name: "Breeze FMO" },
-    { name: "National Life Group" },
-    { name: "North American" },
-    { name: "Manhattan Life" },
-    { name: "Nationwide" },
-    { name: "Mutual of Omaha" },
-    { name: "Experior DebtMedic" },
-    { name: "Lincoln Financial Group" },
-    { name: "Security Benefit" },
-    { name: "Athene" },
-    { name: "AIG" },
-    { name: "Columbus Life Insurance Company" },
-    { name: "Assurity Life Insurance Company" },
-    { name: "Great Western Insurance Company" },
-    { name: "Americo" },
-    { name: "Columbia Financial Group" },
-    { name: "MassMutual" },
-    { name: "Nassau" },
-    { name: "American-Amicable" },
-    { name: "Pan-American Life Insurance Group" },
-    { name: "Transamerica" },
-    { name: "American Equity" },
-    { name: "Liberty Bankers Life" },
-    { name: "NetLaw" },
-    { name: "NIW" },
-    { name: "ScoreNavigator" },
-    { name: "Symetra" },
-    { name: "Global View Capital Management" },
-    { name: "OneAmerica" },
-    { name: "SILAC Insurance Company" },
-    { name: "AuguStar Life" },
-    { name: "Prosperity Life" },
-    { name: "Gerber Life Insurance" },
-    { name: "Guaranty Income Life Insurance Company" },
-    { name: "LegalShield" },
-  ],
+  // Independent / multi-carrier trust band on the homepage. Logos live in
+  // /public/carriers; `file` is the filename, `name` doubles as alt text.
+  // `type` separates insurance carriers from estate/trust-planning partners.
+  // Rendered from config only — never hardcode logo paths in the component.
+  carriers: {
+    enabled: true,
+    items: [
+      { name: "Nationwide", file: "nationwide.svg", type: "carrier" },
+      { name: "Mutual of Omaha", file: "mutual-of-omaha.svg", type: "carrier" },
+      {
+        name: "Corebridge Financial",
+        file: "corebridge-financial.svg",
+        type: "carrier",
+      },
+      {
+        name: "F&G Annuities & Life",
+        file: "fg-annuities-life.svg",
+        type: "carrier",
+      },
+      {
+        name: "Foresters Financial",
+        file: "foresters-financial.svg",
+        type: "carrier",
+      },
+      { name: "IMG Global", file: "img-global.svg", type: "carrier" },
+      {
+        name: "National Life Group",
+        file: "national-life-group.png",
+        type: "carrier",
+      },
+      { name: "North American", file: "north-american.png", type: "carrier" },
+      { name: "Allianz", file: "allianz.png", type: "carrier" },
+      { name: "NetLaw", file: "netlaw.svg", type: "partner" },
+      { name: "TrusteeFriend", file: "trusteefriend.png", type: "partner" },
+    ],
+  },
   brand: {
     ink: "#143A4A",
     inkSoft: "#2C5364",
@@ -416,10 +405,6 @@ export const siteConfig: SiteConfig = {
     { top: "$0", bottom: "to run your number" },
     { top: "No pressure", bottom: "nothing pitched on the first call" },
   ],
-  carrierStrip: {
-    enabled: false,
-    eyebrow: "INDEPENDENT · WE PLACE ACROSS MULTIPLE CARRIERS",
-  },
   // TODO[badri]: re-enable Calculators in M2 when real calculator pages ship.
   nav: [
     { href: "/retirement-planning", label: "Retirement Planning", primary: true },
