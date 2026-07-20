@@ -20,7 +20,9 @@ type ContactChannel = {
 
 export default function ContactPage() {
   const { nap } = siteConfig;
-  const telHref = nap.phone ? `tel:${nap.phone.replace(/[^\d+]/g, "")}` : "";
+  const telHref = nap.phone
+    ? `tel:${nap.phoneE164 || nap.phone.replace(/[^\d+]/g, "")}`
+    : "";
 
   const channels: ContactChannel[] = [];
   if (nap.email) {
@@ -77,7 +79,7 @@ export default function ContactPage() {
               ))}
             </ul>
             <p className="mt-5 text-sm">
-              Mountain House, CA · {nap.email}
+              {nap.email}
             </p>
           </div>
         }
@@ -129,7 +131,7 @@ export default function ContactPage() {
           <div className="md:col-span-7">
             <SectionHeading
               eyebrow="Where we are"
-              title="Based in Mountain House, CA."
+              title="Serving the Central Valley, Tri-Valley, and Bay Area."
               lede="Most meetings happen by video or phone. In-person available on request for Central Valley and Bay Area clients."
             />
             <div className="mt-8">

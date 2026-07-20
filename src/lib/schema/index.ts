@@ -70,7 +70,7 @@ export function localBusiness(config: SiteConfig): JsonLdObject {
             longitude: config.nap.longitude,
           }
         : undefined,
-    telephone: config.nap.phone || undefined,
+    telephone: config.nap.phoneE164 || config.nap.phone || undefined,
     email: config.nap.email || undefined,
     openingHours: config.nap.openingHours,
     areaServed: [
