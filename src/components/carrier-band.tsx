@@ -207,7 +207,7 @@ function LogoImage({ logo }: { logo: CarrierLogo }) {
       height={30}
       sizes="150px"
       style={{ width: "auto" }}
-      className="h-[22px] max-w-[120px] object-contain opacity-55 grayscale transition-[filter,opacity] duration-[250ms] ease-in-out hover:opacity-100 hover:grayscale-0 md:h-[30px] md:max-w-[150px]"
+      className="h-[22px] max-w-[120px] object-contain md:h-[30px] md:max-w-[150px]"
     />
   );
 }

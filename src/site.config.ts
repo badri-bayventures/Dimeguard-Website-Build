@@ -124,6 +124,8 @@ export type SiteConfig = {
     postalCode: string;
     addressCountry: string;
     phone: string;
+    /** E.164 form of `phone` for tel: links and JSON-LD `telephone`. */
+    phoneE164: string;
     email: string;
     latitude?: number;
     longitude?: number;
@@ -269,7 +271,7 @@ export const siteConfig: SiteConfig = {
     photoSrc: "/founders/saral.png",
     knowsLanguage: ["English", "Hindi"],
     bioSnippet:
-      "Saral works one-on-one with first-generation families in their 40s and 50s on insurance, retirement, and tax-aware planning — based in Mountain House, serving the Central Valley, Tri-Valley, and Bay Area.",
+      "Saral works one-on-one with first-generation families in their 40s and 50s on insurance, retirement, and tax-aware planning — serving the Central Valley, Tri-Valley, and Bay Area.",
   },
   // Second founder entry stays commented out until Saral confirms his business
   // partner's public-inclusion decision.
@@ -309,7 +311,8 @@ export const siteConfig: SiteConfig = {
     addressRegion: "CA",
     postalCode: "",
     addressCountry: "US",
-    phone: "408-582-4271",
+    phone: "209-884-2023",
+    phoneE164: "+12098842023",
     email: "hello@dimeguard.com",
     openingHours: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"],
     areaServed: ["Central Valley", "Tri-Valley", "Bay Area"],
@@ -384,12 +387,12 @@ export const siteConfig: SiteConfig = {
   // to `right`.
   topTrustBar: {
     enabled: true,
-    left: "Independent Financial Doctor",
+    left: "Independent, multi-carrier agency",
     right: "20-MIN FIRST CALL · NO SCRIPT, NO SALES PITCH",
   },
   locationPin: {
     enabled: true,
-    label: "Mountain House, CA",
+    label: "Central Valley, CA",
   },
   ctaLabels: {
     bookCall: "Book a 20-min call",
@@ -410,11 +413,11 @@ export const siteConfig: SiteConfig = {
     { href: "/retirement-planning", label: "Retirement Planning", primary: true },
     // URL stays /life-insurance; disability/LTC content lives inside the page.
     { href: "/life-insurance", label: "Life Insurance", primary: true },
+    { href: "/blog", label: "Blog", primary: true },
     // About is HIDDEN for now — Saral's personal presence removed from the
     // visible flow. Uncomment to restore it to the header nav.
     // { href: "/about", label: "About", primary: true },
     { href: "/contact", label: "Contact", primary: true },
-    { href: "/blog", label: "Blog", primary: false },
     { href: "/resources", label: "Resources", primary: false },
   ],
   legalLinks: [
@@ -432,7 +435,7 @@ export const siteConfig: SiteConfig = {
     {
       path: "/",
       title:
-        "Insurance, retirement & tax planning · Mountain House, CA · Dimeguard",
+        "Insurance, retirement & tax planning · Central Valley, CA · Dimeguard",
       description:
         "Dimeguard helps families think clearly about insurance, retirement, and tax coordination. Multi-carrier independent agent — first call is 20 minutes, no script, no sales pitch.",
       priority: 1.0,
@@ -473,9 +476,9 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/about",
-      title: "About Saral Toms · Insurance & Retirement Advisor",
+      title: "About Saral Toms · Senior Financial Planner",
       description:
-        "Meet Saral Toms — a Mountain House-based insurance and retirement advisor working with Central Valley families on retirement, life, and tax-aware planning.",
+        "Meet Saral Toms — a California-based senior financial planner working with Central Valley families on retirement, life, and tax-aware planning.",
       priority: 0.7,
       changeFrequency: "yearly",
       lastModified: "2026-05-12",
@@ -526,7 +529,7 @@ export const siteConfig: SiteConfig = {
       path: "/contact",
       title: "Contact · Dimeguard",
       description:
-        "Three ways to reach us — email, a 20-minute Calendly call, or the contact form. Based in Mountain House, CA; serving the Central Valley, Tri-Valley, and Bay Area.",
+        "Three ways to reach us — email, a 20-minute Calendly call, or the contact form. Serving the Central Valley, Tri-Valley, and Bay Area.",
       priority: 0.8,
       changeFrequency: "yearly",
       lastModified: "2026-05-12",
