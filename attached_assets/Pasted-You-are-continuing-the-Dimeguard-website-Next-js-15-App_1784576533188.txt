@@ -1,0 +1,43 @@
+You are continuing the Dimeguard website (Next.js 15 App Router, `site.config.ts`-driven, deployed on Vercel). Make exactly the four changes below and nothing else. Prefer editing `site.config.ts` / content over touching components; when a component change is unavoidable, keep it surgical.
+
+### 1. Phone number swap → NAP consistency pass (do this first, it's the most important)
+The business phone is changing from the old personal number to a new business line. Replace **every** instance of the old number with the new one, in display copy AND in structured data, so the site's NAP stays internally consistent (this also has to match Google Business Profile).
+
+- **Old number to find and replace everywhere:** `408-582-4271` (also check for unformatted variants `4085824271` / `+14085824271` / `(408) 582-4271`).
+- **New number:** `209-884-2023` (display format), `+12098842023` (tel: links and schema `telephone`).
+- Locations to hit: the **footer**, the **/contact** page/block, any header or CTA phone link, and the **`LocalBusiness` / `FinancialService` JSON-LD** `telephone` field in `lib/schema/`. Search the whole repo — do not assume you know every spot.
+- In the **footer specifically**: also **remove Saral's personal name** if it appears there (e.g. a byline, copyright credit, or bio remnant). **Keep the California license line** (`CA insurance license #4344549`) exactly as-is. The footer should read as the business, not the person.
+- Do not change the Calendly URL, email addresses, or the business address logic.
+
+### 2. Carrier logos → real (full-color) at rest
+In the homepage carrier trust band, the logos currently render **monochrome/grayscale at ~55% opacity at rest**, color-on-hover. Saral wants them in **their actual brand colors at all times** (the muted hover reads wrong to him).
+
+- Remove the at-rest `filter: grayscale(1)` and the reduced opacity — render every logo at **full color, full opacity, at rest**.
+- Keep everything else about the band unchanged: the staggered crossfade motion, the fixed cap-height slots (no layout shift), the `surfaceMuted` (`#F5F1E8`) background, the config-driven render, `prefers-reduced-motion` fallback, and the compliance-safe copy.
+- Since logos now show full-color on the `#F5F1E8` surface, **verify none of them carry a baked white/opaque background box** that would show as an ugly rectangle. If any logo does, report it by filename — do NOT ship it looking boxed. (Allianz was already fixed to transparent; watch the rest.)
+
+### 3. Blog → prominent top-nav placement
+The blog is currently a slim "Latest insights" strip above the footer. Saral wants it reachable from the **top navigation**, not footer-only.
+
+- Add a **"Blog"** (or "Insights") item to the **header nav** array in `site.config.ts`, linking to `/blog`.
+- Keep the existing pre-footer "Latest insights" strip as well — this is additive, not a move.
+- Header nav order suggestion: Retirement Planning · Life Insurance · Blog · About · Contact — but respect whatever the current live header shows; only insert Blog, don't reorder or re-add anything currently hidden (About stays as it currently is).
+
+### 4. Remove "Independent Financial Advisor" wording
+Find every instance of the exact phrase **"Independent Financial Advisor"** (and close variants like "Independent Financial Adviser") in visible copy, metadata, OG tags, and schema `jobTitle`/description fields. Remove it. Where a role label is structurally required, use the site's existing approved title conventions already in use elsewhere ("Senior Financial Planner" for Saral's role; "independent, multi-carrier" for the business positioning) rather than inventing a new one. Report each place you changed.
+
+### 5. Strip the last Mountain House mention
+There is one remaining "Mountain House" reference in visible copy (the site is otherwise de-emphasized off the local anchor per the content-over-geography strategy). Find it and remove/neutralize it so no visible copy names Mountain House. **Leave the business address logic, GBP-related config, and any `licensure`/state data structures untouched** — this is a *visible copy* strip only, not a data change.
+
+### Guardrails
+- Do NOT touch: the calculator, the Calendly booking embed, the lead `/api/lead` route, the Notion blog pipeline, or the deliberately-hidden About block/nav.
+- Do NOT re-enable any held service-page routes (`canonical:false` / `showInLlms:false` stay as they are).
+- Compliance copy rules still apply: no superlatives (best/top/#1), no outcome/return promises, no carrier count, no testimonials.
+- Keep Core Web Vitals clean: no layout shift from the carrier-band change; logos stay `next/image`.
+
+### When done, report:
+1. Every file changed.
+2. The full list of places the old phone number was found and replaced (display + schema), and confirmation the footer no longer shows Saral's personal name but still shows the CA license line.
+3. Confirmation the carrier logos render full-color at rest with motion intact — and flag by filename any logo showing a white/boxed background.
+4. That "Blog" is in the header nav and `/blog` resolves.
+5. Every place "Independent Financial Advisor" was removed, and the Mountain House mention that was stripped.
