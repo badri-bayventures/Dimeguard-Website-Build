@@ -309,7 +309,7 @@ export const siteConfig: SiteConfig = {
     addressRegion: "CA",
     postalCode: "",
     addressCountry: "US",
-    phone: "408-582-4271",
+    phone: "209-884-2023",
     email: "hello@dimeguard.com",
     openingHours: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"],
     areaServed: ["Central Valley", "Tri-Valley", "Bay Area"],
@@ -413,8 +413,12 @@ export const siteConfig: SiteConfig = {
     // About is HIDDEN for now — Saral's personal presence removed from the
     // visible flow. Uncomment to restore it to the header nav.
     // { href: "/about", label: "About", primary: true },
+    // Blog promoted to the primary header nav 2026-07-31 (Saral's 7/10 ask).
+    // Side effect by design: `primary: true` items are filtered OUT of the
+    // footer link list, so /blog now reaches the reader via the header and the
+    // pre-footer "Latest insights" strip rather than the footer nav.
+    { href: "/blog", label: "Blog", primary: true },
     { href: "/contact", label: "Contact", primary: true },
-    { href: "/blog", label: "Blog", primary: false },
     { href: "/resources", label: "Resources", primary: false },
   ],
   legalLinks: [
