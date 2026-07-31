@@ -540,6 +540,19 @@ export const siteConfig: SiteConfig = {
       canonical: false,
     },
     {
+      path: "/calculators/retirement",
+      title: "Retirement readiness calculator · Dimeguard",
+      description:
+        "Project what your savings may grow to by the age you want to stop working, and see it against what your retirement spending would actually need. Assumptions stay visible and adjustable.",
+      priority: 0.8,
+      changeFrequency: "yearly",
+      lastModified: "2026-07-31",
+      llmsSummary:
+        "Retirement readiness calculator — project savings growth to retirement age and compare it against the nest egg required for a chosen spending level and retirement length.",
+      showInLlms: true,
+      canonical: true,
+    },
+    {
       path: "/calculators/inflation",
       title: "Inflation calculator · See what your savings may buy",
       description:
