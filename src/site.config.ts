@@ -425,8 +425,9 @@ export const siteConfig: SiteConfig = {
     { href: "/terms", label: "Terms" },
   ],
   serviceLinks: [
-    // Held for staggered release — re-enable in waves (2026-06).
-    // { href: "/401k-rollovers", label: "401(k) Rollovers" },
+    // Staggered release. Released: 401(k) Rollovers (2026-07-31).
+    // Next wave: one more page week of 2026-08-10, remainder post-launch.
+    { href: "/401k-rollovers", label: "401(k) Rollovers" },
     // { href: "/annuities", label: "Annuities & Retirement Income" },
     // { href: "/tax-planning", label: "Tax-Efficient Planning" },
     // { href: "/estate-planning", label: "Estate Planning" },
@@ -561,8 +562,12 @@ export const siteConfig: SiteConfig = {
       lastModified: "2026-06-06",
       llmsSummary:
         "401(k) rollovers — when a rollover to an IRA makes sense, tax-bucket implications, and trade-offs to weigh.",
-      showInLlms: false,
-      canonical: false,
+      // Released from the staggered hold 2026-07-31 — first service page to go
+      // canonical so it has indexing runway before the Aug 15 launch. Copy is
+      // unchanged since 2026-06-06, so lastModified stays put (it stamps real
+      // edits, not publication status).
+      showInLlms: true,
+      canonical: true,
     },
     {
       path: "/annuities",
