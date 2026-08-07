@@ -252,6 +252,32 @@ export type SiteConfig = {
     enabled: boolean;
     calculator: "retirement" | "life_value";
   };
+  /**
+   * Client testimonials. STRUCTURE ONLY until real, permissioned quotes
+   * arrive (blocked on GBP verification + Saral's outreach to 4-5 clients).
+   * The homepage section renders ONLY when `items` is non-empty — never
+   * fabricate content here. Copy rules: process-oriented quotes only, no
+   * outcome/return claims (see testimonial-row.tsx).
+   */
+  testimonials: {
+    enabled: boolean;
+    /** Section heading copy, ready for when quotes land. */
+    eyebrow: string;
+    title: string;
+    items: {
+      quote: string;
+      attribution: string;
+      meta?: string;
+    }[];
+  };
+  /**
+   * Site assistant (chatbot). `enabled: false` is the kill switch — it must
+   * remove the widget entirely in one config change (no rollback needed).
+   */
+  assistant: {
+    enabled: boolean;
+    launcherLabel: string;
+  };
 };
 
 /**
@@ -311,8 +337,10 @@ export const siteConfig: SiteConfig = {
     addressRegion: "CA",
     postalCode: "",
     addressCountry: "US",
-    phone: "209-884-2023",
-    phoneE164: "+12098842023",
+    // 408-800-1427 per Saral's 2026-08-03 email — matches his business card
+    // (was 209-884-2023, swapped in sitewide 2026-07-20).
+    phone: "408-800-1427",
+    phoneE164: "+14088001427",
     email: "hello@dimeguard.com",
     openingHours: ["Mo-Fr 09:00-18:00", "Sa 09:00-13:00"],
     areaServed: ["Central Valley", "Tri-Valley", "Bay Area"],
@@ -553,17 +581,31 @@ export const siteConfig: SiteConfig = {
       canonical: true,
     },
     {
+      path: "/calculators/life-value",
+      title: "Life insurance coverage calculator · Dimeguard",
+      description:
+        "Estimate how much life insurance coverage your family may need from your income, your dependents, and the coverage you already have. Assumptions stay visible and adjustable.",
+      priority: 0.8,
+      changeFrequency: "yearly",
+      lastModified: "2026-08-07",
+      llmsSummary:
+        "Human life value calculator — estimate a life insurance coverage need from annual income, dependents, and existing coverage.",
+      showInLlms: true,
+      canonical: true,
+    },
+    {
       path: "/calculators/inflation",
       title: "Inflation calculator · See what your savings may buy",
       description:
-        "Estimate how inflation may erode your savings over time. Independent calculator embedded for quick what-if math.",
+        "Estimate how inflation may erode the purchasing power of your savings over 10, 20, or 30 years — quick what-if math with every assumption on screen.",
       priority: 0.6,
       changeFrequency: "yearly",
-      lastModified: "2026-05-10",
+      // Native calculator shipped 2026-08-07 (replaces the held embed plan).
+      lastModified: "2026-08-07",
       llmsSummary:
-        "Inflation calculator — estimate the future purchasing power of today's savings.",
-      showInLlms: false,
-      canonical: false,
+        "Inflation calculator — estimate the future purchasing power of today's savings at a chosen inflation rate.",
+      showInLlms: true,
+      canonical: true,
     },
     {
       path: "/401k-rollovers",
@@ -620,6 +662,61 @@ export const siteConfig: SiteConfig = {
         "Estate planning — beneficiary alignment, liquidity, and where life insurance fits alongside a will or trust.",
       showInLlms: false,
       canonical: false,
+    },
+    // Multi-state initial pages (M3 scope) — one per licensed state, driven
+    // by `licensure.licensedStates` + `src/lib/states.ts`. Thin by design;
+    // deepen per-state as GBP/local signals mature.
+    {
+      path: "/states/california",
+      title: "Financial planning in California · Dimeguard",
+      description:
+        "Insurance, retirement, and tax-aware planning for California families — home base in the Central Valley, serving the Tri-Valley and Bay Area, licensed statewide.",
+      priority: 0.5,
+      changeFrequency: "yearly",
+      lastModified: "2026-08-07",
+      llmsSummary:
+        "California service page — insurance and retirement planning, licensed in CA (home state).",
+      showInLlms: true,
+      canonical: true,
+    },
+    {
+      path: "/states/texas",
+      title: "Financial planning in Texas · Dimeguard",
+      description:
+        "Insurance, retirement, and tax-aware planning for Texas families — licensed in Texas, meetings by video, the same 20-minute first call.",
+      priority: 0.5,
+      changeFrequency: "yearly",
+      lastModified: "2026-08-07",
+      llmsSummary:
+        "Texas service page — insurance and retirement planning, licensed in TX, remote-first.",
+      showInLlms: true,
+      canonical: true,
+    },
+    {
+      path: "/states/colorado",
+      title: "Financial planning in Colorado · Dimeguard",
+      description:
+        "Insurance, retirement, and tax-aware planning for Colorado families — licensed in Colorado, meetings by video, the same 20-minute first call.",
+      priority: 0.5,
+      changeFrequency: "yearly",
+      lastModified: "2026-08-07",
+      llmsSummary:
+        "Colorado service page — insurance and retirement planning, licensed in CO, remote-first.",
+      showInLlms: true,
+      canonical: true,
+    },
+    {
+      path: "/states/new-jersey",
+      title: "Financial planning in New Jersey · Dimeguard",
+      description:
+        "Insurance, retirement, and tax-aware planning for New Jersey families — licensed in New Jersey, meetings by video, the same 20-minute first call.",
+      priority: 0.5,
+      changeFrequency: "yearly",
+      lastModified: "2026-08-07",
+      llmsSummary:
+        "New Jersey service page — insurance and retirement planning, licensed in NJ, remote-first.",
+      showInLlms: true,
+      canonical: true,
     },
     {
       path: "/privacy",
@@ -693,6 +790,27 @@ export const siteConfig: SiteConfig = {
   heroCalcTeaser: {
     enabled: true,
     calculator: "retirement",
+  },
+  // PLACEHOLDER STRUCTURE — do not fabricate quotes. Real testimonials are
+  // blocked on GBP verification + Saral collecting permissioned quotes from
+  // 4-5 clients. When they arrive: paste each as {quote, attribution, meta}
+  // and the homepage section renders automatically. TODO[saral]: quotes.
+  testimonials: {
+    enabled: true,
+    eyebrow: "What clients say",
+    title: "Careful conversations, in their words.",
+    items: [
+      // {
+      //   quote: "TODO[saral]: process-oriented quote — how it felt to work
+      //           together, never outcomes or returns.",
+      //   attribution: "TODO[saral]: First name L.",
+      //   meta: "TODO[saral]: city or context (optional)",
+      // },
+    ],
+  },
+  assistant: {
+    enabled: true,
+    launcherLabel: "Questions?",
   },
 };
 
