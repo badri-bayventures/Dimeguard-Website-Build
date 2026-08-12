@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { siteConfig } from "@/site.config";
+import { buttonClasses } from "@/components/button";
 import { track } from "@/lib/analytics/track";
 
 /**
@@ -331,7 +332,11 @@ export default function AssistantWidget() {
             <button
               type="submit"
               disabled={busy || input.trim() === ""}
-              className="btn btn--primary px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60"
+              className={buttonClasses(
+                "primary",
+                "md",
+                "disabled:cursor-not-allowed",
+              )}
             >
               Send
             </button>

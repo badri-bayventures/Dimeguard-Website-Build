@@ -440,9 +440,9 @@ export const siteConfig: SiteConfig = {
     { href: "/retirement-planning", label: "Retirement Planning", primary: true },
     // URL stays /life-insurance; disability/LTC content lives inside the page.
     { href: "/life-insurance", label: "Life Insurance", primary: true },
-    // Header entry lands on the flagship calculator; there is no /calculators
-    // hub route. The other two calculators live in the footer Explore column.
-    { href: "/calculators/retirement", label: "Calculators", primary: true },
+    // Header entry lands on the hub; the three calculators also stay
+    // individually reachable from the footer Explore column.
+    { href: "/calculators", label: "Calculators", primary: true },
     { href: "/blog", label: "Blog", primary: true },
     // About is HIDDEN for now — Saral's personal presence removed from the
     // visible flow. Uncomment to restore it to the header nav.
@@ -570,6 +570,19 @@ export const siteConfig: SiteConfig = {
         "Contact page — email, phone, Calendly link, and a short message form for reaching Saral Toms.",
       showInNav: true,
       canonical: false,
+    },
+    {
+      path: "/calculators",
+      title: "Planning calculators · Dimeguard",
+      description:
+        "Three free planning calculators — retirement readiness, life insurance coverage, and inflation impact. Simple math, every assumption visible and adjustable.",
+      priority: 0.7,
+      changeFrequency: "yearly",
+      lastModified: "2026-08-12",
+      llmsSummary:
+        "Calculators hub — links to the retirement readiness, life insurance coverage, and inflation impact calculators.",
+      showInLlms: true,
+      canonical: true,
     },
     {
       path: "/calculators/retirement",

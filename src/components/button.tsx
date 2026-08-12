@@ -28,6 +28,19 @@ type CommonProps = {
   className?: string;
 };
 
+/**
+ * Class string for elements that can't be a <Button>/<ButtonLink> — e.g. a
+ * plain <a download> (next/link would intercept the click) or a form button
+ * that needs extra state classes. Keeps every CTA on the one button system.
+ */
+export function buttonClasses(
+  variant: Variant = "primary",
+  size: Size = "md",
+  extra = "",
+): string {
+  return `${base} ${sizes[size]} ${variants[variant]} ${extra}`.trim();
+}
+
 export function Button({
   variant = "primary",
   size = "md",

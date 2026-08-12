@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";
 import { track } from "@/lib/analytics/track";
+import { buttonClasses } from "./button";
 import { Disclosure } from "./disclosure";
 
 type Status = "locked" | "submitting" | "unlocked" | "error";
@@ -157,7 +158,11 @@ export function LeadGate({
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="btn btn--primary w-full sm:w-auto disabled:cursor-not-allowed disabled:opacity-60"
+            className={buttonClasses(
+              "primary",
+              "md",
+              "w-full sm:w-auto disabled:cursor-not-allowed",
+            )}
           >
             {status === "submitting" ? "Sending…" : submitLabel}
           </button>
