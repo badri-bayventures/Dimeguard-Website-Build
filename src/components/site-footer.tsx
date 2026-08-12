@@ -100,7 +100,7 @@ export function SiteFooter() {
               <li key={s.slug}>
                 <Link
                   href={`/states/${s.slug}`}
-                  className="hover:text-[color:var(--color-accent)]"
+                  className="underline decoration-white/40 underline-offset-4 hover:text-[color:var(--color-accent)] hover:decoration-[color:var(--color-accent)]"
                 >
                   {s.name}
                 </Link>

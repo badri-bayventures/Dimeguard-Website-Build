@@ -1,6 +1,7 @@
 "use client";
 
 import { track } from "@/lib/analytics/track";
+import { buttonClasses } from "./button";
 import { LeadGate } from "./lead-gate";
 
 export type ResourceFile = {
@@ -23,9 +24,9 @@ export function ResourceDownloads({ files }: { files: ResourceFile[] }) {
     <LeadGate
       source="Resources downloads"
       storageKey="dg-gate-resources"
-      eyebrow="Free download"
-      title="Get the spreadsheets"
-      blurb="Tell us where to send updates and the download links unlock right here. Both files open in Excel, Google Sheets, or Numbers."
+      eyebrow="Free downloads"
+      title="Get both files — free"
+      blurb="Leave your name and email and the download buttons unlock right here, instantly. Both files open in Excel, Google Sheets, or Numbers."
       submitLabel="Unlock the downloads"
     >
       <div className="rounded-2xl border border-[color:var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] md:p-8">
@@ -52,7 +53,7 @@ export function ResourceDownloads({ files }: { files: ResourceFile[] }) {
                 onClick={() =>
                   track("resource_downloaded", { file: file.href })
                 }
-                className="btn btn--primary self-start"
+                className={buttonClasses("primary", "md", "self-start")}
               >
                 Download <span className="sr-only">{file.title} </span>
                 <span aria-hidden>↓</span>

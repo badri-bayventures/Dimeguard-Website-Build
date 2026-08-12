@@ -67,11 +67,19 @@ export default function ResourcesPage() {
                   key={file.href}
                   className="rounded-2xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] p-6"
                 >
-                  <p className="font-semibold text-[color:var(--color-ink)]">
-                    {file.title}
-                  </p>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-semibold text-[color:var(--color-ink)]">
+                      {file.title}
+                    </p>
+                    <span className="rounded-full bg-[color:var(--color-accent)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--color-accent-ink)]">
+                      Free
+                    </span>
+                  </div>
                   <p className="mt-2 text-sm leading-relaxed text-[color:var(--color-muted)]">
                     {file.description}
+                  </p>
+                  <p className="mt-3 text-xs text-[color:var(--color-muted)]">
+                    {file.format}
                   </p>
                 </div>
               ))}
