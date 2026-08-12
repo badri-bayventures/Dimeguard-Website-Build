@@ -436,17 +436,21 @@ export const siteConfig: SiteConfig = {
     { top: "$0", bottom: "to run your number" },
     { top: "No pressure", bottom: "nothing pitched on the first call" },
   ],
-  // TODO[badri]: re-enable Calculators in M2 when real calculator pages ship.
   nav: [
     { href: "/retirement-planning", label: "Retirement Planning", primary: true },
     // URL stays /life-insurance; disability/LTC content lives inside the page.
     { href: "/life-insurance", label: "Life Insurance", primary: true },
+    // Header entry lands on the flagship calculator; there is no /calculators
+    // hub route. The other two calculators live in the footer Explore column.
+    { href: "/calculators/retirement", label: "Calculators", primary: true },
     { href: "/blog", label: "Blog", primary: true },
     // About is HIDDEN for now — Saral's personal presence removed from the
     // visible flow. Uncomment to restore it to the header nav.
     // { href: "/about", label: "About", primary: true },
     { href: "/contact", label: "Contact", primary: true },
     { href: "/resources", label: "Resources", primary: false },
+    { href: "/calculators/life-value", label: "Coverage Calculator", primary: false },
+    { href: "/calculators/inflation", label: "Inflation Calculator", primary: false },
   ],
   legalLinks: [
     { href: "/privacy", label: "Privacy" },
