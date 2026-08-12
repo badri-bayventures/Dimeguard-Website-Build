@@ -5,6 +5,7 @@ import { SITE_URL, siteConfig } from "@/site.config";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/cookie-consent";
+import { AssistantMount } from "@/components/assistant/assistant-mount";
 import { Analytics } from "@/components/analytics";
 import { AnalyticsPageViews } from "@/components/analytics-page-views";
 import { JsonLd } from "@/lib/schema/json-ld";
@@ -82,6 +83,7 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
+        <AssistantMount />
         <CookieConsent />
         <Analytics />
         <AnalyticsPageViews />

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { siteConfig } from "@/site.config";
+import { statePages } from "@/lib/states";
 import { Container } from "./container";
 
 export function SiteFooter() {
@@ -94,6 +95,18 @@ export function SiteFooter() {
           <p className="mt-4 text-sm text-white/80">
             Licensed in California, serving clients across the nation.
           </p>
+          <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-white/80">
+            {statePages.map((s) => (
+              <li key={s.slug}>
+                <Link
+                  href={`/states/${s.slug}`}
+                  className="hover:text-[color:var(--color-accent)]"
+                >
+                  {s.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
           <p className="mt-2 text-sm text-white/80">
             CA Insurance Lic. #{siteConfig.licensure.licenseNumber}
           </p>

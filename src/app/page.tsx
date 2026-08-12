@@ -6,6 +6,7 @@ import { CarrierBand } from "@/components/carrier-band";
 import { Container } from "@/components/container";
 import { Section, SectionHeading } from "@/components/section";
 import { ServiceCard } from "@/components/service-card";
+import { TestimonialRow } from "@/components/testimonial-row";
 import { Faq } from "@/components/faq";
 import { Disclosure } from "@/components/disclosure";
 import { ButtonLink } from "@/components/button";
@@ -112,6 +113,23 @@ export default async function Home() {
       </Section>
 
       <CarrierBand />
+
+      {/* Testimonials — PLACEHOLDER STRUCTURE. Renders only when real,
+          permissioned quotes exist in siteConfig.testimonials.items (blocked
+          on GBP verification + Saral's client outreach). Never seed with
+          fabricated content. */}
+      {siteConfig.testimonials.enabled &&
+        siteConfig.testimonials.items.length > 0 && (
+          <Section tone="surface">
+            <SectionHeading
+              eyebrow={siteConfig.testimonials.eyebrow}
+              title={siteConfig.testimonials.title}
+            />
+            <div className="mt-12">
+              <TestimonialRow items={siteConfig.testimonials.items} />
+            </div>
+          </Section>
+        )}
 
       <Section tone="muted">
         <div className="grid items-start gap-12 md:grid-cols-12">
