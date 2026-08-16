@@ -277,6 +277,21 @@ export type SiteConfig = {
   assistant: {
     enabled: boolean;
     launcherLabel: string;
+    /**
+     * Context-aware opening line. Resolved client-side when the panel opens
+     * (never at render, so no hydration drift): the first `byPath` entry whose
+     * `prefix` matches the current pathname wins; the homepage rotates through
+     * `home`; anything unmapped falls back to `fallback`. `{title}` in a blog
+     * greeting is replaced with the post title; `{state}` with the state name.
+     * A time-of-day salutation ("Good evening!") is prepended automatically.
+     */
+    greetings: {
+      fallback: string;
+      home: string[];
+      byPath: { prefix: string; text: string }[];
+      /** Shown when the visitor arrived via an event QR (`?utm_campaign=<key>`). */
+      byCampaign: { key: string; text: string }[];
+    };
   };
 };
 
@@ -828,6 +843,64 @@ export const siteConfig: SiteConfig = {
   assistant: {
     enabled: true,
     launcherLabel: "Questions?",
+    greetings: {
+      fallback:
+        "Ask me anything about Dimeguard — or I can help you book a quick call.",
+      home: [
+        "Are you thinking about retirement, life insurance, or just getting organized? Ask me anything.",
+        "Not sure where to start? Tell me what's on your mind and I'll point you to the right place — or a quick call.",
+        "Planning for the years ahead? Ask me how we work, or I can help you book a 20-minute call.",
+        "Curious what a first conversation looks like? Ask me anything — no jargon, no pressure.",
+      ],
+      byPath: [
+        {
+          prefix: "/retirement-planning",
+          text: "Thinking about retirement? Ask me how we approach it, or I can help you book a 20-minute call.",
+        },
+        {
+          prefix: "/life-insurance",
+          text: "Questions about life or disability coverage? Ask away — or try the coverage calculator and I'll help you read the result.",
+        },
+        {
+          prefix: "/401k-rollovers",
+          text: "Have an old 401(k) sitting somewhere? Ask me how a rollover works, or book a call to talk it through.",
+        },
+        {
+          prefix: "/calculators",
+          text: "Want help making sense of your number? Ask me — or book a call and we'll walk through it together.",
+        },
+        {
+          prefix: "/resources",
+          text: "Looking for a spreadsheet or a starting point? Ask me what fits your situation, or I can point you to the right download.",
+        },
+        {
+          prefix: "/blog/",
+          text: "Reading about {title}? Ask me a follow-up question, or I can point you to a related page.",
+        },
+        {
+          prefix: "/blog",
+          text: "Looking for something specific? Tell me the topic and I'll find the right note — or a page that goes deeper.",
+        },
+        {
+          prefix: "/states/",
+          text: "Working from {state}? Ask me how we work with families there, or book a call.",
+        },
+        {
+          prefix: "/contact",
+          text: "Ready to talk? Pick a time on the calendar — or ask me anything first.",
+        },
+        {
+          prefix: "/book",
+          text: "Ready to talk? Pick a time on the calendar — or ask me anything first.",
+        },
+      ],
+      byCampaign: [
+        {
+          key: "dussehra",
+          text: "Nice meeting you at Dussehra! Want your retirement number, or a time to talk this week?",
+        },
+      ],
+    },
   },
 };
 
