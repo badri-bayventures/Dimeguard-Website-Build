@@ -27,8 +27,11 @@ import { track } from "@/lib/analytics/track";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
+// Short and warm per Saral's 8/14 ask. The persistent DISCLOSURE line under
+// the header still carries the "automated" identity signal, so the greeting
+// itself no longer has to.
 const GREETING =
-  "Hi — I'm the automated assistant for this site. I can answer questions about what Dimeguard does and help you get to the right page or book a call.";
+  "Hi there! Ask me anything about Dimeguard — or I can help you book a quick call.";
 
 const DISCLOSURE = "Automated assistant — not a licensed representative.";
 
