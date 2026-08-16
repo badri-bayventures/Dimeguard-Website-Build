@@ -481,7 +481,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/retirement-planning",
-      title: "Retirement planning · Dimeguard",
+      title: "Retirement planning",
       description:
         "A 20-minute first call about your current savings, target retirement age, Social Security timing, and tax-bucket coordination. Designed for families in their 40s and 50s.",
       priority: 0.9,
@@ -495,7 +495,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/life-insurance",
-      title: "Life & disability · Dimeguard",
+      title: "Life & disability",
       description:
         "A short conversation about income to replace, dependents, existing coverage, and whether term or permanent insurance may fit your situation. Multi-carrier independent agent.",
       priority: 0.9,
@@ -560,7 +560,7 @@ export const siteConfig: SiteConfig = {
       // duplicate of the contact info already exposed on every page (footer
       // NAP, header Calendly CTA, /about reach-out block).
       path: "/contact",
-      title: "Contact · Dimeguard",
+      title: "Contact",
       description:
         "Three ways to reach us — email, a 20-minute Calendly call, or the contact form. Serving the Central Valley, Tri-Valley, and Bay Area.",
       priority: 0.8,
@@ -573,7 +573,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/calculators",
-      title: "Planning calculators · Dimeguard",
+      title: "Planning calculators",
       description:
         "Three free planning calculators — retirement readiness, life insurance coverage, and inflation impact. Simple math, every assumption visible and adjustable.",
       priority: 0.7,
@@ -586,7 +586,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/calculators/retirement",
-      title: "Retirement readiness calculator · Dimeguard",
+      title: "Retirement readiness calculator",
       description:
         "Project what your savings may grow to by the age you want to stop working, and see it against what your retirement spending would actually need. Assumptions stay visible and adjustable.",
       priority: 0.8,
@@ -599,7 +599,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/calculators/life-value",
-      title: "Life insurance coverage calculator · Dimeguard",
+      title: "Life insurance coverage calculator",
       description:
         "Estimate how much life insurance coverage your family may need from your income, your dependents, and the coverage you already have. Assumptions stay visible and adjustable.",
       priority: 0.8,
@@ -626,7 +626,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/401k-rollovers",
-      title: "401(k) rollovers · Dimeguard",
+      title: "401(k) rollovers",
       description:
         "A plain-language look at rolling an old 401(k) into an IRA — when it makes sense, the tax-bucket implications, and the trade-offs to weigh before you move money.",
       priority: 0.6,
@@ -643,7 +643,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/annuities",
-      title: "Annuities & retirement income · Dimeguard",
+      title: "Annuities & retirement income",
       description:
         "How annuities can turn part of a nest egg into predictable income — the main types, what the guarantees actually mean, and where they fit (and don't) in a retirement plan.",
       priority: 0.6,
@@ -656,7 +656,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/tax-planning",
-      title: "Tax-efficient planning · Dimeguard",
+      title: "Tax-efficient planning",
       description:
         "Coordinating the tax buckets — taxable, tax-deferred, and tax-free — so withdrawals in retirement are sequenced with the tax bill in mind. Not tax advice; coordination with your CPA.",
       priority: 0.6,
@@ -669,7 +669,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/estate-planning",
-      title: "Estate planning · Dimeguard",
+      title: "Estate planning",
       description:
         "The insurance side of passing things on cleanly — beneficiary alignment, liquidity for taxes and expenses, and where life insurance fits alongside a will or trust drafted by your attorney.",
       priority: 0.6,
@@ -685,7 +685,7 @@ export const siteConfig: SiteConfig = {
     // deepen per-state as GBP/local signals mature.
     {
       path: "/states/california",
-      title: "Financial planning in California · Dimeguard",
+      title: "Financial planning in California",
       description:
         "Insurance, retirement, and tax-aware planning for California families — home base in the Central Valley, serving the Tri-Valley and Bay Area, licensed statewide.",
       priority: 0.5,
@@ -698,7 +698,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/states/texas",
-      title: "Financial planning in Texas · Dimeguard",
+      title: "Financial planning in Texas",
       description:
         "Insurance, retirement, and tax-aware planning for Texas families — licensed in Texas, meetings by video, the same 20-minute first call.",
       priority: 0.5,
@@ -711,7 +711,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/states/colorado",
-      title: "Financial planning in Colorado · Dimeguard",
+      title: "Financial planning in Colorado",
       description:
         "Insurance, retirement, and tax-aware planning for Colorado families — licensed in Colorado, meetings by video, the same 20-minute first call.",
       priority: 0.5,
@@ -724,7 +724,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/states/new-jersey",
-      title: "Financial planning in New Jersey · Dimeguard",
+      title: "Financial planning in New Jersey",
       description:
         "Insurance, retirement, and tax-aware planning for New Jersey families — licensed in New Jersey, meetings by video, the same 20-minute first call.",
       priority: 0.5,
@@ -737,7 +737,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/privacy",
-      title: "Privacy policy · Dimeguard",
+      title: "Privacy policy",
       description:
         "How Dimeguard collects, uses, and protects your information, including California (CCPA/CalOPPA) privacy rights.",
       priority: 0.3,
@@ -749,7 +749,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/terms",
-      title: "Terms of use · Dimeguard",
+      title: "Terms of use",
       description:
         "The terms governing use of the Dimeguard website, including disclaimers and the insurance-only scope of services.",
       priority: 0.3,

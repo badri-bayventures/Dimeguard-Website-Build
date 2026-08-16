@@ -34,7 +34,7 @@ export async function generateMetadata(
   if (!post) {
     return buildMetadata({
       path: `/blog/${slug}`,
-      title: "Post not found · Dimeguard",
+      title: "Post not found",
       description: "This blog post could not be found.",
       index: false,
     });
