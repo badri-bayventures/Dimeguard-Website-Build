@@ -277,6 +277,21 @@ export type SiteConfig = {
   assistant: {
     enabled: boolean;
     launcherLabel: string;
+    /**
+     * Context-aware opening line. Resolved client-side when the panel opens
+     * (never at render, so no hydration drift): the first `byPath` entry whose
+     * `prefix` matches the current pathname wins; the homepage rotates through
+     * `home`; anything unmapped falls back to `fallback`. `{title}` in a blog
+     * greeting is replaced with the post title; `{state}` with the state name.
+     * A time-of-day salutation ("Good evening!") is prepended automatically.
+     */
+    greetings: {
+      fallback: string;
+      home: string[];
+      byPath: { prefix: string; text: string }[];
+      /** Shown when the visitor arrived via an event QR (`?utm_campaign=<key>`). */
+      byCampaign: { key: string; text: string }[];
+    };
   };
 };
 
@@ -481,7 +496,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/retirement-planning",
-      title: "Retirement planning · Dimeguard",
+      title: "Retirement planning",
       description:
         "A 20-minute first call about your current savings, target retirement age, Social Security timing, and tax-bucket coordination. Designed for families in their 40s and 50s.",
       priority: 0.9,
@@ -495,7 +510,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/life-insurance",
-      title: "Life & disability · Dimeguard",
+      title: "Life & disability",
       description:
         "A short conversation about income to replace, dependents, existing coverage, and whether term or permanent insurance may fit your situation. Multi-carrier independent agent.",
       priority: 0.9,
@@ -560,7 +575,7 @@ export const siteConfig: SiteConfig = {
       // duplicate of the contact info already exposed on every page (footer
       // NAP, header Calendly CTA, /about reach-out block).
       path: "/contact",
-      title: "Contact · Dimeguard",
+      title: "Contact",
       description:
         "Three ways to reach us — email, a 20-minute Calendly call, or the contact form. Serving the Central Valley, Tri-Valley, and Bay Area.",
       priority: 0.8,
@@ -573,7 +588,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/calculators",
-      title: "Planning calculators · Dimeguard",
+      title: "Planning calculators",
       description:
         "Three free planning calculators — retirement readiness, life insurance coverage, and inflation impact. Simple math, every assumption visible and adjustable.",
       priority: 0.7,
@@ -586,7 +601,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/calculators/retirement",
-      title: "Retirement readiness calculator · Dimeguard",
+      title: "Retirement readiness calculator",
       description:
         "Project what your savings may grow to by the age you want to stop working, and see it against what your retirement spending would actually need. Assumptions stay visible and adjustable.",
       priority: 0.8,
@@ -599,7 +614,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/calculators/life-value",
-      title: "Life insurance coverage calculator · Dimeguard",
+      title: "Life insurance coverage calculator",
       description:
         "Estimate how much life insurance coverage your family may need from your income, your dependents, and the coverage you already have. Assumptions stay visible and adjustable.",
       priority: 0.8,
@@ -626,7 +641,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/401k-rollovers",
-      title: "401(k) rollovers · Dimeguard",
+      title: "401(k) rollovers",
       description:
         "A plain-language look at rolling an old 401(k) into an IRA — when it makes sense, the tax-bucket implications, and the trade-offs to weigh before you move money.",
       priority: 0.6,
@@ -643,7 +658,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/annuities",
-      title: "Annuities & retirement income · Dimeguard",
+      title: "Annuities & retirement income",
       description:
         "How annuities can turn part of a nest egg into predictable income — the main types, what the guarantees actually mean, and where they fit (and don't) in a retirement plan.",
       priority: 0.6,
@@ -656,7 +671,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/tax-planning",
-      title: "Tax-efficient planning · Dimeguard",
+      title: "Tax-efficient planning",
       description:
         "Coordinating the tax buckets — taxable, tax-deferred, and tax-free — so withdrawals in retirement are sequenced with the tax bill in mind. Not tax advice; coordination with your CPA.",
       priority: 0.6,
@@ -669,7 +684,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/estate-planning",
-      title: "Estate planning · Dimeguard",
+      title: "Estate planning",
       description:
         "The insurance side of passing things on cleanly — beneficiary alignment, liquidity for taxes and expenses, and where life insurance fits alongside a will or trust drafted by your attorney.",
       priority: 0.6,
@@ -685,7 +700,7 @@ export const siteConfig: SiteConfig = {
     // deepen per-state as GBP/local signals mature.
     {
       path: "/states/california",
-      title: "Financial planning in California · Dimeguard",
+      title: "Financial planning in California",
       description:
         "Insurance, retirement, and tax-aware planning for California families — home base in the Central Valley, serving the Tri-Valley and Bay Area, licensed statewide.",
       priority: 0.5,
@@ -698,7 +713,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/states/texas",
-      title: "Financial planning in Texas · Dimeguard",
+      title: "Financial planning in Texas",
       description:
         "Insurance, retirement, and tax-aware planning for Texas families — licensed in Texas, meetings by video, the same 20-minute first call.",
       priority: 0.5,
@@ -711,7 +726,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/states/colorado",
-      title: "Financial planning in Colorado · Dimeguard",
+      title: "Financial planning in Colorado",
       description:
         "Insurance, retirement, and tax-aware planning for Colorado families — licensed in Colorado, meetings by video, the same 20-minute first call.",
       priority: 0.5,
@@ -724,7 +739,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/states/new-jersey",
-      title: "Financial planning in New Jersey · Dimeguard",
+      title: "Financial planning in New Jersey",
       description:
         "Insurance, retirement, and tax-aware planning for New Jersey families — licensed in New Jersey, meetings by video, the same 20-minute first call.",
       priority: 0.5,
@@ -737,7 +752,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/privacy",
-      title: "Privacy policy · Dimeguard",
+      title: "Privacy policy",
       description:
         "How Dimeguard collects, uses, and protects your information, including California (CCPA/CalOPPA) privacy rights.",
       priority: 0.3,
@@ -749,7 +764,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       path: "/terms",
-      title: "Terms of use · Dimeguard",
+      title: "Terms of use",
       description:
         "The terms governing use of the Dimeguard website, including disclaimers and the insurance-only scope of services.",
       priority: 0.3,
@@ -828,6 +843,64 @@ export const siteConfig: SiteConfig = {
   assistant: {
     enabled: true,
     launcherLabel: "Questions?",
+    greetings: {
+      fallback:
+        "Ask me anything about Dimeguard — or I can help you book a quick call.",
+      home: [
+        "Are you thinking about retirement, life insurance, or just getting organized? Ask me anything.",
+        "Not sure where to start? Tell me what's on your mind and I'll point you to the right place — or a quick call.",
+        "Planning for the years ahead? Ask me how we work, or I can help you book a 20-minute call.",
+        "Curious what a first conversation looks like? Ask me anything — no jargon, no pressure.",
+      ],
+      byPath: [
+        {
+          prefix: "/retirement-planning",
+          text: "Thinking about retirement? Ask me how we approach it, or I can help you book a 20-minute call.",
+        },
+        {
+          prefix: "/life-insurance",
+          text: "Questions about life or disability coverage? Ask away — or try the coverage calculator and I'll help you read the result.",
+        },
+        {
+          prefix: "/401k-rollovers",
+          text: "Have an old 401(k) sitting somewhere? Ask me how a rollover works, or book a call to talk it through.",
+        },
+        {
+          prefix: "/calculators",
+          text: "Want help making sense of your number? Ask me — or book a call and we'll walk through it together.",
+        },
+        {
+          prefix: "/resources",
+          text: "Looking for a spreadsheet or a starting point? Ask me what fits your situation, or I can point you to the right download.",
+        },
+        {
+          prefix: "/blog/",
+          text: "Reading about {title}? Ask me a follow-up question, or I can point you to a related page.",
+        },
+        {
+          prefix: "/blog",
+          text: "Looking for something specific? Tell me the topic and I'll find the right note — or a page that goes deeper.",
+        },
+        {
+          prefix: "/states/",
+          text: "Working from {state}? Ask me how we work with families there, or book a call.",
+        },
+        {
+          prefix: "/contact",
+          text: "Ready to talk? Pick a time on the calendar — or ask me anything first.",
+        },
+        {
+          prefix: "/book",
+          text: "Ready to talk? Pick a time on the calendar — or ask me anything first.",
+        },
+      ],
+      byCampaign: [
+        {
+          key: "dussehra",
+          text: "Nice meeting you at Dussehra! Want your retirement number, or a time to talk this week?",
+        },
+      ],
+    },
   },
 };
 

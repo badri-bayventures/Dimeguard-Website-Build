@@ -8,7 +8,7 @@ const PATH = "/book";
 export const generateMetadata = () =>
   buildMetadata({
     path: PATH,
-    title: "Book a 20-minute call · Dimeguard",
+    title: "Book a 20-minute call",
     description:
       "Pick a time for a free, no-obligation 20-minute call. No script, no products pitched — just a clear-eyed look at where you stand.",
     index: false,

@@ -12,6 +12,7 @@ import {
 import { siteConfig } from "@/site.config";
 import { buttonClasses } from "@/components/button";
 import { track } from "@/lib/analytics/track";
+import { getStatePage } from "@/lib/states";
 
 /**
  * Site assistant chat widget. Lazily loaded (see assistant-mount.tsx) so it
@@ -27,8 +28,55 @@ import { track } from "@/lib/analytics/track";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
-const GREETING =
-  "Hi — I'm the automated assistant for this site. I can answer questions about what Dimeguard does and help you get to the right page or book a call.";
+/**
+ * Context-aware greeting (Saral's 8/14 ask: shorter, warmer, personal to the
+ * visitor). Resolved on open, client-side only — the panel is never
+ * server-rendered with a greeting, so there is no hydration drift. The
+ * persistent DISCLOSURE line under the header carries the "automated"
+ * identity signal, so the greeting itself no longer has to.
+ * Copy lives in `siteConfig.assistant.greetings` so it's editable as config.
+ */
+function salutation(hour: number): string {
+  if (hour < 5) return "Hi there!";
+  if (hour < 12) return "Good morning!";
+  if (hour < 17) return "Good afternoon!";
+  if (hour < 22) return "Good evening!";
+  return "Hi there!";
+}
+
+function resolveGreeting(): string {
+  const g = siteConfig.assistant.greetings;
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  const params = new URLSearchParams(window.location.search);
+  const campaign = (params.get("utm_campaign") ?? "").toLowerCase();
+
+  let body: string | undefined;
+  const byCampaign = g.byCampaign.find((c) => campaign.includes(c.key));
+  if (byCampaign) {
+    body = byCampaign.text;
+  } else if (path === "/") {
+    const pool = g.home.length ? g.home : [g.fallback];
+    body = pool[Math.floor(Math.random() * pool.length)];
+  } else {
+    body = g.byPath.find((e) => path.startsWith(e.prefix))?.text;
+  }
+  body ??= g.fallback;
+
+  if (body.includes("{title}")) {
+    // document.title is "<Post title> · Dimeguard" via the layout template.
+    const title = document.title.split(" · ")[0]?.trim();
+    body = title
+      ? body.replace("{title}", title)
+      : "Ask me a follow-up question about this post, or I can point you to a related page.";
+  }
+  if (body.includes("{state}")) {
+    const state = getStatePage(path.split("/")[2] ?? "")?.name;
+    body = state
+      ? body.replace("{state}", state)
+      : body.replace("Working from {state}? ", "");
+  }
+  return `${salutation(new Date().getHours())} ${body}`;
+}
 
 const DISCLOSURE = "Automated assistant — not a licensed representative.";
 
@@ -65,6 +113,7 @@ export default function AssistantWidget() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [openedOnce, setOpenedOnce] = useState(false);
+  const [greeting, setGreeting] = useState<string | null>(null);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
@@ -115,6 +164,7 @@ export default function AssistantWidget() {
     inputRef.current?.focus();
     if (!openedOnce) {
       setOpenedOnce(true);
+      setGreeting(resolveGreeting());
       track("assistant_opened");
     }
   }, [open, openedOnce]);
@@ -281,7 +331,7 @@ export default function AssistantWidget() {
             className="flex-1 space-y-3 overflow-y-auto px-4 py-4"
           >
             <div className="mr-8 rounded-2xl rounded-tl-sm bg-[color:var(--color-surface-muted)] px-3.5 py-2.5 text-sm leading-relaxed text-[color:var(--color-ink)]">
-              {GREETING}
+              {greeting ?? siteConfig.assistant.greetings.fallback}
             </div>
             {messages.map((m, i) =>
               m.role === "user" ? (
