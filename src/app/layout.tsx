@@ -25,7 +25,7 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
+const fullMetadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: `${siteConfig.business.legalName} — ${siteConfig.business.tagline}`,
@@ -49,21 +49,46 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Offline hold (see `siteConfig.maintenance`): neutral metadata only — no
+ * brand name, author or publisher — and an explicit noindex.
+ */
+const offlineMetadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: { absolute: "Temporarily offline" },
+  description: "This site is temporarily offline.",
+  robots: { index: false, follow: false, nocache: true },
+};
+
+export const metadata: Metadata = siteConfig.maintenance.enabled
+  ? offlineMetadata
+  : fullMetadata;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const htmlClassName = `${fraunces.variable} ${inter.variable} h-full antialiased`;
+  const bodyClassName =
+    "min-h-full flex flex-col bg-[color:var(--color-surface)] text-[color:var(--color-ink)]";
+
+  // Offline hold: bare shell — no header, footer, assistant, analytics,
+  // cookie banner or structured data. Middleware rewrites every route to
+  // /offline, so `children` is always the holding page here.
+  if (siteConfig.maintenance.enabled) {
+    return (
+      <html lang="en" className={htmlClassName} suppressHydrationWarning>
+        <body className={bodyClassName} suppressHydrationWarning>
+          {children}
+        </body>
+      </html>
+    );
+  }
+
   return (
-    <html
-      lang="en"
-      className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
-      suppressHydrationWarning
-    >
-      <body
-        className="min-h-full flex flex-col bg-[color:var(--color-surface)] text-[color:var(--color-ink)]"
-        suppressHydrationWarning
-      >
+    <html lang="en" className={htmlClassName} suppressHydrationWarning>
+      <body className={bodyClassName} suppressHydrationWarning>
         {/*
           Site-wide structured data. Rendered in the body (not an explicit
           <head>) to match how every page renders its page-specific JSON-LD

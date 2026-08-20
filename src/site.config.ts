@@ -293,6 +293,19 @@ export type SiteConfig = {
       byCampaign: { key: string; text: string }[];
     };
   };
+  /**
+   * Site-wide OFFLINE switch. `enabled: true` serves a neutral "temporarily
+   * offline" page on every route (HTTP 503 + noindex), blocks the API routes
+   * and removes header/footer/assistant/analytics/structured data — nothing
+   * brand- or service-related is rendered. Used for the CA Department of
+   * Insurance name-approval hold (Aug 2026). Flip to `false` and redeploy to
+   * bring the full site back — no other change required.
+   */
+  maintenance: {
+    enabled: boolean;
+    headline: string;
+    body: string;
+  };
 };
 
 /**
@@ -901,6 +914,11 @@ export const siteConfig: SiteConfig = {
         },
       ],
     },
+  },
+  maintenance: {
+    enabled: true,
+    headline: "This site is temporarily offline.",
+    body: "We’re doing some work behind the scenes and will be back soon. Thank you for your patience.",
   },
 };
 
